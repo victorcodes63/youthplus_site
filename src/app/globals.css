@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --accent: #e5c222;
+  --secondary: #6b7280;
+  --border-light: #e5e7eb;
+  --dark: #0a0a0a;
+  --cursor-plus-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' stroke='%230a0a0a' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --cursor-plus-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+html {
+  color-scheme: light;
+  /* Fixed header (84px): anchor jumps and scrollIntoView account for overlap */
+  scroll-padding-top: 84px;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  text-rendering: geometricPrecision;
+  font-family: var(--font-figtree), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html,
+body,
+* {
+  cursor: var(--cursor-plus-dark) 12 12, auto;
+}
+
+a,
+button,
+input,
+select,
+textarea,
+label,
+[role="button"] {
+  cursor: var(--cursor-plus-dark) 12 12, pointer;
+}
+
+html[data-cursor-tone="dark"],
+html[data-cursor-tone="dark"] body,
+html[data-cursor-tone="dark"] * {
+  cursor: var(--cursor-plus-light) 12 12, auto;
+}
+
+html[data-cursor-tone="dark"] a,
+html[data-cursor-tone="dark"] button,
+html[data-cursor-tone="dark"] input,
+html[data-cursor-tone="dark"] select,
+html[data-cursor-tone="dark"] textarea,
+html[data-cursor-tone="dark"] label,
+html[data-cursor-tone="dark"] [role="button"] {
+  cursor: var(--cursor-plus-light) 12 12, pointer;
+}
+
+/* Editorial grid/margins (5vw desktop / 6% tablet / 24px mobile). */
+.page {
+  padding-inline: 24px;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-inline: 6%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page {
+    padding-inline: 5vw;
+  }
+}
+
+/* Editorial underlines using your accent color. */
+.accent-underline {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0 2px;
+  transition: background-size 250ms ease;
+}
+
+.accent-underline:hover {
+  background-size: 100% 2px;
+}
+
+/* Header "magical" micro-animations (still restrained and premium). */
+@keyframes headerGlow {
+  0% {
+    transform: translateX(-12%);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateX(0%);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateX(12%);
+    opacity: 0.2;
+  }
+}
+
+@keyframes pulseSpark {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+.header-glow-line {
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: -1px;
+  height: 1px;
+  background: var(--accent);
+  filter: blur(0.1px);
+  animation: headerGlow 5.4s ease-in-out infinite;
+}
+
+.spark-dot {
+  animation: pulseSpark 1.7s ease-in-out infinite;
+}
+
+/* Dotted brand wordmark used in dark footer background. */
+.dotted-wordmark {
+  color: transparent;
+  background-image: radial-gradient(rgba(229, 194, 34, 0.24) 1.1px, transparent 1.1px);
+  background-size: 8px 8px;
+  background-position: 0 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
