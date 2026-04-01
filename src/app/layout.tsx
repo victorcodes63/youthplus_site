@@ -45,9 +45,9 @@ export const metadata: Metadata = {
     images: ["/images/women-s-panel-discussion.jpg"],
   },
   icons: {
-    icon: [{ url: "/brand/youthlogo.webp", type: "image/webp", sizes: "192x192" }],
-    shortcut: ["/brand/youthlogo.webp"],
-    apple: [{ url: "/brand/youthlogo.webp", sizes: "180x180" }],
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
   },
 };
 
