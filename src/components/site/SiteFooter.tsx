@@ -182,7 +182,7 @@ export function SiteFooter() {
                 <a href="mailto:hello@youthplus.africa" className="block hover:text-white transition-colors">
                   hello@youthplus.africa
                 </a>
-                <div>Riverside Drive, Riverside, Nairobi</div>
+                <div>Kofisi, 8th floor, Riverside Drive, Nairobi</div>
                 <a href="tel:+254796349079" className="block hover:text-white transition-colors">
                   +254 796 349 079
                 </a>

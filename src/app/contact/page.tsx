@@ -231,7 +231,7 @@ export default function ContactPage() {
                         Office
                       </div>
                       <div className="mt-1 text-[15px] text-[#0A0A0A]">
-                        Riverside Drive, Riverside, Nairobi
+                        Kofisi, 8th floor, Riverside Drive, Nairobi
                       </div>
                     </div>
 
@@ -258,9 +258,10 @@ export default function ContactPage() {
         <FadeUp>
           <iframe
             title="Youth+ Africa Office Location"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7502698094445!2d36.71317077562177!3d-1.32576533567189!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1b6b19ae187f%3A0x15fef8fbdad8d88!2sYouth%20Plus%20Africa!5e0!3m2!1sen!2ske!4v1774952759016!5m2!1sen!2ske"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8391905849458!2d36.78953771254366!3d-1.2693753987132095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f17392b8c42c9%3A0x5d47d022b01143cb!2sKOFISI%20Riverside!5e0!3m2!1sen!2ske!4v1775021226048!5m2!1sen!2ske"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
             className="block h-[260px] w-full min-w-0 border-0 sm:h-[320px] md:h-[380px]"
           />
         </FadeUp>
