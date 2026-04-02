@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { brandAssetPath } from "@/lib/brandAssetPath";
 import { useEffect, useMemo, useRef } from "react";
 
 type Speaker = {
@@ -296,7 +297,7 @@ export function SpeakersCarousel() {
 
                 <div className="absolute right-3 bottom-3 h-10 w-10 p-0.5 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
                   <Image
-                    src={encodeURI("/brand/Y+ Icon White@3x.png")}
+                    src={brandAssetPath("Y+ Icon White@3x.png")}
                     alt="Youth+ Africa logo"
                     width={36}
                     height={36}

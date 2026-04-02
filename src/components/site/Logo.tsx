@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { brandAssetPath } from "@/lib/brandAssetPath";
 
-const ICON_SRC = encodeURI("/brand/Y+ Icon Black@3x.png");
-const WORDMARK_PNG_SRC = encodeURI("/brand/Youth+ Logos - RGB-02.png");
-const WORDMARK_WEBP_SRC = encodeURI("/brand/youthlogo.webp");
+const MOBILE_HEADER_SRC = brandAssetPath("youthblackheaderm.png");
+const WORDMARK_WEBP_SRC = brandAssetPath("youthlogo.webp");
 
-/** Phone: Y+ mark. Tablet (`md`–`lg`): PNG wordmark. Desktop (`lg+`): `youthlogo.webp`. */
+/** Phone: `youthblackheaderm.png`. Tablet+ (`md+`): `youthlogo.webp` wordmark. */
 export function Logo() {
   return (
     <Link
@@ -17,7 +17,7 @@ export function Logo() {
     >
       <div className="relative h-11 w-11 shrink-0 md:hidden">
         <Image
-          src={ICON_SRC}
+          src={MOBILE_HEADER_SRC}
           alt=""
           fill
           className="object-contain object-left"
@@ -27,7 +27,7 @@ export function Logo() {
       </div>
       <div className="relative hidden h-12 w-[200px] shrink-0 md:block lg:hidden">
         <Image
-          src={WORDMARK_PNG_SRC}
+          src={WORDMARK_WEBP_SRC}
           alt="Youth+ Africa logo"
           fill
           className="object-contain object-left"

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { brandAssetPath } from "@/lib/brandAssetPath";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 
 export function SiteFooter() {
@@ -54,7 +55,7 @@ export function SiteFooter() {
             >
               <span className="relative block h-11 w-[200px] sm:h-12 sm:w-[240px] md:h-14 md:w-[280px]">
                 <Image
-                  src={encodeURI("/brand/Youth+ Logos - RGB-02.png")}
+                  src={brandAssetPath("youthwhitefooter.png")}
                   alt="Youth+ Africa logo"
                   fill
                   sizes="(max-width:640px) 200px, (max-width:768px) 240px, 280px"

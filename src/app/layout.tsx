@@ -4,6 +4,7 @@ import { Figtree } from "next/font/google";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { AdaptiveCursor } from "@/components/site/AdaptiveCursor";
+import { brandAssetPath } from "@/lib/brandAssetPath";
 import type { ReactNode } from "react";
 
 const figtree = Figtree({
@@ -15,8 +16,8 @@ const figtree = Figtree({
 
 /** Black mark on light UI; white mark on dark UI (tabs, PWA tiles, etc.). */
 const BRAND_ICON = {
-  onLight: `/brand/${encodeURIComponent("Y+ Icon Black@3x.png")}`,
-  onDark: `/brand/${encodeURIComponent("Y+ Icon White@3x.png")}`,
+  onLight: brandAssetPath("youthblackheaderm.png"),
+  onDark: brandAssetPath("Y+ Icon White@3x.png"),
   width: 3241,
   height: 3240,
 } as const;

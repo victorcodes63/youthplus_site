@@ -209,15 +209,15 @@ export default function Home() {
   const fineHover = usePrefersFineHover();
   const { dismissed: mobileTicketCtaDismissed, dismiss: dismissMobileTicketCta } = useMobileTicketCta();
 
-  const heroBackdropEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
-  const heroEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
+  const heroBackdropEase: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
+  const heroEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
   const heroColumnsOrchestra = {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: reduceMotion ? 0 : 0.12,
-        delayChildren: reduceMotion ? 0 : 0.22,
+        staggerChildren: reduceMotion ? 0 : 0.14,
+        delayChildren: reduceMotion ? 0 : 0.32,
       },
     },
   };
@@ -226,7 +226,7 @@ export default function Home() {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: reduceMotion ? 0 : 0.088,
+        staggerChildren: reduceMotion ? 0 : 0.105,
         delayChildren: 0,
       },
     },
@@ -235,15 +235,15 @@ export default function Home() {
   const heroEnterBadge = {
     hidden: {
       opacity: reduceMotion ? 1 : 0,
-      y: reduceMotion ? 0 : 14,
-      scale: reduceMotion ? 1 : 0.94,
+      y: reduceMotion ? 0 : 12,
+      scale: reduceMotion ? 1 : 0.97,
     },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
       transition: {
-        duration: reduceMotion ? 0 : 0.58,
+        duration: reduceMotion ? 0 : 0.52,
         ease: heroEase,
       },
     },
@@ -252,13 +252,13 @@ export default function Home() {
   const heroEnterLine = {
     hidden: {
       opacity: reduceMotion ? 1 : 0,
-      y: reduceMotion ? 0 : 22,
+      y: reduceMotion ? 0 : 16,
     },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: reduceMotion ? 0 : 0.72,
+        duration: reduceMotion ? 0 : 0.58,
         ease: heroEase,
       },
     },
@@ -267,15 +267,13 @@ export default function Home() {
   const heroEnterBody = {
     hidden: {
       opacity: reduceMotion ? 1 : 0,
-      y: reduceMotion ? 0 : 20,
-      filter: reduceMotion ? "blur(0px)" : "blur(10px)",
+      y: reduceMotion ? 0 : 16,
     },
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: {
-        duration: reduceMotion ? 0 : 0.88,
+        duration: reduceMotion ? 0 : 0.65,
         ease: heroEase,
       },
     },
@@ -284,14 +282,14 @@ export default function Home() {
   const heroEnterCta = {
     hidden: {
       opacity: reduceMotion ? 1 : 0,
-      y: reduceMotion ? 0 : 26,
+      y: reduceMotion ? 0 : 18,
     },
     visible: {
       opacity: 1,
       y: 0,
       transition: reduceMotion
         ? { duration: 0 }
-        : { type: "spring" as const, stiffness: 300, damping: 26, mass: 0.95 },
+        : { type: "spring" as const, stiffness: 220, damping: 32, mass: 1 },
     },
   };
 
@@ -299,8 +297,8 @@ export default function Home() {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: reduceMotion ? 0 : 0.1,
-        delayChildren: 0,
+        staggerChildren: reduceMotion ? 0 : 0.11,
+        delayChildren: reduceMotion ? 0 : 0.06,
       },
     },
   };
@@ -321,10 +319,10 @@ export default function Home() {
         >
           <motion.div
             className="absolute inset-0"
-            initial={reduceMotion ? false : { opacity: 0, scale: 1.09 }}
+            initial={reduceMotion ? false : { opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
-              duration: reduceMotion ? 0 : 1.18,
+              duration: reduceMotion ? 0 : 1.05,
               ease: heroBackdropEase,
             }}
           >
@@ -348,8 +346,8 @@ export default function Home() {
           initial={reduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
-            duration: reduceMotion ? 0 : 1.35,
-            delay: reduceMotion ? 0 : 0.06,
+            duration: reduceMotion ? 0 : 1.05,
+            delay: reduceMotion ? 0 : 0.12,
             ease: heroBackdropEase,
           }}
           style={{

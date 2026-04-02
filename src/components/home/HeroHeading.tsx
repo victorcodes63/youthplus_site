@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 
-const lineEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const lineEase: [number, number, number, number] = [0.22, 1, 0.25, 1];
 
 const DEFAULT_LINES: readonly [string, string] = [
   "Where Africa's Next",
@@ -22,7 +22,8 @@ export function HeroHeading({
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: reduceMotion ? 0 : 0.11,
+        staggerChildren: reduceMotion ? 0 : 0.14,
+        delayChildren: reduceMotion ? 0 : 0.04,
       },
     },
   };
@@ -30,13 +31,13 @@ export function HeroHeading({
   const headlineLine: Variants = {
     hidden: {
       opacity: reduceMotion ? 1 : 0,
-      y: reduceMotion ? 0 : "108%",
+      y: reduceMotion ? 0 : "100%",
     },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: reduceMotion ? 0 : 0.9,
+        duration: reduceMotion ? 0 : 0.72,
         ease: lineEase,
       },
     },
