@@ -21,7 +21,7 @@ export function PartnerLogoMarquee({
   const isHero = variant === "hero";
   const row = [...PARTNER_LOGOS, ...PARTNER_LOGOS];
   /** Card strip is right-aligned in the column; phase-shift so the viewport isn’t empty on the left on first paint. */
-  const marqueeX = isHero ? (["0%", "-50%"] as const) : (["-25%", "-75%"] as const);
+  const marqueeX: [string, string] = isHero ? ["0%", "-50%"] : ["-25%", "-75%"];
 
   return (
     <div className={className}>
