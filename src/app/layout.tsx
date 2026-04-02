@@ -13,8 +13,13 @@ const figtree = Figtree({
   variable: "--font-figtree",
 });
 
-const iconBlack = encodeURI("/brand/Y+ Icon Black@3x.png");
-const iconWhite = encodeURI("/brand/Y+ Icon White@3x.png");
+/** Black mark on light UI; white mark on dark UI (tabs, PWA tiles, etc.). */
+const BRAND_ICON = {
+  onLight: `/brand/${encodeURIComponent("Y+ Icon Black@3x.png")}`,
+  onDark: `/brand/${encodeURIComponent("Y+ Icon White@3x.png")}`,
+  width: 3241,
+  height: 3240,
+} as const;
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -39,35 +44,39 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/women-s-panel-discussion.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Youth+ Africa Nairobi Summit",
+        url: BRAND_ICON.onLight,
+        width: BRAND_ICON.width,
+        height: BRAND_ICON.height,
+        alt: "Youth+ Africa",
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Youth+ Africa | Nairobi Summit 2027",
     description:
       "Reserve your ticket for Youth+ Africa Summit 2027 and connect with Africa's top builders.",
-    images: ["/images/women-s-panel-discussion.jpg"],
+    images: [BRAND_ICON.onLight],
   },
   icons: {
     icon: [
       {
-        url: iconBlack,
+        url: BRAND_ICON.onLight,
         type: "image/png",
         media: "(prefers-color-scheme: light)",
       },
       {
-        url: iconWhite,
+        url: BRAND_ICON.onDark,
         type: "image/png",
         media: "(prefers-color-scheme: dark)",
       },
+      {
+        url: BRAND_ICON.onLight,
+        type: "image/png",
+      },
     ],
-    shortcut: iconBlack,
-    apple: iconBlack,
+    shortcut: BRAND_ICON.onLight,
+    apple: BRAND_ICON.onLight,
   },
 };
 
