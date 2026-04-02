@@ -4,12 +4,17 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 const lineEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
+const DEFAULT_LINES: readonly [string, string] = [
+  "Where Africa's Next",
+  "Generation Ignites",
+];
+
 export function HeroHeading({
   className = "",
-  lines,
+  lines = DEFAULT_LINES,
 }: {
   className?: string;
-  lines: readonly [string, string];
+  lines?: readonly [string, string];
 }) {
   const reduceMotion = useReducedMotion();
 
