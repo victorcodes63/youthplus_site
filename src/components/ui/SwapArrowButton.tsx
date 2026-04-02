@@ -11,6 +11,8 @@ type SwapArrowButtonProps = {
   className?: string;
   hoverTextClassName?: string;
   hoverBgClassName?: string;
+  /** Tighter layout (narrower grid, smaller arrows) for paired CTAs e.g. hero. */
+  compact?: boolean;
 };
 
 export function SwapArrowButton({
@@ -19,14 +21,15 @@ export function SwapArrowButton({
   className = "",
   hoverTextClassName = "hover:text-accent",
   hoverBgClassName = "hover:bg-[#0A0A0A]",
+  compact = false,
 }: SwapArrowButtonProps) {
   const [isHovering, setIsHovering] = useState(false);
 
-  const Arrow = () => (
+  const Arrow = ({ size = "md" }: { size?: "md" | "sm" }) => (
     <svg
       viewBox="0 0 20 20"
       aria-hidden="true"
-      className="h-[18px] w-[18px]"
+      className={size === "sm" ? "h-[15px] w-[15px]" : "h-[18px] w-[18px]"}
       fill="none"
     >
       <path
@@ -46,10 +49,18 @@ export function SwapArrowButton({
       onMouseLeave={() => setIsHovering(false)}
       onFocus={() => setIsHovering(true)}
       onBlur={() => setIsHovering(false)}
-      className={`group inline-flex items-center h-[50px] px-5 rounded-md bg-accent text-[#0A0A0A] font-[800] transition-colors duration-200 ${hoverBgClassName} ${hoverTextClassName} ${className}`}
+      className={`group inline-flex items-center justify-center ${
+        compact ? "min-h-[44px] px-3.5" : "h-[50px] px-5"
+      } rounded-md bg-accent text-[#0A0A0A] font-[800] transition-colors duration-200 ${hoverBgClassName} ${hoverTextClassName} ${className}`}
     >
-      <span className="grid grid-cols-[20px_auto_20px] items-center gap-3">
-        <span className="relative h-5 w-5 overflow-hidden">
+      <span
+        className={
+          compact
+            ? "grid grid-cols-[14px_auto_14px] items-center gap-1.5"
+            : "grid grid-cols-[20px_auto_20px] items-center gap-3"
+        }
+      >
+        <span className={`relative overflow-hidden ${compact ? "h-4 w-4" : "h-5 w-5"}`}>
           <motion.span
             className="absolute inset-0 flex items-center justify-center"
             animate={{
@@ -58,7 +69,7 @@ export function SwapArrowButton({
             }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <Arrow />
+            <Arrow size={compact ? "sm" : "md"} />
           </motion.span>
         </span>
 
@@ -69,7 +80,7 @@ export function SwapArrowButton({
           {children}
         </motion.span>
 
-        <span className="relative h-5 w-5 overflow-hidden">
+        <span className={`relative overflow-hidden ${compact ? "h-4 w-4" : "h-5 w-5"}`}>
           <motion.span
             className="absolute inset-0 flex items-center justify-center"
             animate={{
@@ -78,7 +89,7 @@ export function SwapArrowButton({
             }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <Arrow />
+            <Arrow size={compact ? "sm" : "md"} />
           </motion.span>
         </span>
       </span>

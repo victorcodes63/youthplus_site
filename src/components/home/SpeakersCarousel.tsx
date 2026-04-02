@@ -250,7 +250,7 @@ export function SpeakersCarousel() {
 
       <div
         ref={scrollerRef}
-        className="mt-10 flex gap-5 overflow-x-auto pb-3 px-5 md:px-8 xl:px-10 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="page-inset-x mt-10 flex gap-5 overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {cards.map((speaker, idx) => {
           const shape = SHAPES[idx % SHAPES.length];
@@ -294,12 +294,12 @@ export function SpeakersCarousel() {
                   </span>
                 </Link>
 
-                <div className="absolute right-3 bottom-3 rounded-md bg-white border border-borderLight h-10 w-10 p-1.5">
+                <div className="absolute right-3 bottom-3 h-10 w-10 p-0.5 drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]">
                   <Image
-                    src="/brand/youthlogo.webp"
+                    src={encodeURI("/brand/Y+ Icon White@3x.png")}
                     alt="Youth+ Africa logo"
-                    width={28}
-                    height={28}
+                    width={36}
+                    height={36}
                     className="h-full w-full object-contain"
                   />
                 </div>

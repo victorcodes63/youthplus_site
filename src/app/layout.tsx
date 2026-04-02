@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Figtree } from "next/font/google";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -12,6 +12,15 @@ const figtree = Figtree({
   display: "swap",
   variable: "--font-figtree",
 });
+
+const iconBlack = encodeURI("/brand/Y+ Icon Black@3x.png");
+const iconWhite = encodeURI("/brand/Y+ Icon White@3x.png");
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://youthplusafrica.com"),
@@ -45,9 +54,20 @@ export const metadata: Metadata = {
     images: ["/images/women-s-panel-discussion.jpg"],
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: [
+      {
+        url: iconBlack,
+        type: "image/png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: iconWhite,
+        type: "image/png",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    shortcut: iconBlack,
+    apple: iconBlack,
   },
 };
 

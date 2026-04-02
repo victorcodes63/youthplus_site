@@ -2,13 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView, useScroll, useTransform } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { FadeUp } from "@/components/motion/FadeUp";
 import { HeroHeading } from "@/components/home/HeroHeading";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import { SpeakersCarousel } from "@/components/home/SpeakersCarousel";
 import { WhyUsStory } from "@/components/home/WhyUsStory";
+import { usePrefersFineHover } from "@/lib/usePrefersFineHover";
+import { useMobileTicketCta } from "@/lib/useMobileTicketCta";
+import { MobileTicketCta } from "@/components/site/MobileTicketCta";
+import { PARTNER_LOGOS } from "@/data/partnerLogos";
 
 const HERO_IMAGE = "/images/women-s-panel-discussion.jpg";
 const SUMMIT_IMAGE = "/images/woman-giving-speech.jpg";
@@ -116,6 +127,29 @@ const AGENDA_TEASER = [
   { time: "17:30", title: "Founder Networking", detail: "Structured investor and partner connections" },
 ];
 
+const staggerContainer = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.1, delayChildren: 0.04 },
+  },
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: "easeOut" as const },
+  },
+};
+
+const summitStagger = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.14, delayChildren: 0.06 },
+  },
+};
+
 function LiveStat({
   value,
   suffix = "",
@@ -169,11 +203,112 @@ export default function Home() {
   const heroImageScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
   const heroContentY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
   const heroOverlayOpacity = useTransform(scrollYProgress, [0, 1], [0.62, 0.76]);
+  const reduceMotion = useReducedMotion();
   const [openFeatured, setOpenFeatured] = useState<number | null>(null);
   const [hoverTier, setHoverTier] = useState<number | null>(null);
+  const fineHover = usePrefersFineHover();
+  const { dismissed: mobileTicketCtaDismissed, dismiss: dismissMobileTicketCta } = useMobileTicketCta();
+
+  const heroBackdropEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
+  const heroEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+  const heroColumnsOrchestra = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : 0.12,
+        delayChildren: reduceMotion ? 0 : 0.22,
+      },
+    },
+  };
+
+  const heroLeftOrchestra = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : 0.088,
+        delayChildren: 0,
+      },
+    },
+  };
+
+  const heroEnterBadge = {
+    hidden: {
+      opacity: reduceMotion ? 1 : 0,
+      y: reduceMotion ? 0 : 14,
+      scale: reduceMotion ? 1 : 0.94,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: reduceMotion ? 0 : 0.58,
+        ease: heroEase,
+      },
+    },
+  };
+
+  const heroEnterLine = {
+    hidden: {
+      opacity: reduceMotion ? 1 : 0,
+      y: reduceMotion ? 0 : 22,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: reduceMotion ? 0 : 0.72,
+        ease: heroEase,
+      },
+    },
+  };
+
+  const heroEnterBody = {
+    hidden: {
+      opacity: reduceMotion ? 1 : 0,
+      y: reduceMotion ? 0 : 20,
+      filter: reduceMotion ? "blur(0px)" : "blur(10px)",
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        duration: reduceMotion ? 0 : 0.88,
+        ease: heroEase,
+      },
+    },
+  };
+
+  const heroEnterCta = {
+    hidden: {
+      opacity: reduceMotion ? 1 : 0,
+      y: reduceMotion ? 0 : 26,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: reduceMotion
+        ? { duration: 0 }
+        : { type: "spring" as const, stiffness: 300, damping: 26, mass: 0.95 },
+    },
+  };
+
+  const heroPartnerOrchestra = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : 0.1,
+        delayChildren: 0,
+      },
+    },
+  };
 
   return (
-    <main className="pb-24 md:pb-0">
+    <main
+      className={`${mobileTicketCtaDismissed ? "pb-0" : "pb-24"} md:pb-0 transition-[padding] duration-200`}
+    >
       {/* Hero (full-bleed image, single clean text reveal). */}
       <section
         id="hero"
@@ -184,22 +319,39 @@ export default function Home() {
           className="absolute inset-0"
           style={{ y: heroImageY, scale: heroImageScale }}
         >
-          <Image
-            src={HERO_IMAGE}
-            alt="Women panel discussion at Youth+ Africa summit"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
+          <motion.div
+            className="absolute inset-0"
+            initial={reduceMotion ? false : { opacity: 0, scale: 1.09 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: reduceMotion ? 0 : 1.18,
+              ease: heroBackdropEase,
+            }}
+          >
+            <Image
+              src={HERO_IMAGE}
+              alt="Women panel discussion at Youth+ Africa summit"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+          </motion.div>
         </motion.div>
         <motion.div
           className="absolute inset-0 bg-[#0A0A0A]"
           style={{ opacity: heroOverlayOpacity }}
         />
-        <div
+        <motion.div
           aria-hidden="true"
-          className="absolute inset-0"
+          className="absolute inset-0 pointer-events-none"
+          initial={reduceMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            duration: reduceMotion ? 0 : 1.35,
+            delay: reduceMotion ? 0 : 0.06,
+            ease: heroBackdropEase,
+          }}
           style={{
             background:
               "radial-gradient(circle at 18% 22%, rgba(229,194,34,0.16) 0%, transparent 36%), radial-gradient(circle at 82% 78%, rgba(229,194,34,0.1) 0%, transparent 40%)",
@@ -210,29 +362,31 @@ export default function Home() {
           className="relative page mx-auto max-w-[1440px] min-h-[calc(100vh-84px)] py-12 md:py-14 xl:py-16 flex items-center"
           style={{ y: heroContentY }}
         >
-          <div className="w-full grid grid-cols-12 gap-y-10 lg:gap-x-10 items-end">
-            <div className="col-span-12 xl:col-span-8">
+          <motion.div
+            className="w-full grid grid-cols-12 gap-y-10 lg:gap-x-10 items-end"
+            variants={heroColumnsOrchestra}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div
+              className="col-span-12 xl:col-span-8"
+              variants={heroLeftOrchestra}
+            >
               <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px 0px -50px 0px" }}
-                transition={{ duration: 0.55, ease: "easeOut" }}
+                variants={heroEnterBadge}
                 className="inline-flex items-center gap-3 rounded-md border border-accent/85 bg-black/30 px-3.5 py-1.5 text-accent text-[11px] font-[800] tracking-[0.12em] uppercase"
               >
-                Youth+ Africa Festival 2026 · Tickets Live
+                <span className="md:hidden">Youth+ · Tickets Live</span>
+                <span className="hidden md:inline">Youth+ Africa Festival 2026 · Tickets Live</span>
               </motion.div>
 
-              <div className="mt-5">
-                <HeroHeading>
-                  Where Africa&apos;s Next Generation Ignites
-                </HeroHeading>
-              </div>
+              <HeroHeading
+                className="mt-5"
+                lines={["Where Africa's Next", "Generation Ignites"]}
+              />
 
               <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px 0px -50px 0px" }}
-                transition={{ duration: 0.6, delay: 0.08, ease: "easeOut" }}
+                variants={heroEnterBody}
                 className="mt-6 text-[16px] md:text-[18px] 2xl:text-[20px] leading-[1.55] text-white/85 max-w-[62ch]"
               >
                 Join founders, operators, investors, and builders driving the next
@@ -241,32 +395,27 @@ export default function Home() {
               </motion.p>
 
               <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px 0px -50px 0px" }}
-                transition={{ duration: 0.6, delay: 0.16, ease: "easeOut" }}
-                className="mt-9 flex flex-col sm:flex-row gap-3 sm:items-center"
+                variants={heroEnterCta}
+                className="mt-9 flex flex-row gap-2 sm:gap-3 max-md:items-stretch md:items-center md:justify-start md:gap-4"
               >
                 <SwapArrowButton
                   href="/events"
-                  className="h-[52px] px-6 rounded-md font-[900] text-[15px]"
+                  compact
+                  className="h-12 min-w-0 flex-1 basis-0 rounded-md font-[900] text-[13px] sm:text-[15px] md:flex-none md:basis-auto md:px-4"
                 >
-                  Buy Tickets Now
+                  Tickets
                 </SwapArrowButton>
                 <Link
                   href="/events"
-                  className="inline-flex items-center justify-center h-[52px] px-6 rounded-md border border-white/20 bg-white/5 text-white text-[15px] font-[800] hover:border-accent hover:text-accent transition-colors"
+                  className="inline-flex min-w-0 flex-1 basis-0 items-center justify-center h-12 px-3 sm:px-5 rounded-md border border-white/20 bg-white/5 text-white text-[13px] sm:text-[15px] font-[800] hover:border-accent hover:text-accent transition-colors text-center leading-snug md:inline-flex md:flex-none md:basis-auto md:w-auto"
                 >
-                  View Pass Types
+                  Pass Types
                 </Link>
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px 0px -50px 0px" }}
-                transition={{ duration: 0.6, delay: 0.22, ease: "easeOut" }}
-                className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] 2xl:text-[14px] text-white/80"
+                variants={heroEnterLine}
+                className="mt-7 hidden md:flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] 2xl:text-[14px] text-white/80"
               >
                 <span>Instant checkout</span>
                 <span>•</span>
@@ -274,114 +423,115 @@ export default function Home() {
                 <span>•</span>
                 <span>QR ticket delivered by email</span>
               </motion.div>
-            </div>
+            </motion.div>
 
-            <div id="partners-strip" className="col-span-12 xl:col-span-4">
+            <motion.div
+              id="partners-strip"
+              className="col-span-12 xl:col-span-4 max-w-[560px] w-full xl:ml-auto"
+              variants={heroPartnerOrchestra}
+            >
               <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px 0px -50px 0px" }}
-                transition={{ duration: 0.65, delay: 0.15, ease: "easeOut" }}
-                className="max-w-[560px] xl:ml-auto"
+                variants={heroEnterLine}
+                className="text-white/60 text-[11px] uppercase tracking-[0.24em] font-[800]"
               >
-                <div className="text-white/60 text-[11px] uppercase tracking-[0.24em] font-[800]">
-                  Partners
-                </div>
-                <div className="mt-6 overflow-hidden max-w-[516px]">
-                  <motion.div
-                    className="flex gap-3"
-                    animate={{ x: ["0%", "-50%"] }}
-                    transition={{ duration: 18, ease: "linear", repeat: Infinity }}
-                  >
-                    {[
-                      { src: "/logos/redbull_logo.svg", alt: "Red Bull logo" },
-                      { src: "/logos/fxpesa_logo.svg", alt: "FXPesa logo" },
-                      { src: "/logos/british_council_logo.webp", alt: "British Council logo" },
-                      { src: "/logos/kenya_airways.jpg", alt: "Kenya Airways logo" },
-                      { src: "/logos/equity.png", alt: "Equity logo" },
-                      { src: "/logos/microsoft.jpg", alt: "Microsoft logo" },
-                      { src: "/logos/safaricom.jpeg", alt: "Safaricom logo" },
-                      { src: "/logos/redbull_logo.svg", alt: "Red Bull logo duplicate" },
-                      { src: "/logos/fxpesa_logo.svg", alt: "FXPesa logo duplicate" },
-                      { src: "/logos/british_council_logo.webp", alt: "British Council logo duplicate" },
-                      { src: "/logos/kenya_airways.jpg", alt: "Kenya Airways logo duplicate" },
-                      { src: "/logos/equity.png", alt: "Equity logo duplicate" },
-                      { src: "/logos/microsoft.jpg", alt: "Microsoft logo duplicate" },
-                      { src: "/logos/safaricom.jpeg", alt: "Safaricom logo duplicate" },
-                    ].map((logo, i) => (
-                      <div
-                        key={`${logo.src}-${i}`}
-                        className="min-w-[164px] h-[64px] px-4 flex items-center justify-center"
-                      >
-                        <Image
-                          src={logo.src}
-                          alt={logo.alt}
-                          width={138}
-                          height={42}
-                          className="max-h-[42px] w-auto object-contain brightness-0 invert opacity-85"
-                        />
-                      </div>
-                    ))}
-                  </motion.div>
-                </div>
+                Partners
               </motion.div>
-            </div>
-          </div>
+              <motion.div
+                variants={heroEnterLine}
+                className="mt-6 overflow-hidden max-w-[516px]"
+              >
+                <motion.div
+                  className="flex gap-3"
+                  animate={{ x: ["0%", "-50%"] }}
+                  transition={{ duration: 18, ease: "linear", repeat: Infinity }}
+                >
+                  {[...PARTNER_LOGOS, ...PARTNER_LOGOS].map((logo, i) => (
+                    <div
+                      key={`${logo.src}-${i}`}
+                      className="min-w-[164px] h-[64px] px-4 flex items-center justify-center"
+                    >
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt}
+                        width={138}
+                        height={42}
+                        className="max-h-[42px] w-auto object-contain brightness-0 invert opacity-85"
+                      />
+                    </div>
+                  ))}
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </motion.div>
       </section>
 
       {/* Summit snapshot section (inspired by ATS structure). */}
       <section id="summit-snapshot" className="bg-white text-[#0A0A0A]">
-        <div className="page mx-auto max-w-[1440px] py-14 md:py-20">
-          <div className="grid grid-cols-12 gap-10 items-center">
-            <div className="col-span-12 lg:col-span-7 order-2 lg:order-1">
-              <FadeUp>
-                <div className="relative h-[280px] md:h-[320px]">
-                  <div className="absolute z-20 left-0 top-0 h-[240px] w-[240px] md:h-[280px] md:w-[280px] rounded-[90px] overflow-hidden border border-borderLight">
-                    <Image
-                      src={SUMMIT_IMAGE}
-                      alt="Speaker on stage"
-                      fill
-                      className="object-cover object-[center_24%]"
-                      sizes="280px"
-                    />
-                  </div>
-                  <div
-                    className="absolute z-0 pointer-events-none left-[160px] md:left-[220px] top-0 h-[140px] w-[140px] md:h-[160px] md:w-[160px] rounded-t-[80px] rounded-b-[18px]"
-                    style={{
-                      backgroundImage:
-                        "radial-gradient(rgba(10,10,10,0.92) 1.1px, transparent 1.1px), radial-gradient(rgba(229,194,34,0.95) 1.1px, transparent 1.1px)",
-                      backgroundSize: "8px 8px",
-                      backgroundPosition: "0 0, 4px 4px",
-                    }}
+        <div className="page mx-auto max-w-[1440px] py-14 md:py-20 min-w-0 w-full box-border">
+          {/* Single column on small screens — 12-col + gap can exceed viewport width and clip copy (html overflow-x: clip). */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center min-w-0 w-full">
+            <div className="lg:col-span-7 order-2 lg:order-1 min-w-0 max-w-full w-full">
+              <motion.div
+                className="relative h-[248px] sm:h-[280px] md:h-[320px] w-full max-w-full min-w-0 overflow-hidden"
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-80px" }}
+                variants={summitStagger}
+              >
+                <motion.div
+                  variants={staggerItem}
+                  className="absolute z-20 left-0 top-0 h-[200px] w-[200px] sm:h-[240px] sm:w-[240px] md:h-[280px] md:w-[280px] rounded-[76px] sm:rounded-[90px] overflow-hidden border border-borderLight"
+                >
+                  <Image
+                    src={SUMMIT_IMAGE}
+                    alt="Speaker on stage"
+                    fill
+                    className="object-cover object-[center_24%]"
+                    sizes="(max-width: 640px) 200px, 280px"
                   />
-                  <div className="absolute z-20 left-[170px] md:left-[235px] top-[125px] md:top-[140px] h-[140px] w-[140px] md:h-[160px] md:w-[160px] rounded-b-[80px] rounded-t-[18px] overflow-hidden border border-borderLight">
-                    <Image
-                      src={SUMMIT_IMAGE_ALT}
-                      alt="Audience at summit"
-                      fill
-                      className="object-cover object-[72%_38%]"
-                      sizes="160px"
-                    />
-                  </div>
-                </div>
-              </FadeUp>
+                </motion.div>
+                <motion.div
+                  variants={staggerItem}
+                  aria-hidden="true"
+                  className="absolute z-0 pointer-events-none left-[132px] sm:left-[160px] md:left-[220px] top-0 h-[118px] w-[118px] sm:h-[140px] sm:w-[140px] md:h-[160px] md:w-[160px] rounded-t-[68px] rounded-b-[16px] sm:rounded-t-[80px] sm:rounded-b-[18px]"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(rgba(10,10,10,0.92) 1.1px, transparent 1.1px), radial-gradient(rgba(229,194,34,0.95) 1.1px, transparent 1.1px)",
+                    backgroundSize: "8px 8px",
+                    backgroundPosition: "0 0, 4px 4px",
+                  }}
+                />
+                <motion.div
+                  variants={staggerItem}
+                  className="absolute z-20 left-[138px] sm:left-[170px] md:left-[235px] top-[108px] sm:top-[125px] md:top-[140px] h-[118px] w-[118px] sm:h-[140px] sm:w-[140px] md:h-[160px] md:w-[160px] rounded-b-[68px] rounded-t-[16px] sm:rounded-b-[80px] sm:rounded-t-[18px] overflow-hidden border border-borderLight"
+                >
+                  <Image
+                    src={SUMMIT_IMAGE_ALT}
+                    alt="Audience at summit"
+                    fill
+                    className="object-cover object-[72%_38%]"
+                    sizes="(max-width: 640px) 118px, 160px"
+                  />
+                </motion.div>
+              </motion.div>
             </div>
 
-            <div className="col-span-12 lg:col-span-5 order-1 lg:order-2">
-              <FadeUp>
-                <h2 className="text-[38px] md:text-[54px] leading-[0.95] tracking-[-0.04em] font-[900]">
+            <div className="lg:col-span-5 order-1 lg:order-2 min-w-0 max-w-full w-full">
+              <FadeUp className="min-w-0 max-w-full w-full">
+                <h2 className="text-[38px] md:text-[54px] leading-[0.95] tracking-[-0.04em] font-[900] break-words">
                   The Leading
                   <br />
                   African Youth
                   <br />
                   Innovation Summit
                 </h2>
-                <p className="mt-6 text-secondary text-[15px] leading-[1.7] max-w-[48ch]">
-                  For builders, founders, investors, and ecosystem partners
-                  shaping what comes next across Africa.
+                <p className="mt-6 w-full text-secondary text-[15px] leading-[1.7] break-words [word-break:break-word] hyphens-auto">
+                  {
+                    "For builders, founders, investors, and ecosystem partners shaping what comes next across Africa."
+                  }
                 </p>
-                <div className="mt-8">
+                <div className="mt-8 min-w-0 max-w-full">
                   <SwapArrowButton
                     href="/events"
                     className="h-11 px-5 text-[14px] font-[800] rounded-md"
@@ -418,7 +568,11 @@ export default function Home() {
 
       {/* Editorial image split (full-bleed where used). */}
       <section id="editorial-sessions" className="relative overflow-hidden border-y border-white/10">
-        <div className="absolute inset-0">
+        <motion.div
+          className="absolute inset-0"
+          animate={{ scale: [1, 1.035, 1] }}
+          transition={{ duration: 22, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }}
+        >
           <Image
             src={EDITORIAL_IMAGE}
             alt="Speaker at a youth conference"
@@ -427,7 +581,7 @@ export default function Home() {
             sizes="100vw"
             className="object-cover object-[center_28%]"
           />
-        </div>
+        </motion.div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/88 via-[#0A0A0A]/72 to-[#0A0A0A]/84" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(229,194,34,0.08),transparent_40%)]" />
         <div className="relative page mx-auto max-w-[1440px] py-16 md:py-20">
@@ -461,7 +615,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured events */}
+      {/* Featured events — layout: phone (stack) → md (full width row) → lg (image + copy columns, stagger). */}
       <section id="featured-events" className="page mx-auto max-w-[1440px] py-14">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <FadeUp>
@@ -488,15 +642,27 @@ export default function Home() {
           {FEATURED_EVENTS.map((event, idx) => (
             <FadeUp key={event.title} delayMs={idx * 80}>
               <motion.article
-                className={`overflow-hidden border border-borderLight rounded-md bg-white shadow-[0_10px_30px_rgba(10,10,10,0.06)] ${
-                  idx % 2 === 0 ? "md:mr-10" : "md:ml-10"
+                className={`overflow-hidden border border-borderLight rounded-xl bg-white shadow-[0_12px_40px_rgba(10,10,10,0.07)] md:rounded-xl md:shadow-[0_10px_30px_rgba(10,10,10,0.06)] lg:rounded-md max-md:border-l-[3px] max-md:border-l-accent ${
+                  idx % 2 === 0 ? "lg:mr-10" : "lg:ml-10"
                 }`}
-                onMouseEnter={() => setOpenFeatured(idx)}
-                onMouseLeave={() => setOpenFeatured((prev) => (prev === idx ? null : prev))}
+                onMouseEnter={() => {
+                  if (fineHover) setOpenFeatured(idx);
+                }}
+                onMouseLeave={() => {
+                  if (fineHover) setOpenFeatured((prev) => (prev === idx ? null : prev));
+                }}
                 initial={{ opacity: 0, y: 22, scale: 0.992 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, margin: "-60px" }}
-                whileHover={{ y: -6, scale: 1.005, boxShadow: "0 20px 52px rgba(10,10,10,0.12)" }}
+                whileHover={
+                  fineHover
+                    ? {
+                        y: -6,
+                        scale: 1.005,
+                        boxShadow: "0 20px 52px rgba(10,10,10,0.12)",
+                      }
+                    : undefined
+                }
                 transition={{ duration: 0.28, ease: "easeOut" }}
               >
                 <div
@@ -504,7 +670,7 @@ export default function Home() {
                     idx % 2 === 1 ? "lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1" : ""
                   }`}
                 >
-                  <div className="relative h-[220px] md:h-[260px] lg:h-full lg:col-span-5 overflow-hidden">
+                  <div className="relative h-[min(52vw,240px)] min-h-[200px] sm:min-h-[220px] md:h-[260px] lg:h-full lg:col-span-5 overflow-hidden max-md:rounded-t-xl">
                     <motion.div
                       className="absolute inset-0"
                       animate={{
@@ -533,21 +699,24 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="lg:col-span-7 p-5 md:p-6">
-                    <h3 className="text-[24px] md:text-[28px] leading-[1.05] font-[900] tracking-[-0.03em] text-primary">
+                  <div className="lg:col-span-7 p-4 sm:p-5 md:p-6">
+                    <h3 className="text-[22px] sm:text-[24px] md:text-[28px] leading-[1.08] font-[900] tracking-[-0.03em] text-primary">
                       {event.title}
                     </h3>
-                    <div className="mt-3 text-[13px] font-[700] text-secondary">{event.meta}</div>
-                    <div className="mt-1.5 text-[13px] font-[700] text-primary">{event.date}</div>
-                    <div className="mt-1 text-[13px] font-[700] text-secondary">{event.venue}</div>
+                    <div className="mt-2.5 text-[12px] sm:text-[13px] font-[700] text-secondary">{event.meta}</div>
+                    <div className="mt-3 flex flex-col gap-1 rounded-md border border-borderLight/80 bg-[#fafafa] px-3 py-2.5 sm:flex-row sm:items-center sm:gap-3 sm:border-0 sm:bg-transparent sm:p-0">
+                      <div className="text-[13px] font-[800] text-primary">{event.date}</div>
+                      <span className="hidden h-3 w-px bg-borderLight sm:block" aria-hidden="true" />
+                      <div className="text-[13px] font-[700] text-secondary leading-snug">{event.venue}</div>
+                    </div>
                     <p className="mt-3 text-[14px] md:text-[15px] leading-[1.65] text-secondary max-w-[64ch]">
                       {event.value}
                     </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
+                    <div className="mt-4 grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-2">
                       {event.tiers.map((tier, tierIdx) => (
                         <span
                           key={tier}
-                          className={`inline-flex items-center rounded-md border px-2.5 py-1 text-[11px] font-[800] uppercase tracking-[0.08em] ${
+                          className={`flex items-center justify-center rounded-md border px-1.5 py-2 text-[10px] sm:inline-flex sm:px-2.5 sm:py-1 sm:text-[11px] font-[800] uppercase tracking-[0.06em] sm:tracking-[0.08em] text-center leading-tight ${
                             tierIdx === 0
                               ? "border-accent bg-accent/10 text-[#0A0A0A]"
                               : "border-borderLight text-secondary"
@@ -557,24 +726,31 @@ export default function Home() {
                         </span>
                       ))}
                     </div>
-                    <div className="mt-3 text-[13px] font-[800] text-[#0A0A0A]">
+                    <div className="mt-3 text-[12px] sm:text-[13px] font-[800] text-[#0A0A0A]">
                       {event.urgency}
                     </div>
 
-                    <motion.div
-                      className="mt-4 inline-flex items-center gap-2 text-[13px] font-[800] text-primary/90"
-                      animate={{ x: openFeatured === idx ? 2 : 0 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
-                    >
-                      Hover or tap to reveal more
-                      <motion.span
-                        aria-hidden="true"
-                        animate={{ rotate: openFeatured === idx ? 45 : 0 }}
-                        transition={{ duration: 0.22, ease: "easeOut" }}
+                    {!fineHover && (
+                      <p className="mt-4 text-[12px] sm:text-[13px] font-[700] text-secondary leading-snug">
+                        Tap <span className="text-primary">Show details</span> for the full brief.
+                      </p>
+                    )}
+                    {fineHover && (
+                      <motion.div
+                        className="mt-4 hidden md:inline-flex items-center gap-2 text-[13px] font-[800] text-primary/90"
+                        animate={{ x: openFeatured === idx ? 2 : 0 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
                       >
-                        +
-                      </motion.span>
-                    </motion.div>
+                        Hover to reveal more
+                        <motion.span
+                          aria-hidden="true"
+                          animate={{ rotate: openFeatured === idx ? 45 : 0 }}
+                          transition={{ duration: 0.22, ease: "easeOut" }}
+                        >
+                          +
+                        </motion.span>
+                      </motion.div>
+                    )}
 
                     <AnimatePresence initial={false}>
                       {openFeatured === idx && (
@@ -604,10 +780,10 @@ export default function Home() {
                       )}
                     </AnimatePresence>
 
-                    <div className="mt-5 flex flex-wrap gap-3 items-center">
+                    <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                       <SwapArrowButton
                         href="/events"
-                        className="h-[42px] px-4 rounded-md text-[14px] font-[800]"
+                        className="h-12 w-full justify-center px-4 rounded-md text-[14px] font-[800] sm:h-[42px] sm:w-auto"
                         hoverTextClassName="hover:text-white"
                         hoverBgClassName="hover:bg-[#0A0A0A]"
                       >
@@ -615,14 +791,16 @@ export default function Home() {
                       </SwapArrowButton>
                       <Link
                         href="/events"
-                        className="inline-flex h-[42px] items-center justify-center rounded-md border border-borderLight px-4 text-[14px] font-[800] text-primary hover:border-accent transition-colors"
+                        className="inline-flex h-12 w-full sm:h-[42px] sm:w-auto items-center justify-center rounded-md border border-borderLight px-4 text-[14px] font-[800] text-primary hover:border-accent transition-colors"
                       >
                         View agenda
                       </Link>
                       <button
                         type="button"
                         onClick={() => setOpenFeatured((prev) => (prev === idx ? null : idx))}
-                        className="inline-flex h-[42px] items-center justify-center rounded-md border border-borderLight px-4 text-[13px] font-[800] text-primary/90 hover:border-accent transition-colors md:hidden"
+                        className={`inline-flex h-12 w-full sm:h-[42px] sm:w-auto items-center justify-center rounded-md border border-borderLight bg-white px-4 text-[13px] font-[800] text-primary/90 hover:border-accent transition-colors ${
+                          fineHover ? "md:hidden" : ""
+                        }`}
                       >
                         {openFeatured === idx ? "Hide details" : "Show details"}
                       </button>
@@ -751,19 +929,27 @@ export default function Home() {
             </FadeUp>
           </div>
           <div className="lg:col-span-8">
-            <div className="space-y-3">
-              {AGENDA_TEASER.map((slot, idx) => (
-                <FadeUp key={slot.time} delayMs={idx * 60}>
-                  <div className="grid grid-cols-[74px_1fr] gap-4 rounded-md border border-borderLight bg-white p-4 md:p-5">
-                    <div className="text-[18px] font-[900] tracking-[-0.02em] text-accent">{slot.time}</div>
-                    <div>
-                      <div className="text-[17px] font-[800] text-primary tracking-[-0.01em]">{slot.title}</div>
-                      <div className="mt-1 text-[14px] text-secondary">{slot.detail}</div>
-                    </div>
+            <motion.div
+              className="space-y-3"
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={staggerContainer}
+            >
+              {AGENDA_TEASER.map((slot) => (
+                <motion.div
+                  key={slot.time}
+                  variants={staggerItem}
+                  className="grid grid-cols-[74px_1fr] gap-4 rounded-md border border-borderLight bg-white p-4 md:p-5"
+                >
+                  <div className="text-[18px] font-[900] tracking-[-0.02em] text-accent">{slot.time}</div>
+                  <div>
+                    <div className="text-[17px] font-[800] text-primary tracking-[-0.01em]">{slot.title}</div>
+                    <div className="mt-1 text-[14px] text-secondary">{slot.detail}</div>
                   </div>
-                </FadeUp>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -778,18 +964,28 @@ export default function Home() {
               <h3 className="mt-4 text-[28px] md:text-[34px] leading-[1.08] tracking-[-0.04em] font-[900] text-primary">
                 Everything you need before checkout.
               </h3>
-              <div className="mt-6 space-y-3">
+              <motion.div
+                className="mt-6 space-y-3"
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-40px" }}
+                variants={staggerContainer}
+              >
                 {[
                   "Instant QR ticket delivered by email after payment.",
                   "Secure payment support for M-Pesa and international cards.",
                   "Group and company ticketing available on request.",
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-3 text-[14px] text-secondary">
+                  <motion.div
+                    key={item}
+                    variants={staggerItem}
+                    className="flex items-start gap-3 text-[14px] text-secondary"
+                  >
                     <span className="mt-[7px] h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
                     <span>{item}</span>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </FadeUp>
           </div>
           <div className="lg:col-span-6">
@@ -816,18 +1012,9 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="fixed bottom-4 left-4 right-4 z-40 md:hidden">
-        <div className="rounded-md border border-black/10 bg-white/96 backdrop-blur px-3 py-3 shadow-[0_12px_30px_rgba(10,10,10,0.12)]">
-          <SwapArrowButton
-            href="/events"
-            className="w-full h-11 px-4 rounded-md text-[14px] font-[900] justify-center"
-            hoverTextClassName="hover:text-white"
-            hoverBgClassName="hover:bg-[#0A0A0A]"
-          >
-            Get tickets now
-          </SwapArrowButton>
-        </div>
-      </div>
+      {!mobileTicketCtaDismissed && (
+        <MobileTicketCta onDismiss={dismissMobileTicketCta} />
+      )}
 
     </main>
   );

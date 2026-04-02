@@ -1,19 +1,54 @@
 "use client";
 
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 
-export function HeroHeading({ children }: { children: ReactNode }) {
+const lineEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+export function HeroHeading({
+  className = "",
+  lines,
+}: {
+  className?: string;
+  lines: readonly [string, string];
+}) {
+  const reduceMotion = useReducedMotion();
+
+  const headlineOrchestra: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : 0.11,
+      },
+    },
+  };
+
+  const headlineLine: Variants = {
+    hidden: {
+      opacity: reduceMotion ? 1 : 0,
+      y: reduceMotion ? 0 : "108%",
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: reduceMotion ? 0 : 0.9,
+        ease: lineEase,
+      },
+    },
+  };
+
   return (
     <motion.h1
-      className="font-[800] tracking-[-0.05em] leading-[0.92] text-white text-[clamp(44px,6vw,72px)]"
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px 0px -40px 0px" }}
-      transition={{ duration: 0.75, ease: "easeOut" }}
+      className={`font-[800] tracking-[-0.05em] leading-[0.92] text-white text-[clamp(44px,6vw,72px)] ${className}`.trim()}
+      variants={headlineOrchestra}
     >
-      {children}
+      {lines.map((line, i) => (
+        <span key={i} className="block overflow-hidden pb-[0.04em]">
+          <motion.span className="block will-change-transform" variants={headlineLine}>
+            {line}
+          </motion.span>
+        </span>
+      ))}
     </motion.h1>
   );
 }
-

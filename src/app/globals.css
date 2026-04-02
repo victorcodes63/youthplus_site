@@ -17,6 +17,8 @@ html {
   color-scheme: light;
   /* Fixed header (84px): anchor jumps and scrollIntoView account for overlap */
   scroll-padding-top: 84px;
+  /* Prevent rare horizontal bleed from grids, marquees, or absolute children */
+  overflow-x: clip;
 }
 
 body {
@@ -58,20 +60,29 @@ html[data-cursor-tone="dark"] [role="button"] {
   cursor: var(--cursor-plus-light) 12 12, pointer;
 }
 
-/* Editorial grid/margins (5vw desktop / 6% tablet / 24px mobile). */
-.page {
-  padding-inline: 24px;
+/* Editorial grid: safe-area on notched phones + consistent horizontal rhythm.
+   Breakpoints match Tailwind `sm` / `md` / `lg` (see tailwind.config.ts). */
+.page,
+.page-inset-x {
+  padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
 }
 
+/* md: tablet portrait — wider gutters */
 @media (min-width: 768px) {
-  .page {
-    padding-inline: 6%;
+  .page,
+  .page-inset-x {
+    padding-left: calc(6% + env(safe-area-inset-left, 0px));
+    padding-right: calc(6% + env(safe-area-inset-right, 0px));
   }
 }
 
+/* lg: tablet landscape / desktop */
 @media (min-width: 1024px) {
-  .page {
-    padding-inline: 5vw;
+  .page,
+  .page-inset-x {
+    padding-left: calc(5vw + env(safe-area-inset-left, 0px));
+    padding-right: calc(5vw + env(safe-area-inset-right, 0px));
   }
 }
 
@@ -131,14 +142,20 @@ html[data-cursor-tone="dark"] [role="button"] {
   animation: pulseSpark 1.7s ease-in-out infinite;
 }
 
-/* Dotted brand wordmark used in dark footer background. */
+/* Dotted brand wordmark used in dark footer background (accent #e5c222). */
 .dotted-wordmark {
   color: transparent;
-  background-image: radial-gradient(rgba(229, 194, 34, 0.24) 1.1px, transparent 1.1px);
+  background-image: radial-gradient(rgba(229, 194, 34, 0.62) 1.1px, transparent 1.1px);
   background-size: 8px 8px;
   background-position: 0 0;
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+/* Phone-sized mark: brighter dots + slightly larger halftone so “youth+” reads clearly. */
+.dotted-wordmark--bright {
+  background-image: radial-gradient(rgba(229, 194, 34, 0.9) 1.25px, transparent 1.25px);
+  background-size: 7px 7px;
 }
 
 @layer utilities {

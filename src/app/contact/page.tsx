@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FormEvent, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { FadeUp } from "@/components/motion/FadeUp";
+import { PartnerLogoMarquee } from "@/components/site/PartnerLogoMarquee";
 
 const faqs = [
   {
@@ -126,27 +127,11 @@ export default function ContactPage() {
                   </motion.div>
                 </div>
 
-                <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                  <motion.div
-                    variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
-                    transition={{ duration: 0.35, ease: "easeOut" }}
-                  >
-                  <div>
-                    <label className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-black/45">
-                      Phone number *
-                    </label>
-                    <input
-                      name="phone"
-                      type="tel"
-                      required
-                      className="w-full rounded-md border border-black/10 px-3 py-2.5 text-sm text-black focus:outline-none focus:border-[#0A0A0A]"
-                    />
-                  </div>
-                  </motion.div>
-                  <motion.div
-                    variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
-                    transition={{ duration: 0.35, ease: "easeOut" }}
-                  >
+                <motion.div
+                  variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="mt-4"
+                >
                   <div>
                     <label className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-black/45">
                       Company *
@@ -157,8 +142,7 @@ export default function ContactPage() {
                       className="w-full rounded-md border border-black/10 px-3 py-2.5 text-sm text-black focus:outline-none focus:border-[#0A0A0A]"
                     />
                   </div>
-                  </motion.div>
-                </div>
+                </motion.div>
 
                 <motion.div
                   variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
@@ -211,7 +195,7 @@ export default function ContactPage() {
               </form>
             </FadeUp>
 
-            <div className="flex w-full flex-col gap-5 lg:sticky lg:top-28 lg:self-start">
+            <div className="flex w-full flex-col gap-8 lg:sticky lg:top-28 lg:self-start">
               <FadeUp>
                 <div className="rounded-md border border-borderLight bg-white p-6 md:p-7">
                   <p className="text-[11px] uppercase tracking-[0.1em] text-accent font-[800]">
@@ -240,14 +224,21 @@ export default function ContactPage() {
                         Email
                       </div>
                       <a
-                        href="mailto:hello@youthplus.africa"
+                        href="mailto:support@youthplusafrica.com"
                         className="mt-1 block text-[15px] text-[#0A0A0A] hover:underline underline-offset-4"
                       >
-                        hello@youthplus.africa
+                        support@youthplusafrica.com
                       </a>
                     </div>
                   </div>
                 </div>
+              </FadeUp>
+
+              <FadeUp delayMs={90}>
+                <PartnerLogoMarquee
+                  variant="card"
+                  className="w-full max-w-[516px] pt-2 md:pt-4 xl:ml-auto"
+                />
               </FadeUp>
             </div>
           </div>
