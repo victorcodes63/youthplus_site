@@ -466,7 +466,7 @@ export default function AboutPage() {
               About Youth+ Africa
             </motion.p>
             <HeroHeading
-              className="mt-5 text-[38px] md:text-[66px] tracking-[-0.045em]"
+              className="mt-5 text-[31px] sm:text-[35px] md:text-[66px] tracking-[-0.04em] md:tracking-[-0.045em]"
               lines={["Where Africa's next generation", "of builders becomes undeniable."]}
             />
             <motion.p

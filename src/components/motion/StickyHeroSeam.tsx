@@ -27,7 +27,7 @@ export function StickyHeroSeam({
 
   return (
     <div className="relative">
-      <div className="sticky top-[84px] z-0">{hero}</div>
+      <div className="z-0 md:sticky md:top-[84px]">{hero}</div>
 
       <motion.div
         ref={sheetRef}

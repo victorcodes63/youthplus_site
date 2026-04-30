@@ -57,7 +57,7 @@ export function PartnerLogoMarquee({
     : "pointer-events-none absolute inset-y-0 right-0 z-[1] w-8 bg-gradient-to-l from-white to-transparent";
 
   return (
-    <div className={className}>
+    <div className={`w-full min-w-0 overflow-hidden ${className}`}>
       {label ? (
         <p
           className={

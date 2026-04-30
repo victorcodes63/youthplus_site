@@ -74,6 +74,9 @@ export default function ContactPage() {
     hidden: { opacity: reduceMotion ? 1 : 0, y: reduceMotion ? 0 : 10, scale: reduceMotion ? 1 : 0.98 },
     visible: { opacity: 1, y: 0, scale: 1, transition: { duration: reduceMotion ? 0 : 0.42, ease: heroEase } },
   };
+  const formInputClassName =
+    "h-11 w-full min-w-0 border-0 border-b border-black/20 bg-transparent px-0 py-0 text-[16px] tracking-[-0.01em] text-black transition placeholder:text-[16px] placeholder:text-black/30 focus:border-[#0A0A0A] focus:outline-none md:h-12 md:text-[18px] md:placeholder:text-[18px]";
+  const formLabelClassName = "mb-1 block text-[11px] font-medium uppercase tracking-wider text-black/45";
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -86,17 +89,17 @@ export default function ContactPage() {
   };
 
   return (
-    <>
+    <div className="w-full min-w-0 overflow-x-clip">
       <ScrollJackSection
-        className="relative overflow-hidden bg-[linear-gradient(180deg,#0A0A0A_0px,#0A0A0A_250px,#f2f2f2_420px,#ffffff_560px,#ffffff_100%)] pb-14 pt-8 text-black sm:pb-16 sm:pt-10 md:pb-24 md:pt-12"
+        className="relative w-full min-w-0 overflow-hidden bg-[linear-gradient(180deg,#0A0A0A_0px,#0A0A0A_220px,#f2f2f2_390px,#ffffff_540px,#ffffff_100%)] pb-12 pt-6 text-black sm:pb-16 sm:pt-8 md:pb-24 md:pt-12"
         intensity={1.05}
       >
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(10,10,10,0.42),transparent_40%),radial-gradient(circle_at_50%_12%,rgba(229,194,34,0.18),transparent_36%)]"
         />
-        <div className="page mx-auto max-w-[1440px]">
-          <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-[#0A0A0A] px-6 py-8 text-white shadow-[0_18px_50px_rgba(10,10,10,0.2)] md:px-9 md:py-10">
+        <div className="page mx-auto w-full min-w-0 max-w-[1440px]">
+          <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-[#0A0A0A] px-4 py-6 text-white shadow-[0_18px_50px_rgba(10,10,10,0.2)] sm:px-5 sm:py-7 md:px-9 md:py-10">
             <div aria-hidden className="pointer-events-none absolute inset-0">
               <Image
                 src={CONTACT_HERO_IMAGE}
@@ -119,7 +122,7 @@ export default function ContactPage() {
               variants={heroOrchestra}
               initial="hidden"
               animate="visible"
-              className="relative md:ml-auto md:max-w-[34rem] md:text-left"
+              className="relative ml-auto max-w-[21rem] text-left sm:max-w-[24rem] md:max-w-[34rem]"
             >
               <motion.div
                 variants={heroEnterBadge}
@@ -129,23 +132,23 @@ export default function ContactPage() {
               </motion.div>
               <motion.h1
                 variants={heroEnterLine}
-                className="relative mt-5 max-w-[15ch] text-[36px] font-[900] leading-[0.93] tracking-[-0.045em] text-white md:text-[60px]"
+                className="relative mt-4 max-w-[12ch] text-[28px] font-[900] leading-[0.98] tracking-[-0.03em] text-white sm:max-w-[13ch] sm:text-[34px] md:max-w-[15ch] md:text-[60px]"
               >
                 Let&apos;s design your next high-impact experience.
               </motion.h1>
               <motion.p
                 variants={heroEnterBody}
-                className="relative mt-4 max-w-[34rem] text-[15px] leading-[1.75] text-white/82 md:text-[18px]"
+                className="relative mt-3.5 max-w-[34rem] text-[13px] leading-[1.68] text-white/82 sm:mt-4 sm:text-[15px] md:text-[18px]"
               >
                 Share your goals, timeline, and audience. We&apos;ll return a clear
                 execution plan for events, summits, and strategic ecosystem work.
               </motion.p>
-              <motion.div variants={heroChipOrchestra} className="relative mt-7 flex flex-wrap gap-2.5">
+              <motion.div variants={heroChipOrchestra} className="relative mt-5 flex flex-wrap gap-2 sm:mt-7 sm:gap-2.5">
                 {["48h response", "Nairobi HQ", "Pan-African execution"].map((item) => (
                   <motion.span
                     key={item}
                     variants={heroEnterChip}
-                    className="inline-flex items-center rounded-md border border-white/20 bg-white/5 px-3 py-1.5 text-[12px] font-[700] text-white/88"
+                    className="inline-flex items-center rounded-md border border-white/20 bg-white/5 px-2.5 py-1.5 text-[10px] font-[700] text-white/88 sm:px-3 sm:text-[12px]"
                   >
                     {item}
                   </motion.span>
@@ -154,17 +157,17 @@ export default function ContactPage() {
             </motion.div>
           </div>
 
-          <div className="relative mt-9 grid gap-8 md:gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(300px,1fr)] lg:items-start lg:gap-x-10 xl:gap-x-14">
+          <div className="relative mt-6 grid w-full min-w-0 gap-6 sm:mt-7 sm:gap-7 md:mt-9 md:gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(300px,1fr)] lg:items-start lg:gap-x-10 xl:gap-x-14">
             <FadeUp>
               <form
                 onSubmit={handleSubmit}
-                className="px-1 py-1 sm:px-2 md:px-0"
+                className="min-w-0 overflow-hidden rounded-[18px] border border-black/10 bg-white/85 px-3 py-3 shadow-[0_8px_30px_rgba(10,10,10,0.06)] backdrop-blur-[1.5px] sm:px-4 sm:py-4 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0 md:shadow-none md:backdrop-blur-0"
               >
-                <div className="mb-5">
+                <div className="mb-4 sm:mb-5">
                   <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
                     Project inquiry
                   </p>
-                  <h2 className="mt-2 text-[28px] font-[900] leading-[1.02] tracking-[-0.03em] text-[#0A0A0A] md:text-[34px]">
+                  <h2 className="mt-2 text-[24px] font-[900] leading-[1.03] tracking-[-0.03em] text-[#0A0A0A] sm:text-[27px] md:text-[34px]">
                     Tell us what you&apos;re building.
                   </h2>
                 </div>
@@ -176,21 +179,21 @@ export default function ContactPage() {
                     hidden: {},
                     visible: { transition: { staggerChildren: 0.05, delayChildren: 0.03 } },
                   }}
-                  className="space-y-4"
+                  className="min-w-0 space-y-3 sm:space-y-3.5"
                 >
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="min-w-0 grid gap-3 md:grid-cols-2 md:gap-4">
                     <motion.div
                       variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
                       transition={{ duration: 0.32, ease: "easeOut" }}
                     >
                       <div>
-                        <label className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-black/45">
+                        <label className={formLabelClassName}>
                           Full name *
                         </label>
                         <input
                           name="name"
                           required
-                          className="w-full border-0 border-b border-black/15 bg-transparent px-0 py-2.5 text-[20px] tracking-[-0.01em] text-black transition placeholder:text-black/30 focus:border-[#0A0A0A] focus:outline-none"
+                          className={formInputClassName}
                         />
                       </div>
                     </motion.div>
@@ -199,32 +202,32 @@ export default function ContactPage() {
                       transition={{ duration: 0.32, ease: "easeOut" }}
                     >
                       <div>
-                        <label className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-black/45">
+                        <label className={formLabelClassName}>
                           Email *
                         </label>
                         <input
                           name="email"
                           type="email"
                           required
-                          className="w-full border-0 border-b border-black/15 bg-transparent px-0 py-2.5 text-[20px] tracking-[-0.01em] text-black transition placeholder:text-black/30 focus:border-[#0A0A0A] focus:outline-none"
+                          className={formInputClassName}
                         />
                       </div>
                     </motion.div>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="min-w-0 grid gap-3 md:grid-cols-2 md:gap-4">
                     <motion.div
                       variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
                       transition={{ duration: 0.32, ease: "easeOut" }}
                     >
                       <div>
-                        <label className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-black/45">
+                        <label className={formLabelClassName}>
                           Company *
                         </label>
                         <input
                           name="company"
                           required
-                          className="w-full border-0 border-b border-black/15 bg-transparent px-0 py-2.5 text-[20px] tracking-[-0.01em] text-black transition placeholder:text-black/30 focus:border-[#0A0A0A] focus:outline-none"
+                          className={formInputClassName}
                         />
                       </div>
                     </motion.div>
@@ -233,32 +236,32 @@ export default function ContactPage() {
                       transition={{ duration: 0.32, ease: "easeOut" }}
                     >
                       <div>
-                        <label className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-black/45">
+                        <label className={formLabelClassName}>
                           Timeline
                         </label>
                         <input
                           name="timeline"
                           placeholder="e.g. Launching in 6 weeks"
-                          className="w-full border-0 border-b border-black/15 bg-transparent px-0 py-2.5 text-[20px] tracking-[-0.01em] text-black transition placeholder:text-black/30 focus:border-[#0A0A0A] focus:outline-none"
+                          className={formInputClassName}
                         />
                       </div>
                     </motion.div>
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-black/45">
+                    <label className={formLabelClassName}>
                       Message *
                     </label>
                     <textarea
                       name="message"
-                      rows={6}
+                      rows={4}
                       required
-                      placeholder="Tell us your objective, audience size, and what success should look like."
-                      className="w-full resize-none border-0 border-b border-black/15 bg-transparent px-0 py-2.5 text-[20px] tracking-[-0.01em] text-black transition placeholder:text-black/30 focus:border-[#0A0A0A] focus:outline-none"
+                      placeholder="Tell us your goals and success metrics."
+                      className="min-h-[104px] w-full min-w-0 max-w-full resize-none border-0 border-b border-black/20 bg-transparent px-0 py-2 pr-2 text-[16px] leading-[1.4] tracking-[-0.01em] text-black transition placeholder:text-[16px] placeholder:leading-[1.4] placeholder:text-black/30 focus:border-[#0A0A0A] focus:outline-none md:min-h-[132px] md:text-[18px] md:placeholder:text-[18px]"
                     />
                   </div>
 
-                  <p className="text-[11px] leading-relaxed text-black/45">
+                  <p className="text-[10px] leading-relaxed text-black/50 sm:text-[11px]">
                     We use this information to respond to your inquiry. Please
                     review our{" "}
                     <Link
@@ -280,8 +283,9 @@ export default function ContactPage() {
                     type="submit"
                     disabled={isSubmitting}
                     variant="dark"
-                    fullWidth
-                    className="sm:w-auto"
+                    size="md"
+                    icon="arrow-right"
+                    className="w-full sm:w-auto"
                   >
                     {isSubmitting ? "Sending..." : "Contact us"}
                   </BrandButton>
@@ -289,16 +293,16 @@ export default function ContactPage() {
               </form>
             </FadeUp>
 
-            <div className="flex w-full flex-col gap-8 lg:sticky lg:top-28 lg:self-start lg:border-l lg:border-black/10 lg:pl-8 xl:pl-10">
+            <div className="flex w-full min-w-0 flex-col gap-7 lg:sticky lg:top-28 lg:self-start lg:border-l lg:border-black/10 lg:pl-8 xl:pl-10">
               <FadeUp>
-                <div className="px-1 py-1 sm:px-2 md:px-0">
+                <div className="min-w-0 px-1 py-1 sm:px-2 md:px-0">
                   <p className="text-[11px] uppercase tracking-[0.1em] text-accent font-[800]">
                     Contact details
                   </p>
-                  <h3 className="mt-2 text-[22px] md:text-[26px] leading-[1.05] tracking-[-0.02em] font-[900] text-[#0A0A0A]">
+                  <h3 className="mt-2 text-[20px] sm:text-[22px] md:text-[26px] leading-[1.06] tracking-[-0.02em] font-[900] text-[#0A0A0A]">
                     Reach us directly.
                   </h3>
-                  <p className="mt-3 text-[14px] leading-[1.7] text-secondary">
+                  <p className="mt-3 max-w-full break-words text-[14px] leading-[1.7] text-secondary">
                     If your summit launch is time-sensitive, share your timeline
                     in the form and we will prioritize your request.
                   </p>
@@ -341,7 +345,7 @@ export default function ContactPage() {
               </FadeUp>
 
               <FadeUp delayMs={90}>
-                <div className="px-1 py-1 sm:px-2 md:px-0">
+                <div className="min-w-0 px-1 py-1 sm:px-2 md:px-0">
                   <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
                     Partners
                   </p>
@@ -354,7 +358,7 @@ export default function ContactPage() {
                     logoTone="gold"
                     durationSec={42}
                     frameStyle="none"
-                    className="w-full pt-4"
+                    className="w-full min-w-0 overflow-hidden pt-4"
                   />
                 </div>
               </FadeUp>
@@ -363,7 +367,7 @@ export default function ContactPage() {
         </div>
       </ScrollJackSection>
 
-      <section className="relative w-full" aria-label="Office location map">
+      <section className="relative w-full min-w-0 overflow-x-clip" aria-label="Office location map">
         <SectionDivider contentWidth className="absolute top-0 bg-black/[0.06]" />
         <FadeUp className="pt-6 md:pt-8">
           <iframe
@@ -377,9 +381,9 @@ export default function ContactPage() {
         </FadeUp>
       </section>
 
-      <ScrollJackSection className="relative bg-white py-16 md:py-20" intensity={0.9}>
+      <ScrollJackSection className="relative w-full min-w-0 overflow-x-clip bg-white py-16 md:py-20" intensity={0.9}>
         <SectionDivider contentWidth className="absolute top-0 bg-black/[0.06]" />
-        <div className="page mx-auto max-w-[1440px] pt-6 md:pt-8">
+        <div className="page mx-auto w-full min-w-0 max-w-[1440px] pt-6 md:pt-8">
           <BrandedFaqSection
             eyebrow="FAQ"
             title="Questions & Answers"
@@ -401,7 +405,7 @@ export default function ContactPage() {
           />
         </div>
       </ScrollJackSection>
-    </>
+    </div>
   );
 }
 

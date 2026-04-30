@@ -57,6 +57,7 @@ const VENTURE_ITEMS = [
 export function SiteHeader() {
   const pathname = usePathname();
   const [venturesOpen, setVenturesOpen] = useState(false);
+  const [mobileVenturesOpen, setMobileVenturesOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -66,6 +67,24 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onEscape);
+    return () => window.removeEventListener("keydown", onEscape);
+  }, [menuOpen]);
 
   const openVenturesMenu = () => {
     setVenturesOpen(true);
@@ -164,7 +183,10 @@ export function SiteHeader() {
 
         <button
           type="button"
-          onClick={() => setMenuOpen((prev) => !prev)}
+          onClick={() => {
+            setMobileVenturesOpen(false);
+            setMenuOpen((prev) => !prev);
+          }}
           className="lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-md border border-borderLight"
           aria-label="Toggle navigation menu"
           aria-expanded={menuOpen}
@@ -227,49 +249,101 @@ export function SiteHeader() {
 
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="lg:hidden border-t border-borderLight bg-white"
-          >
-            <div className="font-body-ui page py-5 space-y-3">
-              <div className="rounded-md border border-borderLight p-4 space-y-3">
-                <Link href="/events" onClick={() => setMenuOpen(false)} className="block text-[15px] font-[700] tracking-[0.005em] text-[#0A0A0A]">
-                  Events
-                </Link>
-                <div>
-                  <div className="text-[15px] font-[700] tracking-[0.005em] text-[#0A0A0A]">Ventures</div>
-                  <div className="mt-2 flex flex-col gap-2">
-                    {VENTURE_ITEMS.map((item) => (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        onClick={() => setMenuOpen(false)}
-                        className="text-[14px] font-[500] text-secondary hover:text-[#0A0A0A]"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
+          <>
+            <motion.button
+              type="button"
+              aria-label="Close navigation menu"
+              className="fixed inset-0 z-40 bg-[#0A0A0A]/36 backdrop-blur-[1px] lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: "easeOut" }}
+              onClick={() => {
+                setMobileVenturesOpen(false);
+                setMenuOpen(false);
+              }}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.985 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.985 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="absolute left-0 right-0 top-full z-50 max-h-[calc(100vh-84px)] overflow-y-auto border-t border-borderLight bg-white shadow-[0_18px_44px_rgba(10,10,10,0.16)] lg:hidden"
+            >
+              <div className="font-body-ui page py-5">
+                <div className="flex flex-col rounded-xl border border-borderLight bg-white p-4 shadow-[0_10px_28px_rgba(10,10,10,0.06)]">
+                  <div className="space-y-4">
+                    <Link href="/events" onClick={() => {
+                      setMobileVenturesOpen(false);
+                      setMenuOpen(false);
+                    }} className="block text-[17px] font-[700] tracking-[0.005em] text-[#0A0A0A]">
+                      Events
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setMobileVenturesOpen((prev) => !prev)}
+                      className="flex w-full items-center justify-between text-left text-[17px] font-[700] tracking-[0.005em] text-[#0A0A0A]"
+                      aria-expanded={mobileVenturesOpen}
+                      aria-controls="mobile-ventures-submenu"
+                    >
+                      <span>Ventures</span>
+                      <span className={`text-[18px] transition-transform ${mobileVenturesOpen ? "rotate-90" : ""}`}>›</span>
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {mobileVenturesOpen && (
+                        <motion.div
+                          id="mobile-ventures-submenu"
+                          initial={{ opacity: 0, x: 14, height: 0 }}
+                          animate={{ opacity: 1, x: 0, height: "auto" }}
+                          exit={{ opacity: 0, x: 14, height: 0 }}
+                          transition={{ duration: 0.18, ease: "easeOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="ml-2 mt-1 space-y-2 border-l border-borderLight pl-3">
+                            {VENTURE_ITEMS.map((item) => (
+                              <Link
+                                key={item.label}
+                                href={item.href}
+                                onClick={() => {
+                                  setMobileVenturesOpen(false);
+                                  setMenuOpen(false);
+                                }}
+                                className="block text-[14px] font-[500] text-secondary hover:text-[#0A0A0A]"
+                              >
+                                {item.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    <Link href="/about" onClick={() => {
+                      setMobileVenturesOpen(false);
+                      setMenuOpen(false);
+                    }} className="block text-[17px] font-[700] tracking-[0.005em] text-[#0A0A0A]">
+                      About
+                    </Link>
+                  </div>
+                  <div className="pt-5">
+                    <BrandButton
+                      href="/contact"
+                      onClick={() => {
+                        setMobileVenturesOpen(false);
+                        setMenuOpen(false);
+                      }}
+                      variant="gold"
+                      fullWidth
+                      icon="arrow-up-right"
+                      iconPosition="end"
+                      className="h-12 text-[1rem] font-[700]"
+                    >
+                      Contact us
+                    </BrandButton>
                   </div>
                 </div>
-                <Link href="/about" onClick={() => setMenuOpen(false)} className="block text-[15px] font-[700] tracking-[0.005em] text-[#0A0A0A]">
-                  About
-                </Link>
               </div>
-              <BrandButton
-                href="/contact"
-                onClick={() => setMenuOpen(false)}
-                variant="gold"
-                fullWidth
-                icon="arrow-up-right"
-                iconPosition="end"
-              >
-                Contact us
-              </BrandButton>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>

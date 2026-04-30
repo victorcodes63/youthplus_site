@@ -34,7 +34,7 @@ const VARIANT_CLASS: Record<BrandButtonVariant, string> = {
   gold: "border border-transparent bg-accent text-[#0A0A0A] shadow-[0_6px_18px_rgba(229,194,34,0.28)] hover:bg-[#d8b81f]",
   outline: "border-2 border-[#0A0A0A] bg-white text-[#0A0A0A] hover:bg-black/[0.03]",
   outlineSubtle: "border border-black/20 bg-white text-[#0A0A0A] hover:border-[#0A0A0A]/35 hover:bg-black/[0.02]",
-  dark: "border border-transparent bg-[#111426] text-white hover:brightness-110",
+  dark: "border border-transparent bg-[#0A0A0A] text-white hover:bg-[#1A1A1A]",
   ghost: "border border-transparent bg-transparent text-[#0A0A0A] hover:bg-black/[0.04]",
 };
 

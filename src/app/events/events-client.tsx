@@ -673,7 +673,7 @@ export function EventsClient() {
       >
         <SectionDivider contentWidth className="absolute top-0 opacity-80" />
         <FadeUp className="pt-6 md:pt-8">
-          <h2 className="text-balance text-[33px] font-[900] leading-[0.98] tracking-[-0.03em] md:text-[50px]">
+          <h2 className="text-balance text-[29px] font-[900] leading-[1.02] tracking-[-0.028em] sm:text-[31px] md:text-[50px]">
             Full 2026 monthly tracks
           </h2>
           <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.8] text-secondary">
@@ -692,18 +692,18 @@ export function EventsClient() {
                 <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr]">
                   <div className="border-b border-borderLight bg-[#0A0A0A] px-6 py-6 text-white lg:border-b-0 lg:border-r">
                     <p className="text-[11px] font-[700] uppercase tracking-[0.1em] text-white/70">Month</p>
-                    <p className="mt-2 text-[32px] font-[900] leading-[0.95] tracking-[-0.03em]">{track.month}</p>
+                    <p className="mt-2 text-[28px] font-[900] leading-[0.96] tracking-[-0.03em] sm:text-[30px]">{track.month}</p>
                     <p className="mt-5 text-[12px] font-[700] uppercase tracking-[0.08em] text-accent">Theme</p>
                     <p className="mt-2 text-[14px] leading-[1.7] text-white/90">{track.theme}</p>
                   </div>
 
-                  <div className="grid gap-3 p-4 md:grid-cols-3 md:gap-4 md:p-5">
+                  <div className="grid gap-3 p-3 sm:p-4 md:grid-cols-3 md:gap-4 md:p-5">
                     {track.sessions.map((session) => (
                       <motion.button
                         key={`${track.month}-${session.title}`}
                         whileHover={{ scale: 1.02 }}
                         transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                        className="rounded-xl border border-borderLight bg-[#fafafa] p-4 text-left"
+                        className="rounded-xl border border-borderLight bg-[#fafafa] p-3.5 text-left sm:p-4"
                         onClick={() => setActivePosterKey(`${track.month}-${session.title}`)}
                       >
                         {session.poster ? (
@@ -721,7 +721,7 @@ export function EventsClient() {
                         >
                           {session.channel}
                         </span>
-                        <h3 className="mt-3 text-[18px] font-[900] leading-[1.12] tracking-[-0.02em] text-[#0A0A0A]">
+                        <h3 className="mt-3 text-[16px] font-[900] leading-[1.15] tracking-[-0.018em] text-[#0A0A0A] sm:text-[18px]">
                           {session.title}
                         </h3>
                         <p className="mt-2 text-[13px] font-[700] uppercase tracking-[0.07em] text-secondary">
