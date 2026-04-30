@@ -114,9 +114,10 @@ export function BrandButton(props: BrandButtonProps) {
   );
 
   if ("href" in props && props.href) {
-    const { href, target, rel, ...linkRest } = rest as Omit<
+    const { href, target, rel } = props as AnchorLikeProps;
+    const linkRest = rest as Omit<
       AnchorLikeProps,
-      keyof SharedProps | "href"
+      keyof SharedProps | "href" | "target" | "rel"
     >;
     const safeRel = target === "_blank" ? (rel ?? "noopener noreferrer") : rel;
 

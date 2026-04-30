@@ -161,8 +161,8 @@ export async function GET(request: Request) {
       total: Number(countResult.rows[0]?.count ?? 0),
       page,
       pageSize,
-      counties: countyResult.rows.map((row) => row.county),
-      sectors: sectorResult.rows.map((row) => row.sector),
+      counties: countyResult.rows.map((row: { county: string }) => row.county),
+      sectors: sectorResult.rows.map((row: { sector: string }) => row.sector),
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown database error.";
