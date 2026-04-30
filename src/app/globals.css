@@ -11,6 +11,128 @@
   --dark: #0a0a0a;
   --cursor-plus-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' stroke='%230a0a0a' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   --cursor-plus-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* ---------------------------------------------------------------
+   * Design system tokens
+   * Used by reusable components (JoinUsCta, FooterTicketBanner, ...)
+   * Keep tokens semantic — never reference raw hex values inside
+   * component styles, always go through these custom properties.
+   * ------------------------------------------------------------- */
+
+  /* Brand color (semantic alias for --accent) */
+  --brand-yellow: #e5c222;
+  --brand-yellow-hover: #cda91a; /* 8% darker for solid-button hover */
+  --brand-yellow-soft: rgba(229, 194, 34, 0.18);
+  --brand-yellow-ring: rgba(229, 194, 34, 0.45);
+
+  /* Surface */
+  --surface: #ffffff;
+  --surface-muted: #fafafa;
+  --surface-inverse: #111111;
+  --surface-inverse-strong: #0a0a0a;
+
+  /* Text */
+  --text-primary: #0a0a0a;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --text-inverse: #ffffff;
+
+  /* Border */
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: #e5e7eb;
+  --border-inverse-subtle: rgba(255, 255, 255, 0.1);
+
+  /* Spacing — 8px base scale, no magic numbers in components */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-7: 56px;
+  --space-8: 64px;
+
+  /* Radii */
+  --radius-pill-button: 9999px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Elevation */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 24px rgba(0, 0, 0, 0.03);
+  --shadow-card-hover: 0 1px 3px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.06);
+  --shadow-button: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-button-amber: 0 4px 12px rgba(229, 194, 34, 0.3);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --duration-fast: 200ms;
+
+  /* Z-index scale — only use these constants, no ad hoc z values */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+
+  /* Typography families */
+  --font-display-fallback: Georgia, "Times New Roman", serif;
+  --font-body-fallback: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Display / Hero */
+  --text-hero: clamp(2.75rem, 7vw, 5rem);
+  --text-hero-weight: 900;
+  --text-hero-letter-spacing: -0.035em;
+  --text-hero-line-height: 1.05;
+
+  /* H1 */
+  --text-h1: clamp(2.25rem, 5.5vw, 3.75rem);
+  --text-h1-weight: 800;
+  --text-h1-letter-spacing: -0.03em;
+  --text-h1-line-height: 1.1;
+
+  /* H2 */
+  --text-h2: clamp(1.5rem, 3vw, 2.25rem);
+  --text-h2-weight: 700;
+  --text-h2-letter-spacing: -0.02em;
+  --text-h2-line-height: 1.15;
+
+  /* H3 */
+  --text-h3: clamp(1.125rem, 2vw, 1.5rem);
+  --text-h3-weight: 700;
+  --text-h3-letter-spacing: -0.015em;
+  --text-h3-line-height: 1.25;
+
+  /* Body */
+  --text-body: 1rem;
+  --text-body-weight: 400;
+  --text-body-letter-spacing: -0.005em;
+  --text-body-line-height: 1.65;
+  --text-body-emphasis: 1.0625rem;
+  --text-body-emphasis-weight: 500;
+
+  /* Small/caption */
+  --text-small: 0.875rem;
+  --text-small-weight: 400;
+  --text-small-line-height: 1.6;
+  --text-caption: 0.75rem;
+  --text-caption-weight: 600;
+  --text-caption-letter-spacing: 0.07em;
+  --text-caption-line-height: 1.4;
+
+  /* Stat */
+  --text-stat: clamp(2rem, 4vw, 3rem);
+  --text-stat-weight: 800;
+  --text-stat-letter-spacing: -0.03em;
+
+  /* Text hierarchy */
+  --text-primary: #111111;
+  --text-secondary: rgba(0, 0, 0, 0.68);
+  --text-tertiary: rgba(0, 0, 0, 0.5);
+  --text-inverse: #ffffff;
+  --text-accent: #d4a017;
 }
 
 html {
@@ -22,10 +144,136 @@ html {
 }
 
 body {
-  color: var(--foreground);
+  color: var(--text-primary);
   background: var(--background);
-  text-rendering: geometricPrecision;
-  font-family: var(--font-figtree), system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+  font-family: var(--font-body), var(--font-body-fallback);
+  font-size: var(--text-body);
+  font-weight: var(--text-body-weight);
+  letter-spacing: var(--text-body-letter-spacing);
+  line-height: var(--text-body-line-height);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), var(--font-display-fallback);
+  font-style: normal;
+  text-wrap: balance;
+}
+
+.text-hero,
+h1.hero {
+  font-size: var(--text-hero);
+  font-weight: var(--text-hero-weight);
+  letter-spacing: var(--text-hero-letter-spacing);
+  line-height: var(--text-hero-line-height);
+  font-variation-settings: "opsz" 72;
+}
+
+h1,
+.text-h1 {
+  font-size: var(--text-h1);
+  font-weight: var(--text-h1-weight);
+  letter-spacing: var(--text-h1-letter-spacing);
+  line-height: var(--text-h1-line-height);
+  font-variation-settings: "opsz" 48;
+}
+
+h2,
+.text-h2 {
+  font-size: var(--text-h2);
+  font-weight: var(--text-h2-weight);
+  letter-spacing: var(--text-h2-letter-spacing);
+  line-height: var(--text-h2-line-height);
+  font-variation-settings: "opsz" 36;
+}
+
+h3,
+.text-h3 {
+  font-size: var(--text-h3);
+  font-weight: var(--text-h3-weight);
+  letter-spacing: var(--text-h3-letter-spacing);
+  line-height: var(--text-h3-line-height);
+  font-variation-settings: "opsz" 24;
+}
+
+p,
+li,
+td,
+dd {
+  font-family: var(--font-body), var(--font-body-fallback);
+  max-width: 65ch;
+}
+
+.text-lead {
+  font-family: var(--font-body), var(--font-body-fallback);
+  font-size: var(--text-body-emphasis);
+  font-weight: var(--text-body-emphasis-weight);
+  line-height: 1.7;
+  max-width: 52ch;
+}
+
+.text-label {
+  font-family: var(--font-body), var(--font-body-fallback);
+  font-size: var(--text-caption);
+  font-weight: var(--text-caption-weight);
+  letter-spacing: var(--text-caption-letter-spacing);
+  line-height: var(--text-caption-line-height);
+  text-transform: uppercase;
+}
+
+.text-stat {
+  font-family: var(--font-display), var(--font-display-fallback);
+  font-size: var(--text-stat);
+  font-weight: var(--text-stat-weight);
+  letter-spacing: var(--text-stat-letter-spacing);
+  line-height: 1;
+  font-variation-settings: "opsz" 48;
+}
+
+.text-small {
+  font-size: var(--text-small);
+  font-weight: var(--text-small-weight);
+  line-height: var(--text-small-line-height);
+}
+
+.text-tertiary {
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+}
+
+.font-body-ui {
+  font-family: var(--font-body), var(--font-body-fallback);
+}
+
+/* Keep pills and buttons on the same radius language. */
+.rounded-full {
+  border-radius: var(--radius-pill-button);
+}
+
+/* Normalize button-like and pill-like rounded edges across the site. */
+button.rounded-md,
+button.rounded-lg,
+button.rounded-xl,
+button.rounded-2xl,
+button.rounded-3xl,
+[role="button"].rounded-md,
+[role="button"].rounded-lg,
+[role="button"].rounded-xl,
+[role="button"].rounded-2xl,
+[role="button"].rounded-3xl,
+.inline-flex.rounded-md,
+.inline-flex.rounded-lg,
+.inline-flex.rounded-xl,
+.inline-flex.rounded-2xl,
+.inline-flex.rounded-3xl {
+  border-radius: var(--radius-pill-button);
 }
 
 html,
@@ -163,3 +411,173 @@ html[data-cursor-tone="dark"] [role="button"] {
     text-wrap: balance;
   }
 }
+
+/* =================================================================
+ * Design system component: JoinUsCta
+ * Production card with primary / secondary / tertiary CTAs.
+ * All values come from design tokens — no hardcoded colors or spacing.
+ * Animated only via transform / opacity / box-shadow / colors.
+ * Respects prefers-reduced-motion.
+ * ============================================================== */
+
+.cta-card {
+  position: relative;
+  background-color: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-6) var(--space-7);
+}
+
+@media (max-width: 768px) {
+  .cta-card {
+    padding: var(--space-5) var(--space-3);
+  }
+}
+
+.cta-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .cta-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    align-items: stretch;
+  }
+}
+
+.cta-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 4px 12px;
+  border-radius: var(--radius-md);
+  background-color: var(--brand-yellow-soft);
+  border: 1px solid var(--brand-yellow-ring);
+  color: var(--text-primary);
+  color: var(--brand-yellow);
+  border: 1.5px solid currentColor;
+}
+
+.cta-heading {
+  margin-top: var(--space-3);
+  font-size: var(--text-h1);
+  line-height: var(--text-h1-line-height);
+  letter-spacing: var(--text-h1-letter-spacing);
+  font-weight: var(--text-h1-weight);
+  color: var(--text-primary);
+  text-wrap: balance;
+  font-variation-settings: "opsz" 48;
+}
+
+.cta-description {
+  margin-top: var(--space-2);
+  max-width: 52ch;
+  font-size: var(--text-body-emphasis);
+  font-weight: var(--text-body-emphasis-weight);
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.cta-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  width: 100%;
+  min-width: 320px;
+}
+
+@media (max-width: 768px) {
+  .cta-actions {
+    min-width: 0;
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tertiary spans both columns of cta-actions. */
+.cta-tertiary-button {
+  grid-column: 1 / -1;
+}
+
+.cta-helper {
+  grid-column: 1 / -1;
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+}
+
+/* =================================================================
+ * Design system component: FooterTicketBanner
+ * Dark surface, single primary CTA on the right.
+ * ============================================================== */
+
+.ticket-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--surface-inverse);
+  border: 1px solid var(--border-inverse-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .ticket-banner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: var(--space-3);
+  }
+}
+
+.ticket-banner__top-line {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--brand-yellow-ring),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.ticket-banner__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ticket-banner__eyebrow {
+  font-size: var(--text-caption);
+  font-weight: var(--text-caption-weight);
+  letter-spacing: var(--text-caption-letter-spacing);
+  text-transform: uppercase;
+  color: var(--brand-yellow);
+}
+
+.ticket-banner__heading {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: var(--text-h3-letter-spacing);
+  color: var(--text-inverse);
+  line-height: var(--text-h3-line-height);
+  font-variation-settings: "opsz" 24;
+}
+
+@media (min-width: 768px) {
+  .ticket-banner__heading {
+    font-size: 1.5rem;
+  }
+}
+

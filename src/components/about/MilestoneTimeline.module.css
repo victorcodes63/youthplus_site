@@ -1,0 +1,995 @@
+.timeline {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-standard: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --tick-min: rgba(0, 0, 0, 0.12);
+  --tick-mid: rgba(0, 0, 0, 0.2);
+  --tick-major: rgba(0, 0, 0, 0.35);
+  --rail-baseline: rgba(0, 0, 0, 0.08);
+  --node-border: rgba(0, 0, 0, 0.15);
+  --node-icon: rgba(0, 0, 0, 0.3);
+  --meta-color: rgba(0, 0, 0, 0.4);
+  --description-color: rgba(0, 0, 0, 0.55);
+  --nav-border: rgba(0, 0, 0, 0.12);
+  --nav-icon: rgba(0, 0, 0, 0.3);
+  position: relative;
+  background: #fff;
+  color: #111;
+  padding: 64px 0 80px;
+  outline: none;
+}
+
+.timeline:focus-visible {
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
+.light,
+.dark {
+  /* Both themes share the white-on-light spec; .dark kept for prop compatibility. */
+  background: #fff;
+  color: #111;
+}
+
+.floating {
+  /* Backwards-compatible flag; the new design has no border/shadow on the section. */
+  background: #fff;
+}
+
+.autoToggleDesktop {
+  position: absolute;
+  top: 64px;
+  right: 0;
+  z-index: 5;
+}
+
+.autoToggleMobile {
+  display: none;
+}
+
+.autoToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--nav-border);
+  background: transparent;
+  color: var(--meta-color);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.autoToggle:hover {
+  color: #111;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.autoToggleOn {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+.autoToggleOn:hover {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+
+.autoDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #fff;
+  animation: autoDotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes autoDotPulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.railFrame {
+  position: relative;
+  margin-top: 8px;
+}
+
+.railViewport {
+  position: relative;
+  height: 130px;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+}
+
+.dragging {
+  cursor: grabbing;
+}
+
+.railBaseline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100px;
+  height: 1px;
+  background: var(--rail-baseline);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.railTrack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 130px;
+  will-change: transform;
+}
+
+.ticksLayer {
+  position: absolute;
+  left: 0;
+  top: 100px;
+  width: 100%;
+  height: 22px;
+  pointer-events: none;
+}
+
+.tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 8px;
+  background: var(--tick-min);
+  transform: translateX(-50%);
+}
+
+.tickMid {
+  height: 14px;
+  background: var(--tick-mid);
+}
+
+.tickMilestone {
+  height: 20px;
+  background: var(--tick-major);
+}
+
+.railNode {
+  position: absolute;
+  top: 52px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.nodeYear {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 12px);
+  transform: translate(-50%, 0);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 0;
+  white-space: nowrap;
+  animation: yearEnter 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  pointer-events: none;
+}
+
+@keyframes yearEnter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 4px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.pulseRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
+  border-radius: 999px;
+  border: 2px solid #111;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(1);
+  animation: pulseRing 700ms ease-out both;
+}
+
+@keyframes pulseRing {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+.nodeButton {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1.5px solid var(--node-border);
+  background: #fff;
+  color: var(--node-icon);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    border-width 0.3s ease;
+}
+
+.nodeButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15);
+}
+
+.nodeActive {
+  transform: scale(1.2);
+  background: #111;
+  border: 2px solid #111;
+  color: #fff;
+}
+
+.nodeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.progressSvg {
+  position: absolute;
+  inset: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+.progressTrack {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.2);
+  stroke-width: 2;
+}
+
+.progressFill {
+  fill: none;
+  stroke: #111;
+  stroke-width: 2;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 80ms linear;
+}
+
+.connectorWrap {
+  position: relative;
+  height: 56px;
+  display: flex;
+  justify-content: center;
+}
+
+.connector {
+  width: 2px;
+  height: 100%;
+  background: #111;
+  transform-origin: top center;
+  transform: scaleY(0);
+}
+
+.connectorVisible {
+  animation: connectorDraw 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes connectorDraw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.contentZone {
+  position: relative;
+}
+
+.cardShell {
+  position: relative;
+  padding: 28px 0 0;
+}
+
+.cardHairline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.12) 18%,
+    rgba(0, 0, 0, 0.12) 82%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.eyebrowChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 10px;
+  border-radius: 999px;
+  background: rgba(229, 194, 34, 0.12);
+  border: 1px solid rgba(229, 194, 34, 0.45);
+  color: #8a6f00;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.eyebrowChipEntering {
+  animation: chipEnter 400ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+}
+
+@keyframes chipEnter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #e5c222;
+  box-shadow: 0 0 0 3px rgba(229, 194, 34, 0.18);
+}
+
+.eyebrowText {
+  line-height: 1;
+}
+
+.counter {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.counterCurrent {
+  display: inline-block;
+  font-size: 1.25rem;
+  color: #111;
+  min-width: 1.4ch;
+  text-align: right;
+}
+
+.counterCurrentEntering {
+  animation: counterFlip 350ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes counterFlip {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.counterSep {
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.2);
+}
+
+.counterTotal {
+  font-size: 0.85rem;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(280px, 560px) minmax(0, 1fr);
+  gap: 34px;
+  justify-items: stretch;
+  align-items: center;
+}
+
+.imageStage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f4f4f4;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.06),
+    0 14px 40px -16px rgba(0, 0, 0, 0.18);
+  isolation: isolate;
+}
+
+.imageWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #f4f4f4;
+}
+
+.image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.32) 0%,
+    rgba(0, 0, 0, 0) 35%,
+    rgba(0, 0, 0, 0) 65%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.imageEntering {
+  animation: imageFadeIn 600ms ease both;
+}
+
+.imageLeaving {
+  animation: imageFadeOut 600ms ease both;
+}
+
+@keyframes imageFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes imageFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+.yearBadge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #e5c222;
+  color: #1a1300;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 6px 18px -6px rgba(229, 194, 34, 0.6);
+}
+
+.yearBadgeEntering {
+  animation: badgeEnter 500ms cubic-bezier(0.34, 1.56, 0.64, 1) 250ms both;
+}
+
+@keyframes badgeEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.textStage {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 4px 0 4px 34px;
+  border-left: 1px solid rgba(0, 0, 0, 0.14);
+  text-align: left;
+}
+
+.textBlock {
+  position: relative;
+}
+
+.textBlockLeaving {
+  position: absolute;
+  inset: 0;
+  animation: textLeave 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  pointer-events: none;
+}
+
+.textBlockEntering {
+  animation: textEnter 500ms cubic-bezier(0.16, 1, 0.3, 1) 320ms both;
+}
+
+@keyframes textEnter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes textLeave {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.title {
+  position: relative;
+  margin: 0;
+  font-size: clamp(1.875rem, 3.2vw, 2.625rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: #0a0a0a;
+}
+
+.titleAccent {
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin: 18px 0 0;
+  border-radius: 999px;
+  background: #e5c222;
+  transform-origin: center center;
+  animation: accentDraw 500ms cubic-bezier(0.16, 1, 0.3, 1) 500ms both;
+}
+
+@keyframes accentDraw {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.description {
+  margin: 22px 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.62);
+  max-width: 56ch;
+}
+
+.navRow {
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.upNext {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.upNext:hover,
+.upNext:focus-visible {
+  color: #0a0a0a;
+  outline: none;
+}
+
+.upNext:hover .upNextArrow,
+.upNext:focus-visible .upNextArrow {
+  transform: translateX(4px);
+  background: #0a0a0a;
+  color: #fff;
+  border-color: #0a0a0a;
+}
+
+.upNextDone {
+  cursor: default;
+}
+
+.upNextLabel {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.upNextDivider {
+  width: 24px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.upNextValue {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0a0a0a;
+  letter-spacing: -0.005em;
+}
+
+.upNextValueEntering {
+  animation: upNextEnter 400ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+}
+
+@keyframes upNextEnter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.upNextYear {
+  font-variant-numeric: tabular-nums;
+  color: #0a0a0a;
+}
+
+.upNextDot {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.upNextTitle {
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: 600;
+}
+
+.upNextArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  color: rgba(0, 0, 0, 0.55);
+  margin-left: 4px;
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navArrows {
+  display: flex;
+  gap: 10px;
+}
+
+.navArrow {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1.5px solid var(--nav-border);
+  background: transparent;
+  color: rgba(0, 0, 0, 0.55);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.navArrow:hover {
+  border-color: #0a0a0a;
+  color: #0a0a0a;
+  transform: translateY(-1px);
+}
+
+.navArrow:focus-visible {
+  outline: none;
+  border-color: #0a0a0a;
+  color: #0a0a0a;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.navArrow:disabled {
+  opacity: 0.25;
+  pointer-events: none;
+  cursor: default;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1024px) {
+  .timeline {
+    padding: 56px 0 64px;
+  }
+
+  .card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    justify-items: center;
+    align-items: start;
+  }
+
+  .textStage {
+    max-width: 760px;
+    padding: 0;
+    border-left: 0;
+    text-align: center;
+  }
+
+  .titleAccent {
+    margin: 18px auto 0;
+  }
+
+  .description {
+    margin: 22px auto 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .timeline {
+    padding: 48px 0 64px;
+  }
+
+  .autoToggleDesktop {
+    display: none;
+  }
+
+  .autoToggleMobile {
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+  }
+
+  .railViewport {
+    height: 100px;
+  }
+
+  .railTrack {
+    height: 100px;
+  }
+
+  .railBaseline,
+  .ticksLayer {
+    top: 76px;
+  }
+
+  .ticksLayer {
+    height: 22px;
+  }
+
+  .railNode {
+    top: 32px;
+  }
+
+  .nodeButton {
+    width: 36px;
+    height: 36px;
+  }
+
+  .nodeActive {
+    transform: scale(1.222);
+  }
+
+  .pulseRing {
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+  }
+
+  .nodeYear {
+    bottom: calc(100% + 10px);
+    font-size: 0.75rem;
+  }
+
+  .connectorWrap {
+    height: 32px;
+  }
+
+  .cardShell {
+    padding-top: 22px;
+  }
+
+  .cardHeader {
+    margin-bottom: 16px;
+  }
+
+  .counterCurrent {
+    font-size: 1.125rem;
+  }
+
+  .card {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    justify-items: stretch;
+  }
+
+  .imageStage {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+  }
+
+  .yearBadge {
+    top: 12px;
+    left: 12px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .textStage {
+    min-height: 0;
+    padding-top: 0;
+  }
+
+  .title {
+    font-size: clamp(1.625rem, 6vw, 2rem);
+  }
+
+  .titleAccent {
+    width: 40px;
+    margin-top: 14px;
+  }
+
+  .description {
+    margin-top: 16px;
+    font-size: 1rem;
+  }
+
+  .navRow {
+    margin-top: 24px;
+    padding-top: 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .upNext {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .upNextDivider {
+    display: none;
+  }
+
+  .navActions {
+    justify-content: space-between;
+  }
+
+  .navArrows {
+    justify-content: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nodeButton,
+  .nodeYear,
+  .connector,
+  .connectorVisible,
+  .imageEntering,
+  .imageLeaving,
+  .textBlockEntering,
+  .textBlockLeaving,
+  .pulseRing,
+  .autoDot,
+  .progressFill {
+    animation: none !important;
+    transition-duration: 1ms !important;
+  }
+
+  .connector {
+    transform: scaleY(1);
+  }
+
+  .pulseRing {
+    display: none;
+  }
+}

@@ -1,17 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Figtree } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { AdaptiveCursor } from "@/components/site/AdaptiveCursor";
 import { brandAssetPath } from "@/lib/brandAssetPath";
 import type { ReactNode } from "react";
 
-const figtree = Figtree({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
-  variable: "--font-figtree",
+  variable: "--font-display",
+  axes: ["opsz"],
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-body",
 });
 
 /** Black mark on light UI; white mark on dark UI (tabs, PWA tiles, etc.). */
@@ -88,7 +94,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${figtree.variable} ${figtree.className} antialiased`}>
+      <body className={`${fraunces.variable} ${plusJakarta.variable} antialiased`}>
         <AdaptiveCursor />
         <SiteHeader />
         <div className="pt-[84px]">{children}</div>

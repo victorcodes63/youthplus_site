@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 const STORAGE_KEY = "youthplus_mobile_ticket_cta_dismissed";
 
@@ -9,15 +9,14 @@ const STORAGE_KEY = "youthplus_mobile_ticket_cta_dismissed";
  * across sessions. (Switch to sessionStorage if you prefer once-per-tab only.)
  */
 export function useMobileTicketCta() {
-  const [dismissed, setDismissed] = useState(false);
-
-  useEffect(() => {
+  const [dismissed, setDismissed] = useState(() => {
     try {
-      if (localStorage.getItem(STORAGE_KEY) === "1") setDismissed(true);
+      return localStorage.getItem(STORAGE_KEY) === "1";
     } catch {
       /* private mode / quota */
+      return false;
     }
-  }, []);
+  });
 
   const dismiss = useCallback(() => {
     try {

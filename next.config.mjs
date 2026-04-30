@@ -14,15 +14,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "plus.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "www.youthplusafrica.com",
+      },
     ],
   },
-  // Avoid stale webpack chunk refs (e.g. Cannot find module './734.js') and pack cache ENOENT in dev.
-  webpack: (config, { dev }) => {
-    if (dev) {
-      config.cache = false;
-    }
-    return config;
-  },
+  // Next.js 16 uses Turbopack by default; keep config explicit.
+  turbopack: {},
 };
 
 export default nextConfig;

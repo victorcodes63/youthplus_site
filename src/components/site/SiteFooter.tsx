@@ -1,50 +1,27 @@
 import Image from "next/image";
 import Link from "next/link";
 import { brandAssetPath } from "@/lib/brandAssetPath";
-import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
+import { FooterTicketBanner } from "@/components/site/FooterTicketBanner";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden bg-[#0A0A0A] text-white mt-20 border-t border-white/10 min-h-[620px] md:min-h-[700px]">
+    <footer className="relative overflow-hidden border-t border-white/10 bg-[#0A0A0A] text-white">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-0 right-0 bottom-10 md:bottom-14 select-none text-center font-[900] lowercase leading-none"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-0 -translate-y-8 select-none text-center font-[900] lowercase leading-none md:-translate-y-12"
       >
-        <span className="dotted-wordmark dotted-wordmark--bright md:hidden block text-[clamp(72px,26vw,200px)] tracking-[-0.04em]">
+        <span className="dotted-wordmark dotted-wordmark--bright block text-[clamp(72px,26vw,200px)] tracking-[-0.04em] opacity-45 md:hidden">
           youth+
         </span>
-        <span className="dotted-wordmark hidden md:inline text-[clamp(56px,17vw,260px)] tracking-[-0.06em]">
+        <span className="dotted-wordmark hidden text-[clamp(56px,17vw,260px)] tracking-[-0.06em] opacity-45 md:inline">
           youth+africa
         </span>
       </div>
 
-      <div className="relative z-10 page mx-auto max-w-[1440px] pt-14 md:pt-16 pb-40 md:pb-52">
-        <div className="mb-10 relative overflow-hidden border border-white/15 bg-[#111111] rounded-md p-5 md:p-6">
-          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#E5C222]/70 to-transparent" />
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-5 items-center text-center md:text-left">
-            <div>
-              <div className="text-[11px] uppercase tracking-[0.1em] text-accent font-[800]">
-              Next Summit
-              </div>
-              <div className="mt-1 text-[20px] md:text-[24px] font-[900] tracking-[-0.02em]">
-                Nairobi 2027 Ticket Sales Are Live
-              </div>
-            </div>
-
-            <div className="flex justify-center md:block md:pl-6 md:border-l md:border-white/10">
-              <SwapArrowButton
-                href="/events"
-                className="h-11 px-5 text-[14px] font-[900] whitespace-nowrap"
-                hoverTextClassName="hover:text-white"
-                hoverBgClassName="hover:bg-[#0A0A0A]"
-              >
-                Reserve Tickets
-              </SwapArrowButton>
-            </div>
-          </div>
-        </div>
+      <div className="relative z-10 page mx-auto max-w-[1440px] pb-16 pt-14 md:pb-20 md:pt-16">
+        <FooterTicketBanner className="mb-10" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 border-b border-white/10 pb-10">
           <div className="lg:col-span-4 space-y-5 text-center md:text-left">
@@ -64,13 +41,13 @@ export function SiteFooter() {
                 />
               </span>
             </Link>
-            <p className="text-[15px] leading-[1.7] text-white/80 max-w-[42ch] mx-auto md:mx-0">
+            <p className="text-lead text-white/80 mx-auto md:mx-0">
               Youth+ Africa connects founders, investors, operators, and youth leaders
               to build practical solutions for the continent.
             </p>
             <div className="flex justify-center md:justify-start">
-              <div className="inline-flex items-center rounded-md border border-accent px-3 py-1 text-[11px] font-[800] tracking-[0.1em] uppercase text-accent">
-                Next Summit • Nairobi
+              <div className="inline-flex items-center rounded-md border-[1.5px] border-accent px-3 py-1 text-label text-accent">
+                Youth+ Summit 2026 • Nairobi
               </div>
             </div>
 
@@ -151,10 +128,10 @@ export function SiteFooter() {
 
           <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="space-y-3">
-              <div className="text-[13px] font-[800] uppercase tracking-[0.08em] text-accent">
+              <div className="text-label text-accent">
                 Company
               </div>
-              <div className="flex flex-col gap-2 text-[14px] text-white/85">
+              <div className="flex flex-col gap-2 text-small text-white/80">
                 <a href="#about" className="hover:text-white transition-colors">About</a>
                 <Link href="/events" className="hover:text-white transition-colors">Our Events</Link>
                 <a href="#sponsors" className="hover:text-white transition-colors">Partners</a>
@@ -163,10 +140,10 @@ export function SiteFooter() {
             </div>
 
             <div className="space-y-3">
-              <div className="text-[13px] font-[800] uppercase tracking-[0.08em] text-accent">
+              <div className="text-label text-accent">
                 Attend
               </div>
-              <div className="flex flex-col gap-2 text-[14px] text-white/85">
+              <div className="flex flex-col gap-2 text-small text-white/80">
                 <Link href="/events" className="hover:text-white transition-colors">Buy Tickets</Link>
                 <Link href="/profile/tickets" className="hover:text-white transition-colors">My Tickets</Link>
                 <Link href="/events" className="hover:text-white transition-colors">Venue & Travel</Link>
@@ -175,22 +152,22 @@ export function SiteFooter() {
             </div>
 
             <div className="space-y-3">
-              <div className="text-[13px] font-[800] uppercase tracking-[0.08em] text-accent">
+              <div className="text-label text-accent">
                 Resources
               </div>
-              <div className="flex flex-col gap-2 text-[14px] text-white/85">
-                <Link href="/events" className="hover:text-white transition-colors">Speaker Deck</Link>
-                <Link href="/events" className="hover:text-white transition-colors">Partnership Pack</Link>
-                <Link href="/events" className="hover:text-white transition-colors">Media Kit</Link>
-                <Link href="/events" className="hover:text-white transition-colors">Community</Link>
+              <div className="flex flex-col gap-2 text-small text-white/80">
+                <Link href="/resources/speaker-deck" className="hover:text-white transition-colors">Speaker Deck</Link>
+                <Link href="/resources/partnership-pack" className="hover:text-white transition-colors">Partnership Pack</Link>
+                <Link href="/resources/media-kit" className="hover:text-white transition-colors">Media Kit</Link>
+                <Link href="/resources/community" className="hover:text-white transition-colors">Community</Link>
               </div>
             </div>
 
             <div className="space-y-3">
-              <div className="text-[13px] font-[800] uppercase tracking-[0.08em] text-accent">
+              <div className="text-label text-accent">
                 Contact
               </div>
-              <div className="text-[14px] text-white/85 space-y-2">
+              <div className="text-small text-white/80 space-y-2">
                 <a
                   href="mailto:support@youthplusafrica.com"
                   className="block hover:text-white transition-colors"
@@ -204,14 +181,14 @@ export function SiteFooter() {
         </div>
 
         <div className="pt-5 flex flex-col md:flex-row items-center md:items-center justify-between gap-4 text-center md:text-left">
-          <div className="text-[12px] text-white/60">
+          <div className="text-small text-white/70">
             © {year} Youth+ Africa. All rights reserved.
           </div>
-          <div className="flex flex-wrap items-center justify-center md:justify-end gap-5 text-[12px] text-white/60">
-            <Link href="/offline" className="hover:text-white transition-colors">Privacy</Link>
-            <Link href="/offline" className="hover:text-white transition-colors">Terms</Link>
-            <Link href="/offline" className="hover:text-white transition-colors">Cookies</Link>
-            <Link href="/offline" className="hover:text-white transition-colors">Accessibility</Link>
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-5 text-small text-white/70">
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Cookies</Link>
+            <Link href="/accessibility" className="hover:text-white transition-colors">Accessibility</Link>
           </div>
         </div>
       </div>

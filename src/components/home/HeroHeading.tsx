@@ -45,7 +45,8 @@ export function HeroHeading({
 
   return (
     <motion.h1
-      className={`font-[800] tracking-[-0.05em] leading-[0.92] text-white text-[clamp(44px,6vw,72px)] ${className}`.trim()}
+      className={`text-hero text-white ${className}`.trim()}
+      style={{ fontVariationSettings: '"opsz" 72' }}
       variants={headlineOrchestra}
     >
       {lines.map((line, i) => (

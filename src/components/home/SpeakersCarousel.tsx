@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { brandAssetPath } from "@/lib/brandAssetPath";
-import { useEffect, useMemo, useRef } from "react";
+import { SectionDivider } from "@/components/ui/SectionDivider";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Speaker = {
   name: string;
@@ -186,44 +187,114 @@ const SHAPES = [
 ];
 
 export function SpeakersCarousel() {
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
   const cards = useMemo(() => SPEAKERS, []);
+  const reduceMotion = useReducedMotion();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [cursorActive, setCursorActive] = useState(false);
+  const [cursorPoint, setCursorPoint] = useState({ x: 0, y: 0 });
+  const [cardWidth, setCardWidth] = useState(280);
+  const [gap, setGap] = useState(20);
+  const [visibleCount, setVisibleCount] = useState(1);
+  const dragStartXRef = useRef(0);
+  const dragOffsetRef = useRef(0);
+  const pointerIdRef = useRef<number | null>(null);
+  const DRAG_THRESHOLD = 60;
 
   useEffect(() => {
-    const node = scrollerRef.current;
-    if (!node) return;
+    const measure = () => {
+      const viewport = viewportRef.current;
+      const track = trackRef.current;
+      if (!viewport || !track) return;
+      const card = track.querySelector<HTMLElement>("[data-speaker-card]");
+      if (!card) return;
+      const nextCardWidth = card.offsetWidth;
+      const trackStyle = window.getComputedStyle(track);
+      const nextGap = parseFloat(trackStyle.columnGap || trackStyle.gap || "20");
+      const nextVisible = Math.max(1, Math.round(viewport.clientWidth / (nextCardWidth + nextGap)));
+      setCardWidth(nextCardWidth);
+      setGap(Number.isFinite(nextGap) ? nextGap : 20);
+      setVisibleCount(nextVisible);
+    };
 
-    const id = setInterval(() => {
-      const max = node.scrollWidth - node.clientWidth;
-      if (max <= 0) return;
-      const next = node.scrollLeft + 300;
-      node.scrollTo({
-        left: next >= max ? 0 : next,
-        behavior: "smooth",
-      });
-    }, 2400);
-
-    return () => clearInterval(id);
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, []);
 
+  const maxIndex = Math.max(0, cards.length - visibleCount);
+  const safeIndex = Math.min(activeIndex, maxIndex);
+  const step = cardWidth + gap;
+  const baseOffset = -safeIndex * step;
+  const clampIndex = (next: number) => Math.max(0, Math.min(maxIndex, next));
+
+  const goTo = (next: number) => {
+    setActiveIndex(clampIndex(next));
+  };
+
   const scrollByCards = (direction: "prev" | "next") => {
-    const node = scrollerRef.current;
-    if (!node) return;
-    const delta = direction === "next" ? 560 : -560;
-    node.scrollBy({ left: delta, behavior: "smooth" });
+    goTo(safeIndex + (direction === "next" ? 1 : -1));
+  };
+
+  const onPointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    pointerIdRef.current = event.pointerId;
+    dragStartXRef.current = event.clientX;
+    dragOffsetRef.current = 0;
+    setIsDragging(true);
+    setDragOffset(0);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const onPointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    if (!isDragging || pointerIdRef.current !== event.pointerId) return;
+    const delta = event.clientX - dragStartXRef.current;
+    const atStart = safeIndex === 0;
+    const atEnd = safeIndex === maxIndex;
+    const resisted = (atStart && delta > 0) || (atEnd && delta < 0) ? delta * 0.35 : delta;
+    dragOffsetRef.current = resisted;
+    setDragOffset(resisted);
+  };
+
+  const endPointer = (pointerId: number) => {
+    if (pointerIdRef.current !== pointerId) return;
+    const finalOffset = dragOffsetRef.current;
+    setIsDragging(false);
+    pointerIdRef.current = null;
+    dragOffsetRef.current = 0;
+    setDragOffset(0);
+
+    if (finalOffset <= -DRAG_THRESHOLD) {
+      goTo(safeIndex + 1);
+      return;
+    }
+    if (finalOffset >= DRAG_THRESHOLD) {
+      goTo(safeIndex - 1);
+    }
+  };
+
+  const onPointerUp: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    endPointer(event.pointerId);
+  };
+
+  const onPointerCancel: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    endPointer(event.pointerId);
   };
 
   return (
     <section id="speakers" className="py-16 md:py-20">
       <div className="page mx-auto max-w-[1440px] flex items-end justify-between gap-6 flex-wrap">
         <div>
-          <div className="text-[12px] font-[700] tracking-[0.12em] uppercase text-secondary">
+          <div className="text-label text-secondary">
             Speakers
           </div>
-          <h2 className="mt-4 text-[30px] md:text-[42px] leading-[1.02] tracking-[-0.04em] font-[900] text-primary max-w-[18ch]">
+          <h2 className="mt-4 text-h2 text-primary max-w-[18ch]">
             Voices shaping the next chapter of African innovation.
           </h2>
-          <p className="mt-4 text-secondary text-[15px] max-w-[62ch]">
+          <p className="mt-4 text-lead">
             Hover any speaker card to reveal LinkedIn and connect directly.
             Twenty curated profiles from founders, operators, and investors.
           </p>
@@ -233,7 +304,7 @@ export function SpeakersCarousel() {
           <button
             type="button"
             onClick={() => scrollByCards("prev")}
-            className="h-10 w-10 rounded-md border border-borderLight text-primary hover:border-accent transition-colors"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-borderLight bg-white text-primary transition-colors hover:border-accent hover:bg-accent hover:text-[#0A0A0A]"
             aria-label="Previous speakers"
           >
             ←
@@ -241,7 +312,7 @@ export function SpeakersCarousel() {
           <button
             type="button"
             onClick={() => scrollByCards("next")}
-            className="h-10 w-10 rounded-md border border-borderLight text-primary hover:border-accent transition-colors"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-borderLight bg-white text-primary transition-colors hover:border-accent hover:bg-accent hover:text-[#0A0A0A]"
             aria-label="Next speakers"
           >
             →
@@ -249,27 +320,63 @@ export function SpeakersCarousel() {
         </div>
       </div>
 
-      <div
-        ref={scrollerRef}
-        className="page-inset-x mt-10 flex gap-5 overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {cards.map((speaker, idx) => {
-          const shape = SHAPES[idx % SHAPES.length];
-          return (
-            <motion.article
-              key={`${speaker.name}-${speaker.company}`}
-              className={`group relative min-w-[280px] max-w-[280px] shrink-0 snap-start border border-borderLight bg-white shadow-[0_6px_24px_rgba(10,10,10,0.05)] ${shape}`}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.45, delay: (idx % 5) * 0.05, ease: "easeOut" }}
+      <div className="relative left-1/2 mt-10 w-screen -translate-x-1/2 bg-white px-4 py-5 md:px-6 md:py-6 lg:px-8">
+        <SectionDivider contentWidth className="absolute top-0 left-1/2 -translate-x-1/2" />
+        <SectionDivider contentWidth className="absolute bottom-0 left-1/2 -translate-x-1/2" />
+        <div className="mx-auto max-w-[1440px]">
+          <div className="mb-4 flex items-center justify-between md:mb-5">
+            <p className="text-label text-secondary">
+              <span className="lg:hidden">Drag to explore</span>
+              <span className="hidden lg:inline">20 speakers</span>
+            </p>
+          </div>
+          <div
+            ref={viewportRef}
+            className={`relative overflow-hidden touch-pan-y select-none ${
+              isDragging ? "cursor-grabbing" : "cursor-grab"
+            }`}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerCancel}
+            onMouseEnter={() => setCursorActive(true)}
+            onMouseLeave={() => setCursorActive(false)}
+            onMouseMove={(event) => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              setCursorPoint({
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top,
+              });
+            }}
+            onDragStart={(event) => event.preventDefault()}
+          >
+            <div
+              ref={trackRef}
+              className="flex gap-5 pb-3 will-change-transform"
+              style={{
+                transform: `translate3d(${baseOffset + dragOffset}px, 0, 0)`,
+                transition: isDragging ? "none" : `transform ${reduceMotion ? 1 : 600}ms cubic-bezier(0.16, 1, 0.3, 1)`,
+              }}
             >
+          {cards.map((speaker, idx) => {
+            const shape = SHAPES[idx % SHAPES.length];
+            return (
+              <motion.article
+                key={`${speaker.name}-${speaker.company}`}
+                data-speaker-card
+                className={`group relative min-w-[280px] max-w-[280px] shrink-0 border border-borderLight bg-white shadow-[0_6px_24px_rgba(10,10,10,0.05)] ${shape}`}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.45, delay: (idx % 5) * 0.05, ease: "easeOut" }}
+              >
               <div className={`relative h-[330px] overflow-hidden border-b border-borderLight ${shape}`}>
                 <Image
                   src={speaker.image}
                   alt={`${speaker.name} portrait`}
                   fill
                   sizes="280px"
+                  draggable={false}
                   className="object-cover transition duration-300 group-hover:scale-[1.03] group-hover:blur-[2px]"
                 />
 
@@ -279,10 +386,10 @@ export function SpeakersCarousel() {
                   href={speaker.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:pointer-events-auto group-hover:opacity-100"
                   aria-label={`View ${speaker.name} LinkedIn profile`}
                 >
-                  <span className="inline-flex items-center justify-center h-11 px-4 rounded-md bg-white text-[#0A0A0A] font-[700] text-[13px]">
+                  <span className="inline-flex items-center justify-center h-11 px-4 rounded-md bg-white text-[#0A0A0A] font-[600] text-[0.9375rem] tracking-[0.01em]">
                     <svg
                       viewBox="0 0 24 24"
                       aria-hidden="true"
@@ -307,19 +414,37 @@ export function SpeakersCarousel() {
               </div>
 
               <div className="p-4">
-                <div className="text-[20px] leading-[1.05] tracking-[-0.02em] font-[800] text-[#0A0A0A]">
+                <div className="text-h3 text-[#0A0A0A]">
                   {speaker.name}
                 </div>
-                <div className="mt-2 text-[13px] font-[700] text-secondary">
+                <div className="mt-2 text-small font-[600] text-secondary">
                   {speaker.title} • {speaker.company}
                 </div>
-                <p className="mt-3 text-[13px] text-secondary leading-[1.6]">
+                <p className="mt-3 text-small">
                   {speaker.bio}
                 </p>
               </div>
-            </motion.article>
-          );
-        })}
+              </motion.article>
+            );
+          })}
+            </div>
+
+            <AnimatePresence>
+              {cursorActive ? (
+                <motion.div
+                  className="pointer-events-none absolute z-20 hidden h-16 w-16 items-center justify-center rounded-full border border-accent bg-black/70 text-[11px] font-[900] uppercase tracking-[0.1em] text-accent md:flex"
+                  style={{ left: cursorPoint.x, top: cursorPoint.y, x: "-50%", y: "-50%" }}
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ duration: 0.16, ease: "easeOut" }}
+                >
+                  Drag
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </section>
   );

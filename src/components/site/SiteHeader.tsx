@@ -2,106 +2,63 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "./Logo";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
+import { BrandButton } from "@/components/ui/BrandButton";
 
-type NavGroup = {
-  label: string;
-  title: string;
-  intro: string;
-  items: Array<{ label: string; href: string; tag: string }>;
-};
+const DESKTOP_LINKS = [
+  { label: "Events", href: "/events" },
+  { label: "About", href: "/about" },
+] as const;
 
-const NAV_GROUPS: NavGroup[] = [
+const VENTURE_ITEMS = [
   {
-    label: "Home",
-    title: "Homepage Sections",
-    intro: "Jump to key sections of the summit landing page.",
-    items: [
-      { label: "Hero", href: "/#hero", tag: "Top" },
-      { label: "Summit Snapshot", href: "/#summit-snapshot", tag: "Overview" },
-      { label: "Speakers", href: "/#speakers", tag: "Voices" },
-      { label: "Why Us", href: "/#about", tag: "Story" },
-    ],
+    label: "AllAXS",
+    href: "/ventures/allaxs",
+    tag: "Platform",
+    description: "Discover our flagship platform powering practical youth innovation pathways.",
   },
   {
-    label: "Tickets",
-    title: "Ticket Journey",
-    intro: "Everything needed to choose, compare, and buy tickets.",
-    items: [
-      { label: "Featured Events", href: "/#featured-events", tag: "Events" },
-      { label: "Ticket Tiers", href: "/#ticket-tiers", tag: "Pricing" },
-      { label: "Agenda Teaser", href: "/#agenda-teaser", tag: "Plan" },
-      { label: "Buyer FAQs", href: "/#buyer-faqs", tag: "Support" },
-    ],
+    label: "Youth+ Radio",
+    href: "/ventures/youth-radio",
+    tag: "Media",
+    description: "Listen to bold youth stories, practical insights, and ecosystem conversations.",
   },
   {
-    label: "Partner",
-    title: "Partners & Ecosystem",
-    intro: "Brand visibility and collaboration opportunities at the summit.",
-    items: [
-      { label: "Partners Strip", href: "/#partners-strip", tag: "Logos" },
-      { label: "Editorial Sessions", href: "/#editorial-sessions", tag: "Content" },
-      { label: "Community", href: "/#about", tag: "Mission" },
-      { label: "Contact Team", href: "/contact", tag: "Reach us" },
-    ],
+    label: "Connect",
+    href: "/ventures/connect",
+    tag: "Community",
+    description: "Join high-agency peers, mentors, and builders in structured collaboration spaces.",
   },
   {
-    label: "About",
-    title: "Youth+ Africa",
-    intro: "Our mission, stories, and long-term outcomes.",
-    items: [
-      { label: "Why Us Story", href: "/#about", tag: "Mission" },
-      { label: "Speakers", href: "/#speakers", tag: "Community" },
-      { label: "Events", href: "/#featured-events", tag: "Updates" },
-      { label: "Contact", href: "/contact", tag: "Reach us" },
-    ],
+    label: "All Ventures",
+    href: "/ventures",
+    tag: "Overview",
+    description: "Explore every Youth+ venture and find the right path for your goals.",
   },
-];
-
-const HEADER_OFFSET_PX = 84;
-
-/** Same-page #section links: close mega-menu first, then scroll so the section clears the fixed header. */
-function useHashSectionNav() {
-  const pathname = usePathname();
-
-  const scrollToHash = useCallback(
-    (hash: string) => {
-      const id = hash.replace(/^#/, "");
-      if (!id) return;
-      const el = document.getElementById(id);
-      if (!el) return;
-      const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET_PX;
-      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
-      window.history.replaceState(null, "", `#${id}`);
-    },
-    []
-  );
-
-  const onInPageHashClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-      if (!href.includes("#")) return;
-      const hashIndex = href.indexOf("#");
-      const pathOnly = href.slice(0, hashIndex) || "/";
-      const hash = href.slice(hashIndex + 1);
-      if (!hash) return;
-      if (pathOnly !== pathname) return;
-      e.preventDefault();
-      return hash;
-    },
-    [pathname]
-  );
-
-  return { scrollToHash, onInPageHashClick };
-}
+  {
+    label: "Partner With Us Form",
+    href: "/partner-with-us",
+    tag: "Partnership",
+    description:
+      "Submit partnership interest and tell us how you would like to collaborate with Youth+ Africa.",
+  },
+  {
+    label: "We Lead Baseline Survey",
+    href: "/we-lead-baseline-survey",
+    tag: "Survey",
+    description:
+      "Complete a short baseline survey so we can better understand your context and support needs.",
+  },
+] as const;
 
 export function SiteHeader() {
-  const [active, setActive] = useState<string | null>(null);
+  const pathname = usePathname();
+  const [venturesOpen, setVenturesOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { scrollToHash, onInPageHashClick } = useHashSectionNav();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -110,7 +67,13 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const activeGroup = NAV_GROUPS.find((group) => group.label === active) ?? null;
+  const openVenturesMenu = () => {
+    setVenturesOpen(true);
+  };
+
+  const closeDesktopMenus = () => {
+    setVenturesOpen(false);
+  };
 
   return (
     <header
@@ -119,37 +82,84 @@ export function SiteHeader() {
           ? "border-borderLight bg-white shadow-[0_10px_40px_rgba(10,10,10,0.08)]"
           : "border-borderLight/80 bg-white/98 shadow-[0_8px_28px_rgba(10,10,10,0.04)]"
       }`}
-      onMouseLeave={() => setActive(null)}
+      onMouseLeave={closeDesktopMenus}
     >
       <div className="relative page mx-auto max-w-[1440px] h-[84px] flex items-center justify-between">
         <Logo />
 
-        <nav className="hidden lg:flex items-center gap-8 text-[14px] font-[800] tracking-[-0.01em]">
-          {NAV_GROUPS.map((group) => (
-            <button
-              type="button"
-              key={group.label}
-              onMouseEnter={() => setActive(group.label)}
-              onFocus={() => setActive(group.label)}
+        <nav className="font-body-ui hidden lg:flex items-center gap-8 text-[0.9375rem] font-[600] tracking-[0.005em]">
+          {DESKTOP_LINKS.slice(0, 1).map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              onMouseEnter={closeDesktopMenus}
+              onFocus={closeDesktopMenus}
               className={`relative inline-flex items-center gap-2 transition-colors ${
-                active === group.label ? "text-[#0A0A0A]" : "text-foreground/80"
+                pathname === item.href ? "text-[#0A0A0A]" : "text-foreground/80 hover:text-[#0A0A0A]"
               }`}
             >
-              <span className="accent-underline">{group.label}</span>
+              <span className="accent-underline">{item.label}</span>
               <span
                 className={`h-1.5 w-1.5 rounded-full bg-accent transition-opacity ${
-                  active === group.label ? "opacity-100" : "opacity-0"
+                  pathname === item.href ? "opacity-100" : "opacity-0"
                 }`}
               />
-            </button>
+            </Link>
+          ))}
+          <Link
+            href="/ventures"
+            onMouseEnter={openVenturesMenu}
+            onFocus={openVenturesMenu}
+            className={`relative inline-flex items-center gap-2 transition-colors ${
+              pathname.startsWith("/ventures") ||
+              pathname === "/partner-with-us" ||
+              pathname === "/we-lead-baseline-survey"
+                ? "text-[#0A0A0A]"
+                : "text-foreground/80 hover:text-[#0A0A0A]"
+            }`}
+          >
+            <span className="accent-underline">Ventures</span>
+            <span
+              className={`h-1.5 w-1.5 rounded-full bg-accent transition-opacity ${
+                pathname.startsWith("/ventures") ||
+                pathname === "/partner-with-us" ||
+                pathname === "/we-lead-baseline-survey" ||
+                venturesOpen
+                  ? "opacity-100"
+                  : "opacity-0"
+              }`}
+            />
+          </Link>
+          {DESKTOP_LINKS.slice(1).map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              onMouseEnter={closeDesktopMenus}
+              onFocus={closeDesktopMenus}
+              className={`relative inline-flex items-center gap-2 transition-colors ${
+                pathname === item.href ? "text-[#0A0A0A]" : "text-foreground/80 hover:text-[#0A0A0A]"
+              }`}
+            >
+              <span className="accent-underline">{item.label}</span>
+              <span
+                className={`h-1.5 w-1.5 rounded-full bg-accent transition-opacity ${
+                  pathname === item.href ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            </Link>
           ))}
 
-          <SwapArrowButton
-            href="/contact"
-            className="ml-2 h-10 px-4 rounded-md text-[14px] shadow-[0_4px_18px_rgba(229,194,34,0.35)]"
+          <span
+            onMouseEnter={closeDesktopMenus}
+            onFocus={closeDesktopMenus}
           >
-            Contact us
-          </SwapArrowButton>
+            <SwapArrowButton
+              href="/contact"
+              className="font-body-ui ml-2 h-10 px-4 rounded-md text-[0.9375rem] font-[700] tracking-[0.005em] shadow-[0_4px_18px_rgba(229,194,34,0.35)]"
+            >
+              Contact us
+            </SwapArrowButton>
+          </span>
         </nav>
 
         <button
@@ -171,51 +181,44 @@ export function SiteHeader() {
       </div>
 
       <AnimatePresence>
-        {activeGroup && (
+        {venturesOpen && (
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
-            className="hidden lg:block border-t border-borderLight bg-white"
+            className="hidden lg:block border-t border-borderLight bg-[linear-gradient(180deg,#ffffff_0%,#fcfcfc_100%)]"
           >
-            <div className="page mx-auto max-w-[1440px] py-8">
-              <div className="grid grid-cols-12 gap-8">
-                <div className="col-span-4">
-                  <div className="inline-flex rounded-md border border-accent px-3 py-1 text-[11px] font-[800] tracking-[0.1em] uppercase text-[#0A0A0A]">
-                    {activeGroup.label}
-                  </div>
-                  <h3 className="mt-4 text-[28px] leading-[1.05] tracking-[-0.03em] font-[900] text-[#0A0A0A]">
-                    {activeGroup.title}
-                  </h3>
-                  <p className="mt-3 text-[14px] leading-[1.7] text-secondary max-w-[30ch]">
-                    {activeGroup.intro}
-                  </p>
+            <div className="page mx-auto max-w-[1440px] py-6">
+              <div className="mb-3">
+                <div className="inline-flex rounded-full border border-accent/70 bg-accent/10 px-3 py-1 text-label text-[#0A0A0A]">
+                  Ventures
                 </div>
-                <div className="col-span-8 grid grid-cols-2 gap-4">
-                  {activeGroup.items.map((item) => (
-                    <Link
-                      key={item.label}
-                      href={item.href}
-                      className="group rounded-md border border-borderLight p-4 hover:border-accent hover:shadow-[0_6px_20px_rgba(10,10,10,0.05)] transition-all"
-                      onClick={(e) => {
-                        const hash = onInPageHashClick(e, item.href);
-                        if (hash === undefined) return;
-                        setActive(null);
-                        window.requestAnimationFrame(() => {
-                          window.setTimeout(() => scrollToHash(hash), 50);
-                        });
-                      }}
-                    >
+              </div>
+              <div className="grid grid-cols-3 gap-3 auto-rows-fr">
+                {VENTURE_ITEMS.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="group flex h-full min-h-[126px] flex-col rounded-md border border-borderLight bg-white p-4 hover:border-accent hover:shadow-[0_8px_26px_rgba(10,10,10,0.08)] hover:-translate-y-[1px] transition-all duration-200"
+                    onClick={() => setVenturesOpen(false)}
+                  >
+                    <div className="flex items-start justify-between gap-3">
                       <div className="text-[16px] tracking-[-0.01em] font-[800] text-[#0A0A0A]">
                         {item.label}
                       </div>
-                      <div className="mt-2 inline-flex rounded-md border border-borderLight px-2 py-1 text-[11px] font-[700] text-secondary group-hover:border-accent transition-colors">
-                        {item.tag}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                      <span className="text-[14px] text-secondary/70 group-hover:text-[#0A0A0A] transition-colors">
+                        →
+                      </span>
+                    </div>
+                    <p className="mt-2 text-[13px] leading-[1.6] text-secondary">
+                      {item.description}
+                    </p>
+                    <div className="mt-auto pt-2 inline-flex rounded-full border border-borderLight bg-[#fafafa] px-2 py-1 text-[11px] font-[700] text-secondary group-hover:border-accent group-hover:bg-accent/10 group-hover:text-[#0A0A0A] transition-colors">
+                      {item.tag}
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -231,38 +234,40 @@ export function SiteHeader() {
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="lg:hidden border-t border-borderLight bg-white"
           >
-            <div className="page py-5 space-y-3">
-              {NAV_GROUPS.map((group) => (
-                <div key={group.label} className="rounded-md border border-borderLight p-4">
-                  <div className="text-[15px] font-[900] text-[#0A0A0A]">{group.label}</div>
-                  <div className="mt-3 flex flex-col gap-2">
-                    {group.items.slice(0, 2).map((item) => (
+            <div className="font-body-ui page py-5 space-y-3">
+              <div className="rounded-md border border-borderLight p-4 space-y-3">
+                <Link href="/events" onClick={() => setMenuOpen(false)} className="block text-[15px] font-[700] tracking-[0.005em] text-[#0A0A0A]">
+                  Events
+                </Link>
+                <div>
+                  <div className="text-[15px] font-[700] tracking-[0.005em] text-[#0A0A0A]">Ventures</div>
+                  <div className="mt-2 flex flex-col gap-2">
+                    {VENTURE_ITEMS.map((item) => (
                       <Link
                         key={item.label}
                         href={item.href}
-                        onClick={(e) => {
-                          const hash = onInPageHashClick(e, item.href);
-                          setMenuOpen(false);
-                          if (hash === undefined) return;
-                          window.requestAnimationFrame(() => {
-                            window.setTimeout(() => scrollToHash(hash), 50);
-                          });
-                        }}
-                        className="text-[14px] text-secondary hover:text-[#0A0A0A]"
+                        onClick={() => setMenuOpen(false)}
+                        className="text-[14px] font-[500] text-secondary hover:text-[#0A0A0A]"
                       >
                         {item.label}
                       </Link>
                     ))}
                   </div>
                 </div>
-              ))}
-              <Link
+                <Link href="/about" onClick={() => setMenuOpen(false)} className="block text-[15px] font-[700] tracking-[0.005em] text-[#0A0A0A]">
+                  About
+                </Link>
+              </div>
+              <BrandButton
                 href="/contact"
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex items-center justify-center w-full h-11 rounded-lg bg-accent text-[#0A0A0A] text-[14px] font-[900]"
+                variant="gold"
+                fullWidth
+                icon="arrow-up-right"
+                iconPosition="end"
               >
                 Contact us
-              </Link>
+              </BrandButton>
             </div>
           </motion.div>
         )}

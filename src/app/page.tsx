@@ -10,10 +10,14 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
+import { AlertCircle, CalendarClock, CheckCircle2, MapPin, Sparkles, Wrench } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { FadeUp } from "@/components/motion/FadeUp";
+import { ScrollJackSection } from "@/components/motion/ScrollJackSection";
+import { StickyHeroSeam } from "@/components/motion/StickyHeroSeam";
 import { HeroHeading } from "@/components/home/HeroHeading";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
+import { SectionDivider } from "@/components/ui/SectionDivider";
 import { SpeakersCarousel } from "@/components/home/SpeakersCarousel";
 import { WhyUsStory } from "@/components/home/WhyUsStory";
 import { usePrefersFineHover } from "@/lib/usePrefersFineHover";
@@ -127,6 +131,63 @@ const AGENDA_TEASER = [
   { time: "17:30", title: "Founder Networking", detail: "Structured investor and partner connections" },
 ];
 
+const HOME_CASE_STUDIES = [
+  {
+    id: "01",
+    title: "Campus Innovators to First Revenue",
+    challenge: "Early-stage founders lacked trusted mentors and structured go-to-market guidance.",
+    action: "Ran a 10-week founder sprint with weekly advisory sessions and peer accountability pods.",
+    result: "37 teams shipped MVPs; 14 secured first paying customers.",
+    imageAlt: "Young African founders collaborating during a Youth+ Africa workshop",
+    image: "/images/case-studies/case-study-01.png",
+  },
+  {
+    id: "02",
+    title: "Women-Led Venture Support",
+    challenge: "High-potential women founders were underconnected to growth-focused networks.",
+    action: "Built targeted founder circles and warm-intro pathways to technical and funding partners.",
+    result: "12 ventures formed strategic partnerships within one quarter.",
+    imageAlt: "African women leaders during a Youth+ Africa strategy session",
+    image: "/images/case-studies/case-study-02.png",
+  },
+  {
+    id: "03",
+    title: "Regional Talent Exchange",
+    challenge: "Young operators in different African markets had limited cross-border collaboration channels.",
+    action: "Created exchange cohorts and role-based mentorship anchored in live problem-solving.",
+    result: "90+ operators completed exchange tracks across 8 countries.",
+    imageAlt: "African innovation team engaging in a Youth+ Africa leadership session",
+    image: "/images/case-studies/case-study-03.png",
+  },
+  {
+    id: "04",
+    title: "Youth+ Radio Audience Expansion",
+    challenge: "Community stories were not consistently reaching new youth audiences outside core cities.",
+    action: "Launched a content sprint with guest operators, weekly publishing cadence, and partner cross-promotion.",
+    result: "Listener engagement grew 2.4x and community signups increased by 38% in one quarter.",
+    imageAlt: "Podcast style studio production with youth hosts",
+    image: "/images/case-studies/case-study-04.png",
+  },
+  {
+    id: "05",
+    title: "Partner Activation for Skills Cohorts",
+    challenge: "Institutional partners needed clearer execution models for practical youth upskilling events.",
+    action: "Co-designed a shared cohort playbook with mentor matching, project checkpoints, and outcome tracking.",
+    result: "4 partner-backed cohorts launched with 82% completion and stronger placement pathways.",
+    imageAlt: "Facilitator leading a collaborative youth workshop",
+    image: "/images/case-studies/case-study-05.png",
+  },
+  {
+    id: "06",
+    title: "Summit-to-Program Conversion Pipeline",
+    challenge: "High summit attendance did not reliably convert into long-term program participation.",
+    action: "Built a 30-day follow-up sequence with segmented tracks, office hours, and peer accountability pods.",
+    result: "Post-event conversion into active events improved by 46% year over year.",
+    imageAlt: "Conference attendees networking after a keynote session",
+    image: "/images/case-studies/case-study-06.png",
+  },
+] as const;
+
 const staggerContainer = {
   hidden: {},
   show: {
@@ -182,11 +243,11 @@ function LiveStat({
 
   return (
     <div ref={ref} className="text-center">
-      <div className="text-accent text-[42px] md:text-[64px] leading-[0.9] tracking-[-0.03em] font-[900]">
+      <div className="text-stat text-accent">
         {count}
         {suffix}
       </div>
-      <div className="mt-2 text-secondary text-[13px] font-[700] tracking-[0.02em]">
+      <div className="mt-2 text-label text-secondary">
         {label}
       </div>
     </div>
@@ -195,19 +256,45 @@ function LiveStat({
 
 export default function Home() {
   const heroRef = useRef<HTMLElement | null>(null);
+  const summitRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
+  });
+  const { scrollYProgress: summitProgress } = useScroll({
+    target: summitRef,
+    offset: ["start end", "end start"],
   });
   const heroImageY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const heroImageScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
   const heroContentY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
   const heroOverlayOpacity = useTransform(scrollYProgress, [0, 1], [0.62, 0.76]);
+  const heroSeamY = useTransform(scrollYProgress, [0, 1], ["0%", "24%"]);
+  const heroSeamOpacity = useTransform(scrollYProgress, [0, 1], [0.24, 0.78]);
+  const summitMediaY = useTransform(summitProgress, [0, 1], ["12%", "-10%"]);
+  const summitMediaScale = useTransform(summitProgress, [0, 0.5, 1], [0.96, 1, 1.04]);
+  const summitCopyY = useTransform(summitProgress, [0, 1], ["10%", "-6%"]);
+  const summitStatsY = useTransform(summitProgress, [0, 1], ["8%", "-4%"]);
   const reduceMotion = useReducedMotion();
   const [openFeatured, setOpenFeatured] = useState<number | null>(null);
   const [hoverTier, setHoverTier] = useState<number | null>(null);
   const fineHover = usePrefersFineHover();
   const { dismissed: mobileTicketCtaDismissed, dismiss: dismissMobileTicketCta } = useMobileTicketCta();
+  const caseStudiesViewportRef = useRef<HTMLDivElement | null>(null);
+  const caseStudiesTrackRef = useRef<HTMLDivElement | null>(null);
+  const [caseCursorActive, setCaseCursorActive] = useState(false);
+  const [caseCursorPoint, setCaseCursorPoint] = useState({ x: 0, y: 0 });
+  const [caseIsDragging, setCaseIsDragging] = useState(false);
+  const [caseDragOffset, setCaseDragOffset] = useState(0);
+  const [caseActiveIndex, setCaseActiveIndex] = useState(0);
+  const caseDragStartXRef = useRef(0);
+  const caseDragOffsetRef = useRef(0);
+  const casePointerIdRef = useRef<number | null>(null);
+  const caseMovedRef = useRef(false);
+  const [caseCardWidth, setCaseCardWidth] = useState(0);
+  const [caseGap, setCaseGap] = useState(16);
+  const [caseVisibleCount, setCaseVisibleCount] = useState(1);
+  const CASE_DRAG_THRESHOLD = 60;
 
   const heroBackdropEase: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
   const heroEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -303,11 +390,225 @@ export default function Home() {
     },
   };
 
+  useEffect(() => {
+    const measure = () => {
+      const viewport = caseStudiesViewportRef.current;
+      const track = caseStudiesTrackRef.current;
+      if (!viewport || !track) return;
+      const card = track.querySelector<HTMLElement>("[data-case-study-card]");
+      if (!card) return;
+      const cardWidth = card.offsetWidth;
+      const trackStyle = window.getComputedStyle(track);
+      const gap = parseFloat(trackStyle.columnGap || trackStyle.gap || "16");
+      const visible = Math.max(1, Math.round(viewport.clientWidth / (cardWidth + gap)));
+      setCaseCardWidth(cardWidth);
+      setCaseGap(Number.isFinite(gap) ? gap : 16);
+      setCaseVisibleCount(visible);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  const caseMaxIndex = Math.max(0, HOME_CASE_STUDIES.length - caseVisibleCount);
+  const caseStep = caseCardWidth + caseGap;
+  const caseSafeIndex = Math.min(caseActiveIndex, caseMaxIndex);
+  const caseBaseOffset = -caseSafeIndex * caseStep;
+
+  const clampCaseIndex = (next: number) => Math.max(0, Math.min(caseMaxIndex, next));
+
+  const goToCaseStudy = (next: number) => {
+    setCaseActiveIndex(clampCaseIndex(next));
+  };
+
+  const slideCaseStudies = (direction: "prev" | "next") => {
+    goToCaseStudy(caseSafeIndex + (direction === "next" ? 1 : -1));
+  };
+
+  const onCasePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    casePointerIdRef.current = event.pointerId;
+    caseDragStartXRef.current = event.clientX;
+    caseDragOffsetRef.current = 0;
+    caseMovedRef.current = false;
+    setCaseIsDragging(true);
+    setCaseDragOffset(0);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const onCasePointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    if (!caseIsDragging || casePointerIdRef.current !== event.pointerId) return;
+    const delta = event.clientX - caseDragStartXRef.current;
+    if (Math.abs(delta) > 4) caseMovedRef.current = true;
+    const atStart = caseSafeIndex === 0;
+    const atEnd = caseSafeIndex === caseMaxIndex;
+    let resisted = delta;
+    if ((atStart && delta > 0) || (atEnd && delta < 0)) {
+      resisted = delta * 0.35;
+    }
+    caseDragOffsetRef.current = resisted;
+    setCaseDragOffset(resisted);
+  };
+
+  const endCasePointer = (pointerId: number) => {
+    if (casePointerIdRef.current !== pointerId) return;
+    const finalOffset = caseDragOffsetRef.current;
+    setCaseIsDragging(false);
+    casePointerIdRef.current = null;
+    caseDragOffsetRef.current = 0;
+    setCaseDragOffset(0);
+    if (finalOffset <= -CASE_DRAG_THRESHOLD) {
+      goToCaseStudy(caseSafeIndex + 1);
+      return;
+    }
+    if (finalOffset >= CASE_DRAG_THRESHOLD) {
+      goToCaseStudy(caseSafeIndex - 1);
+    }
+  };
+
+  const onCasePointerUp: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    endCasePointer(event.pointerId);
+  };
+
+  const onCasePointerCancel: React.PointerEventHandler<HTMLDivElement> = (event) => {
+    endCasePointer(event.pointerId);
+  };
+
+  const homeCaseStudiesSection = (
+    <section id="home-case-studies" className="relative bg-white py-14 md:py-20">
+      <SectionDivider contentWidth className="absolute top-0" />
+      <div className="page mx-auto max-w-[1440px]">
+        <div className="inline-flex items-center rounded-md border border-accent/80 bg-accent/15 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
+          Case Studies
+        </div>
+        <h2 className="mt-4 max-w-[17ch] text-[32px] font-[900] leading-[1.02] tracking-[-0.04em] md:text-[48px] text-[#0A0A0A]">
+          Tangible outcomes from real ecosystem work.
+        </h2>
+
+        <div className="relative left-1/2 mt-8 w-screen -translate-x-1/2 border-y border-white/10 bg-[#0A0A0A] px-4 py-5 md:px-6 md:py-6 lg:px-8">
+          <div className="mb-4 flex items-center justify-between md:mb-5">
+            <p className="text-[11px] font-[800] uppercase tracking-[0.24em] text-white/55">
+              <span className="lg:hidden">Drag to explore</span>
+              <span className="hidden lg:inline">6 case studies</span>
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => slideCaseStudies("prev")}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/35 bg-white/0 text-white transition-colors hover:border-accent hover:bg-accent hover:text-[#0A0A0A]"
+                aria-label="Previous case study"
+              >
+                &larr;
+              </button>
+              <button
+                type="button"
+                onClick={() => slideCaseStudies("next")}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/35 bg-white/0 text-white transition-colors hover:border-accent hover:bg-accent hover:text-[#0A0A0A]"
+                aria-label="Next case study"
+              >
+                &rarr;
+              </button>
+            </div>
+          </div>
+
+          <div
+            ref={caseStudiesViewportRef}
+            className={`relative overflow-hidden touch-pan-y select-none ${
+              caseIsDragging ? "cursor-grabbing" : "cursor-grab"
+            }`}
+            onPointerDown={onCasePointerDown}
+            onPointerMove={onCasePointerMove}
+            onPointerUp={onCasePointerUp}
+            onPointerCancel={onCasePointerCancel}
+            onMouseEnter={() => setCaseCursorActive(true)}
+            onMouseLeave={() => setCaseCursorActive(false)}
+            onMouseMove={(event) => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              setCaseCursorPoint({
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top,
+              });
+            }}
+          >
+            <div
+              ref={caseStudiesTrackRef}
+              className="flex gap-4 pb-1 md:gap-6 will-change-transform"
+              style={{
+                transform: `translate3d(${caseBaseOffset + caseDragOffset}px, 0, 0)`,
+                transition: caseIsDragging
+                  ? "none"
+                  : `transform ${reduceMotion ? 1 : 600}ms cubic-bezier(0.16, 1, 0.3, 1)`,
+              }}
+            >
+              {HOME_CASE_STUDIES.map((study) => (
+                <article
+                  key={study.title}
+                  data-case-study-card
+                  className="w-[min(88vw,420px)] shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#111111] md:w-[calc((100vw-4.75rem)/2)] lg:w-[calc((100vw-6.5rem)/2)]"
+                >
+                  <div className="relative h-[170px] md:h-[180px]">
+                    <Image
+                      src={study.image}
+                      alt={study.imageAlt}
+                      fill
+                      sizes="(max-width: 767px) 88vw, 50vw"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
+                  </div>
+                  <div className="grid grid-cols-[auto_1fr] gap-3 p-4 md:p-5">
+                    <p className="text-[34px] font-[800] leading-none tracking-[-0.02em] text-white/90">{study.id}</p>
+                    <div>
+                      <h3 className="text-[17px] md:text-[18px] font-[900] leading-[1.15] tracking-[-0.02em] text-white">
+                        {study.title}
+                      </h3>
+                      <p className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-[800] uppercase tracking-[0.08em] text-white/55">
+                        <AlertCircle size={12} aria-hidden="true" />
+                        Challenge
+                      </p>
+                      <p className="mt-1 text-[13px] leading-[1.55] text-white/80">{study.challenge}</p>
+                      <p className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-[800] uppercase tracking-[0.08em] text-white/55">
+                        <Wrench size={12} aria-hidden="true" />
+                        What we did
+                      </p>
+                      <p className="mt-1 text-[13px] leading-[1.55] text-white/80">{study.action}</p>
+                      <p className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-[800] uppercase tracking-[0.08em] text-accent">
+                        <CheckCircle2 size={12} aria-hidden="true" />
+                        Result
+                      </p>
+                      <p className="mt-1 text-[13px] leading-[1.55] text-white">{study.result}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <AnimatePresence>
+              {caseCursorActive ? (
+                <motion.div
+                  className="pointer-events-none absolute z-20 hidden h-16 w-16 items-center justify-center rounded-full border border-accent bg-black/70 text-[11px] font-[900] uppercase tracking-[0.1em] text-accent md:flex"
+                  style={{ left: caseCursorPoint.x, top: caseCursorPoint.y, x: "-50%", y: "-50%" }}
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ duration: 0.16, ease: "easeOut" }}
+                >
+                  Drag
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
   return (
     <main
       className={`${mobileTicketCtaDismissed ? "pb-0" : "pb-24"} md:pb-0 transition-[padding] duration-200`}
     >
-      {/* Hero (full-bleed image, single clean text reveal). */}
+      <StickyHeroSeam
+        sheetClassName="rounded-t-[24px] overflow-hidden"
+        hero={
       <section
         id="hero"
         ref={heroRef}
@@ -355,6 +656,16 @@ export default function Home() {
               "radial-gradient(circle at 18% 22%, rgba(229,194,34,0.16) 0%, transparent 36%), radial-gradient(circle at 82% 78%, rgba(229,194,34,0.1) 0%, transparent 40%)",
           }}
         />
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-[180px] pointer-events-none"
+          style={{
+            y: heroSeamY,
+            opacity: heroSeamOpacity,
+            background:
+              "linear-gradient(to top, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.1) 34%, transparent 100%)",
+          }}
+        />
 
         <motion.div
           className="relative page mx-auto max-w-[1440px] min-h-[calc(100vh-84px)] py-12 md:py-14 xl:py-16 flex items-center"
@@ -372,7 +683,7 @@ export default function Home() {
             >
               <motion.div
                 variants={heroEnterBadge}
-                className="inline-flex items-center gap-3 rounded-md border border-accent/85 bg-black/30 px-3.5 py-1.5 text-accent text-[11px] font-[800] tracking-[0.12em] uppercase"
+                className="inline-flex items-center gap-3 rounded-md border-[1.5px] border-accent/85 bg-black/30 px-3.5 py-1.5 text-label text-accent"
               >
                 <span className="md:hidden">Youth+ · Tickets Live</span>
                 <span className="hidden md:inline">Youth+ Africa Festival 2026 · Tickets Live</span>
@@ -385,7 +696,7 @@ export default function Home() {
 
               <motion.p
                 variants={heroEnterBody}
-                className="mt-6 text-[16px] md:text-[18px] 2xl:text-[20px] leading-[1.55] text-white/85 max-w-[62ch]"
+                className="mt-6 text-lead max-w-[62ch] text-white/80"
               >
                 Join founders, operators, investors, and builders driving the next
                 decade of African innovation. Secure your ticket now while this
@@ -399,13 +710,13 @@ export default function Home() {
                 <SwapArrowButton
                   href="/events"
                   compact
-                  className="h-12 min-w-0 flex-1 basis-0 rounded-md font-[900] text-[13px] sm:text-[15px] md:flex-none md:basis-auto md:px-4"
+                  className="h-12 min-w-0 flex-1 basis-0 rounded-md font-[600] text-[0.9375rem] tracking-[0.01em] md:flex-none md:basis-auto md:px-4"
                 >
                   Tickets
                 </SwapArrowButton>
                 <Link
                   href="/events"
-                  className="inline-flex min-w-0 flex-1 basis-0 items-center justify-center h-12 px-3 sm:px-5 rounded-md border border-white/20 bg-white/5 text-white text-[13px] sm:text-[15px] font-[800] hover:border-accent hover:text-accent transition-colors text-center leading-snug md:inline-flex md:flex-none md:basis-auto md:w-auto"
+                  className="inline-flex min-w-0 flex-1 basis-0 items-center justify-center h-12 px-3 sm:px-5 rounded-md border border-white/20 bg-white/5 text-white text-[0.9375rem] font-[600] tracking-[0.01em] hover:border-accent hover:text-accent transition-colors text-center leading-snug md:inline-flex md:flex-none md:basis-auto md:w-auto"
                 >
                   Pass Types
                 </Link>
@@ -413,7 +724,7 @@ export default function Home() {
 
               <motion.div
                 variants={heroEnterLine}
-                className="mt-7 hidden md:flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] 2xl:text-[14px] text-white/80"
+                className="mt-7 hidden md:flex flex-wrap items-center gap-x-5 gap-y-2 text-small text-white/80"
               >
                 <span>Instant checkout</span>
                 <span>•</span>
@@ -430,7 +741,7 @@ export default function Home() {
             >
               <motion.div
                 variants={heroEnterLine}
-                className="text-white/60 text-[11px] uppercase tracking-[0.24em] font-[800]"
+                className="text-label text-white/55"
               >
                 Partners
               </motion.div>
@@ -463,15 +774,20 @@ export default function Home() {
           </motion.div>
         </motion.div>
       </section>
-
+        }
+      >
       {/* Summit snapshot section (inspired by ATS structure). */}
-      <section id="summit-snapshot" className="bg-white text-[#0A0A0A]">
-        <div className="page mx-auto max-w-[1440px] py-14 md:py-20 min-w-0 w-full box-border">
+      <ScrollJackSection id="summit-snapshot" className="bg-white text-[#0A0A0A]" intensity={1.1}>
+        <div
+          ref={summitRef}
+          className="page mx-auto max-w-[1440px] py-14 md:py-20 min-w-0 w-full box-border"
+        >
           {/* Single column on small screens — 12-col + gap can exceed viewport width and clip copy (html overflow-x: clip). */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center min-w-0 w-full">
             <div className="lg:col-span-7 order-2 lg:order-1 min-w-0 max-w-full w-full">
               <motion.div
                 className="relative h-[248px] sm:h-[280px] md:h-[320px] w-full max-w-full min-w-0 overflow-hidden"
+                style={{ y: summitMediaY, scale: summitMediaScale }}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true, margin: "-80px" }}
@@ -516,15 +832,16 @@ export default function Home() {
             </div>
 
             <div className="lg:col-span-5 order-1 lg:order-2 min-w-0 max-w-full w-full">
-              <FadeUp className="min-w-0 max-w-full w-full">
-                <h2 className="text-[38px] md:text-[54px] leading-[0.95] tracking-[-0.04em] font-[900] break-words">
+              <motion.div style={{ y: summitCopyY }}>
+                <FadeUp className="min-w-0 max-w-full w-full">
+                <h2 className="text-h1 text-primary break-words">
                   The Leading
                   <br />
                   African Youth
                   <br />
                   Innovation Summit
                 </h2>
-                <p className="mt-6 w-full text-secondary text-[15px] leading-[1.7] break-words [word-break:break-word] hyphens-auto">
+                <p className="mt-6 w-full text-lead break-words [word-break:break-word] hyphens-auto">
                   {
                     "For builders, founders, investors, and ecosystem partners shaping what comes next across Africa."
                   }
@@ -532,18 +849,22 @@ export default function Home() {
                 <div className="mt-8 min-w-0 max-w-full">
                   <SwapArrowButton
                     href="/events"
-                    className="h-11 px-5 text-[14px] font-[800] rounded-md"
+                    className="h-11 px-5 text-[0.9375rem] font-[600] tracking-[0.01em] rounded-md"
                     hoverTextClassName="hover:text-white"
                     hoverBgClassName="hover:bg-[#0A0A0A]"
                   >
                     What to expect
                   </SwapArrowButton>
                 </div>
-              </FadeUp>
+                </FadeUp>
+              </motion.div>
             </div>
           </div>
 
-          <div className="mt-10 md:mt-12 border-t border-borderLight pt-8">
+          <motion.div
+            className="mt-10 md:mt-12 border-t border-borderLight pt-8"
+            style={{ y: summitStatsY }}
+          >
             <div className="mx-auto max-w-[980px] grid grid-cols-2 md:grid-cols-4 gap-8 place-items-center">
               {[
                 { value: 24, suffix: "", label: "Strategic Partners" },
@@ -556,9 +877,10 @@ export default function Home() {
                 </FadeUp>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </ScrollJackSection>
+      </StickyHeroSeam>
 
       <SpeakersCarousel />
 
@@ -568,6 +890,7 @@ export default function Home() {
       <section id="editorial-sessions" className="relative overflow-hidden border-y border-white/10">
         <motion.div
           className="absolute inset-0"
+          style={{ y: "6%" }}
           animate={{ scale: [1, 1.035, 1] }}
           transition={{ duration: 22, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }}
         >
@@ -577,7 +900,7 @@ export default function Home() {
             fill
             priority
             sizes="100vw"
-            className="object-cover object-[center_28%]"
+            className="object-cover object-top"
           />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/88 via-[#0A0A0A]/72 to-[#0A0A0A]/84" />
@@ -586,24 +909,24 @@ export default function Home() {
           <div className="grid grid-cols-12 gap-8 lg:gap-10 items-start lg:items-center">
             <div className="col-span-12 lg:col-span-8">
               <FadeUp>
-                <div className="inline-flex items-center rounded-md border border-accent/75 bg-black/25 px-3.5 py-1.5 text-accent text-[11px] font-[800] tracking-[0.12em] uppercase">
+                <div className="inline-flex items-center rounded-md border-[1.5px] border-accent/75 bg-black/25 px-3.5 py-1.5 text-label text-accent">
                   Editorial sessions
                 </div>
-                <h3 className="mt-5 text-white font-[900] tracking-[-0.04em] text-[30px] md:text-[48px] leading-[1.03] max-w-[14ch]">
+                <h3 className="mt-5 text-h2 max-w-[14ch] text-white" style={{ fontVariationSettings: '"opsz" 36' }}>
                   Build with clarity. Pitch with confidence.
                 </h3>
-                <p className="mt-5 text-white text-[15px] md:text-[17px] leading-[1.72] max-w-[56ch] [text-shadow:0_1px_12px_rgba(10,10,10,0.55)]">
+                <p className="mt-5 text-lead max-w-[56ch] text-white/80 [text-shadow:0_1px_12px_rgba(10,10,10,0.55)]">
                   Short formats, strong facilitation, and outcomes you can measure.
                   Bring your idea; leave with a plan.
                 </p>
                 <div className="mt-7 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center rounded-md border border-white/20 bg-black/25 px-3 py-1.5 text-[12px] font-[700] text-white/85">
+                  <span className="inline-flex items-center rounded-md border border-white/20 bg-black/25 px-3 py-1.5 text-small text-white/80">
                     Practical keynotes
                   </span>
-                  <span className="inline-flex items-center rounded-md border border-white/20 bg-black/25 px-3 py-1.5 text-[12px] font-[700] text-white/85">
+                  <span className="inline-flex items-center rounded-md border border-white/20 bg-black/25 px-3 py-1.5 text-small text-white/80">
                     Builder workshops
                   </span>
-                  <span className="inline-flex items-center rounded-md border border-white/20 bg-black/25 px-3 py-1.5 text-[12px] font-[700] text-white/85">
+                  <span className="inline-flex items-center rounded-md border border-white/20 bg-black/25 px-3 py-1.5 text-small text-white/80">
                     Real networking
                   </span>
                 </div>
@@ -618,10 +941,10 @@ export default function Home() {
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <FadeUp>
             <div>
-              <div className="text-[12px] font-[700] tracking-[0.12em] uppercase text-secondary">
+              <div className="text-label text-secondary">
                 Featured events
               </div>
-              <h2 className="mt-4 text-[28px] md:text-[34px] leading-[1.1] tracking-[-0.04em] font-[800] text-primary">
+              <h2 className="mt-4 text-h2 text-primary">
                 Choose your track. Reserve your seat.
               </h2>
             </div>
@@ -629,7 +952,7 @@ export default function Home() {
           <div className="hidden md:block">
             <Link
               href="/events"
-              className="text-[14px] font-[700] text-primary inline-flex items-center gap-2 hover:underline underline-offset-4"
+              className="text-[0.9375rem] font-[500] text-primary inline-flex items-center gap-2 hover:underline underline-offset-4"
             >
               View all <span aria-hidden="true">→</span>
             </Link>
@@ -698,14 +1021,23 @@ export default function Home() {
                   </div>
 
                   <div className="lg:col-span-7 p-4 sm:p-5 md:p-6">
-                    <h3 className="text-[22px] sm:text-[24px] md:text-[28px] leading-[1.08] font-[900] tracking-[-0.03em] text-primary">
+                    <h3 className="text-h3 text-primary">
                       {event.title}
                     </h3>
-                    <div className="mt-2.5 text-[12px] sm:text-[13px] font-[700] text-secondary">{event.meta}</div>
+                    <div className="mt-2.5 inline-flex items-center gap-1.5 text-[12px] sm:text-[13px] font-[700] text-secondary">
+                      <Sparkles size={14} aria-hidden="true" />
+                      {event.meta}
+                    </div>
                     <div className="mt-3 flex flex-col gap-1 rounded-md border border-borderLight/80 bg-[#fafafa] px-3 py-2.5 sm:flex-row sm:items-center sm:gap-3 sm:border-0 sm:bg-transparent sm:p-0">
-                      <div className="text-[13px] font-[800] text-primary">{event.date}</div>
+                      <div className="inline-flex items-center gap-1.5 text-[13px] font-[800] text-primary">
+                        <CalendarClock size={14} aria-hidden="true" />
+                        {event.date}
+                      </div>
                       <span className="hidden h-3 w-px bg-borderLight sm:block" aria-hidden="true" />
-                      <div className="text-[13px] font-[700] text-secondary leading-snug">{event.venue}</div>
+                      <div className="inline-flex items-center gap-1.5 text-[13px] font-[700] text-secondary leading-snug">
+                        <MapPin size={14} aria-hidden="true" />
+                        {event.venue}
+                      </div>
                     </div>
                     <p className="mt-3 text-[14px] md:text-[15px] leading-[1.65] text-secondary max-w-[64ch]">
                       {event.value}
@@ -781,7 +1113,7 @@ export default function Home() {
                     <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                       <SwapArrowButton
                         href="/events"
-                        className="h-12 w-full justify-center px-4 rounded-md text-[14px] font-[800] sm:h-[42px] sm:w-auto"
+                        className="h-12 w-full justify-center px-4 rounded-md text-[0.9375rem] font-[600] tracking-[0.01em] sm:h-[42px] sm:w-auto"
                         hoverTextClassName="hover:text-white"
                         hoverBgClassName="hover:bg-[#0A0A0A]"
                       >
@@ -789,14 +1121,14 @@ export default function Home() {
                       </SwapArrowButton>
                       <Link
                         href="/events"
-                        className="inline-flex h-12 w-full sm:h-[42px] sm:w-auto items-center justify-center rounded-md border border-borderLight px-4 text-[14px] font-[800] text-primary hover:border-accent transition-colors"
+                        className="inline-flex h-12 w-full sm:h-[42px] sm:w-auto items-center justify-center rounded-md border border-borderLight px-4 text-[0.9375rem] font-[600] tracking-[0.01em] text-primary hover:border-accent transition-colors"
                       >
                         View agenda
                       </Link>
                       <button
                         type="button"
                         onClick={() => setOpenFeatured((prev) => (prev === idx ? null : idx))}
-                        className={`inline-flex h-12 w-full sm:h-[42px] sm:w-auto items-center justify-center rounded-md border border-borderLight bg-white px-4 text-[13px] font-[800] text-primary/90 hover:border-accent transition-colors ${
+                        className={`inline-flex h-12 w-full sm:h-[42px] sm:w-auto items-center justify-center rounded-md border border-borderLight bg-white px-4 text-[0.9375rem] font-[600] tracking-[0.01em] text-primary/90 hover:border-accent transition-colors ${
                           fineHover ? "md:hidden" : ""
                         }`}
                       >
@@ -824,13 +1156,13 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
           <div className="lg:col-span-5">
             <FadeUp>
-              <div className="text-[12px] font-[700] tracking-[0.12em] uppercase text-secondary">
+              <div className="text-label text-secondary">
                 Ticket tiers
               </div>
-              <h3 className="mt-4 text-[28px] md:text-[34px] leading-[1.08] tracking-[-0.04em] font-[900] text-primary">
+              <h3 className="mt-4 text-h2 text-primary">
                 Pick your pass before this batch closes.
               </h3>
-              <p className="mt-4 text-[15px] leading-[1.7] text-secondary max-w-[52ch]">
+              <p className="mt-4 text-lead max-w-[52ch]">
                 Transparent pricing windows, secure checkout, and instant QR delivery.
                 Early Bird inventory updates in real-time.
               </p>
@@ -858,7 +1190,7 @@ export default function Home() {
                     return (
                       <div className="relative z-10 flex h-full flex-col justify-between">
                         <div
-                          className={`text-[12px] font-[800] uppercase tracking-[0.1em] ${
+                          className={`text-label ${
                             useLightText ? "text-white" : "text-black"
                           }`}
                         >
@@ -866,9 +1198,10 @@ export default function Home() {
                         </div>
                         <div>
                           <div
-                            className={`mt-2 text-[28px] leading-none tracking-[-0.03em] font-[900] ${
+                            className={`mt-2 text-[2.15rem] md:text-[2.35rem] leading-[0.95] tracking-[-0.02em] font-[800] ${
                               useLightText ? "text-white" : "text-black"
                             }`}
+                            style={{ fontVariationSettings: '"opsz" 30' }}
                           >
                             {tier.price}
                           </div>
@@ -918,10 +1251,10 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
           <div className="lg:col-span-4">
             <FadeUp>
-              <div className="text-[12px] font-[700] tracking-[0.12em] uppercase text-secondary">
+              <div className="text-label text-secondary">
                 Agenda teaser
               </div>
-              <h3 className="mt-4 text-[28px] md:text-[34px] leading-[1.08] tracking-[-0.04em] font-[900] text-primary">
+              <h3 className="mt-4 text-h2 text-primary">
                 What your summit day looks like.
               </h3>
             </FadeUp>
@@ -940,10 +1273,10 @@ export default function Home() {
                   variants={staggerItem}
                   className="grid grid-cols-[74px_1fr] gap-4 rounded-md border border-borderLight bg-white p-4 md:p-5"
                 >
-                  <div className="text-[18px] font-[900] tracking-[-0.02em] text-accent">{slot.time}</div>
+                  <div className="text-h3 text-accent">{slot.time}</div>
                   <div>
-                    <div className="text-[17px] font-[800] text-primary tracking-[-0.01em]">{slot.title}</div>
-                    <div className="mt-1 text-[14px] text-secondary">{slot.detail}</div>
+                    <div className="text-h3 text-primary">{slot.title}</div>
+                    <div className="mt-1 text-small">{slot.detail}</div>
                   </div>
                 </motion.div>
               ))}
@@ -952,14 +1285,16 @@ export default function Home() {
         </div>
       </section>
 
+      {homeCaseStudiesSection}
+
       <section id="buyer-faqs" className="page mx-auto max-w-[1440px] py-14 border-t border-borderLight/80">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           <div className="lg:col-span-6">
             <FadeUp>
-              <div className="text-[12px] font-[700] tracking-[0.12em] uppercase text-secondary">
+              <div className="text-label text-secondary">
                 Buy with confidence
               </div>
-              <h3 className="mt-4 text-[28px] md:text-[34px] leading-[1.08] tracking-[-0.04em] font-[900] text-primary">
+              <h3 className="mt-4 text-h2 text-primary">
                 Everything you need before checkout.
               </h3>
               <motion.div
@@ -977,7 +1312,7 @@ export default function Home() {
                   <motion.div
                     key={item}
                     variants={staggerItem}
-                    className="flex items-start gap-3 text-[14px] text-secondary"
+                    className="flex items-start gap-3 text-small"
                   >
                     <span className="mt-[7px] h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
                     <span>{item}</span>
@@ -989,8 +1324,8 @@ export default function Home() {
           <div className="lg:col-span-6">
             <FadeUp>
               <div className="rounded-md border border-borderLight bg-white p-5 md:p-6">
-                <div className="text-[13px] font-[800] uppercase tracking-[0.08em] text-accent">Common buyer FAQs</div>
-                <div className="mt-4 space-y-4 text-[14px] text-secondary">
+                <div className="text-label text-accent">Common buyer FAQs</div>
+                <div className="mt-4 space-y-4 text-small">
                   <div>
                     <div className="font-[800] text-primary">Can I transfer a ticket?</div>
                     <div className="mt-1">Yes. Name transfer is allowed up to 72 hours before the summit.</div>

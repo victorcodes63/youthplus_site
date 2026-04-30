@@ -143,8 +143,12 @@ function PhaseHeadline({
 
   return (
     <motion.h2
-      style={{ opacity: isLast ? fadeIn : mergedOpacity, y }}
-      className="absolute inset-x-0 font-black text-4xl md:text-6xl leading-[1.05] tracking-[-0.04em] text-black text-center"
+      style={{
+        opacity: isLast ? fadeIn : mergedOpacity,
+        y,
+        fontVariationSettings: '"opsz" 48',
+      }}
+      className="absolute inset-x-0 text-h1 text-black text-center"
     >
       {children}
     </motion.h2>
@@ -223,7 +227,7 @@ export function WhyUsStory() {
             className="flex items-center justify-center gap-3 mb-10"
           >
             <div className="w-6 h-px bg-[#e5c222]" />
-            <span className="text-[#e5c222] text-[11px] font-semibold tracking-[3px] uppercase">
+            <span className="text-label text-[#e5c222]">
               Why Youth+ Africa
             </span>
             <div className="w-6 h-px bg-[#e5c222]" />
@@ -250,7 +254,7 @@ export function WhyUsStory() {
               return (
                 <div
                   key={i}
-                  className="flex flex-wrap justify-center gap-x-[0.3em] text-[20px] md:text-[26px] leading-relaxed tracking-tight"
+                  className="flex flex-wrap justify-center gap-x-[0.3em] text-h3 leading-relaxed"
                 >
                   {line.words.map((word, wi) => (
                     <RevealToken
@@ -274,24 +278,24 @@ export function WhyUsStory() {
             className="mt-10 pt-8 border-t border-black/10 flex items-start justify-center gap-8 flex-wrap"
           >
             <div className="text-center flex-shrink-0">
-              <span className="block font-black text-[2.5rem] leading-none text-[#e5c222]">
+              <span className="block text-stat text-[#e5c222]">
                 8
               </span>
-              <span className="block text-[11px] uppercase tracking-[1.5px] text-black/45 mt-1">
+              <span className="block text-label text-black/45 mt-1">
                 Years
               </span>
             </div>
             <div className="w-px h-14 bg-black/15 flex-shrink-0 self-center" />
             <div className="text-center flex-shrink-0">
-              <span className="block font-black text-[2.5rem] leading-none text-[#e5c222]">
+              <span className="block text-stat text-[#e5c222]">
                 10K+
               </span>
-              <span className="block text-[11px] uppercase tracking-[1.5px] text-black/45 mt-1">
+              <span className="block text-label text-black/45 mt-1">
                 Transformed
               </span>
             </div>
             <div className="w-px h-14 bg-black/15 flex-shrink-0 self-center" />
-            <p className="text-base leading-relaxed text-black/65 max-w-[340px] text-center">
+            <p className="text-lead max-w-[340px] text-center">
               <span className="text-black/90 font-medium">
                 This isn&apos;t a platform. It&apos;s a movement.
               </span>{" "}
