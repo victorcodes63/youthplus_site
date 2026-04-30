@@ -8,6 +8,8 @@ type Variant = "hero" | "card";
 type LogoTone = "auto" | "white" | "gold";
 type TileStyle = "plain" | "boxed";
 type FrameStyle = "default" | "none";
+const BRAND_GOLD_FILTER =
+  "brightness(0) saturate(100%) invert(77%) sepia(58%) saturate(778%) hue-rotate(358deg) brightness(95%) contrast(94%)";
 
 export function PartnerLogoMarquee({
   label = "Partners",
@@ -109,14 +111,13 @@ export function PartnerLogoMarquee({
                     useWhiteTone
                       ? "max-h-[34px] w-auto object-contain brightness-0 invert opacity-85 md:max-h-[42px]"
                       : useGoldTone
-                        ? "max-h-[34px] w-auto object-contain opacity-95 md:max-h-[42px]"
+                        ? "max-h-[34px] w-auto object-contain md:max-h-[42px]"
                         : "max-h-[34px] w-auto object-contain md:max-h-[42px]"
                   }
                   style={
                     useGoldTone
                       ? {
-                          filter:
-                            "brightness(0) saturate(100%) invert(78%) sepia(38%) saturate(878%) hue-rotate(354deg) brightness(95%) contrast(95%)",
+                          filter: BRAND_GOLD_FILTER,
                         }
                       : undefined
                   }
