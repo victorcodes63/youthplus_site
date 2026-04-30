@@ -37,15 +37,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://youthplusafrica.com"),
   title: {
-    default: "Youth+ Africa | Nairobi Summit 2027",
+    default: "Youth+ Africa | Nairobi Summit 2026",
     template: "%s | Youth+ Africa",
   },
   description:
-    "Youth+ Africa Summit 2027 in Nairobi. Book tickets, explore speakers, and join builders shaping Africa's next decade.",
+    "Youth+ Africa Summit 2026 in Nairobi. Book tickets, explore speakers, and join builders shaping Africa's next decade.",
   openGraph: {
-    title: "Youth+ Africa | Nairobi Summit 2027",
+    title: "Youth+ Africa | Nairobi Summit 2026",
     description:
-      "Book your Summit 2027 ticket. Meet founders, operators, investors, and creators shaping Africa's future.",
+      "Book your Summit 2026 ticket. Meet founders, operators, investors, and creators shaping Africa's future.",
     url: "https://youthplusafrica.com",
     siteName: "Youth+ Africa",
     type: "website",
@@ -60,9 +60,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Youth+ Africa | Nairobi Summit 2027",
+    title: "Youth+ Africa | Nairobi Summit 2026",
     description:
-      "Reserve your ticket for Youth+ Africa Summit 2027 and connect with Africa's top builders.",
+      "Reserve your ticket for Youth+ Africa Summit 2026 and connect with Africa's top builders.",
     images: [BRAND_ICON.onLight],
   },
   icons: {
@@ -97,7 +97,7 @@ export default function RootLayout({
       <body className={`${fraunces.variable} ${plusJakarta.variable} antialiased`}>
         <AdaptiveCursor />
         <SiteHeader />
-        <div className="pt-[84px]">{children}</div>
+        <div className="pt-[var(--site-header-height)]">{children}</div>
         <SiteFooter />
       </body>
     </html>

@@ -16,7 +16,7 @@ type Speaker = {
   linkedin: string;
 };
 
-const SPEAKERS: Speaker[] = [
+export const SPEAKERS: Speaker[] = [
   {
     name: "Amina Wafula",
     title: "Head of Product",

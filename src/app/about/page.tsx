@@ -1,31 +1,25 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Building2,
-  CalendarHeart,
-  Compass,
-  Fingerprint,
   Glasses,
-  Handshake,
   Mail,
   Network,
   Rocket,
+  UserRound,
 } from "lucide-react";
-import { useEffect, useState, type SVGProps } from "react";
+import { type SVGProps } from "react";
 import { MilestoneTimeline, type Milestone } from "@/components/about/MilestoneTimeline";
-import { StackingPillars, type Pillar } from "@/components/about/StackingPillars";
 import { HeroHeading } from "@/components/home/HeroHeading";
 import { StickyHeroSeam } from "@/components/motion/StickyHeroSeam";
 import { useHeroEnterAnimations } from "@/components/motion/useHeroEnterAnimations";
 import { BrandedFaqSection } from "@/components/site/BrandedFaqSection";
 import { JoinUsCta } from "@/components/site/JoinUsCta";
-import { PartnerLogoMarquee } from "@/components/site/PartnerLogoMarquee";
 import { SectionDivider } from "@/components/ui/SectionDivider";
 import { ScrollJackSection } from "@/components/motion/ScrollJackSection";
-import { PARTNER_LOGOS } from "@/data/partnerLogos";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 
 /** Lucide dropped the branded LinkedIn icon; keep a small outline glyph for team links. */
 function LinkedinIcon({
@@ -97,7 +91,6 @@ const teamMembers: Array<{
     name: "J. I. Mideva Muhandale",
     role: "Digital Communication & Social Media Manager",
     bio: "Leads Youth+ digital storytelling, social strategy, and audience engagement across campaigns and community touchpoints.",
-    photo: "https://www.youthplusafrica.com/images/J.mideva.jpg",
     linkedin: "#",
     email: "mailto:team@youthplusafrica.com",
   },
@@ -141,8 +134,6 @@ const operatingModes = [
 ] as const;
 
 const ABOUT_HERO_IMAGE = "/images/event.png";
-const ABOUT_EDITORIAL_STRIP_IMAGE = "/images/about-editorial-strip.png";
-const ABOUT_PARTNER_LOGOS = PARTNER_LOGOS;
 
 const timelineMilestones: Milestone[] = [
   {
@@ -183,147 +174,6 @@ const timelineMilestones: Milestone[] = [
   },
 ];
 
-const programPillars: Pillar[] = [
-  {
-    number: "01",
-    title: "Community Infrastructure",
-    description:
-      "Curated spaces where high-agency young people build trust, skills, and execution rhythm.",
-    outcome: "A stronger pipeline of coordinated builders.",
-    icon: Fingerprint,
-    eyebrow: "Community",
-    offerings: [
-      "Founder Circles",
-      "Operator Cohorts",
-      "Weekly Builder Rooms",
-      "Onboarding Rituals",
-      "Cross-City Convenings",
-    ],
-    image: "/images/pillar1.jpeg",
-    imageAlt: "African youth founders collaborating in a community workspace",
-    ctaHref: "/events",
-    ctaLabel: "View Events",
-  },
-  {
-    number: "02",
-    title: "Founder & Talent Support",
-    description:
-      "Mentorship, strategic guidance, and ecosystem introductions for emerging founders and operators.",
-    outcome: "Faster validation and clearer growth paths.",
-    icon: Compass,
-    eyebrow: "Founder Support",
-    offerings: [
-      "1:1 Operator Mentorship",
-      "Strategic Office Hours",
-      "Investor Warm Intros",
-      "Skill-Up Sprints",
-      "Hiring Support",
-    ],
-    image: "/images/pillar2.jpeg",
-    imageAlt: "African mentors and founders discussing growth strategy",
-    ctaHref: "/partner-with-us",
-    ctaLabel: "Partner With Us",
-  },
-  {
-    number: "03",
-    title: "Convenings & Events",
-    description:
-      "High-intent forums, summits, and local gatherings that unlock practical collaboration.",
-    outcome: "More deals, partnerships, and opportunities.",
-    icon: CalendarHeart,
-    eyebrow: "Convenings",
-    offerings: [
-      "Annual Summit",
-      "Operator Forums",
-      "Investor Roundtables",
-      "City Salons",
-      "Workshop Series",
-    ],
-    image: "/images/pillar3.jpeg",
-    imageAlt: "African innovation event with speakers and attendees",
-    ctaHref: "/events",
-    ctaLabel: "See Events",
-  },
-  {
-    number: "04",
-    title: "Partnership Studio",
-    description:
-      "Co-designed events with institutions and brands aligned to youth-centered African growth.",
-    outcome: "Long-term, measurable ecosystem outcomes.",
-    icon: Handshake,
-    eyebrow: "Partnerships",
-    offerings: [
-      "Co-Designed Programs",
-      "Brand Collaborations",
-      "Talent Pipelines",
-      "Research Partnerships",
-      "Custom Cohorts",
-    ],
-    image: "/images/pillar4.jpeg",
-    imageAlt: "African professionals in a partnership planning meeting",
-    ctaHref: "/contact",
-    ctaLabel: "Start Collaboration",
-  },
-];
-
-const eventImagery = [
-  {
-    src: "/images/event-energy-workshop.png",
-    alt: "African founders collaborating during a strategy workshop in Nairobi",
-    caption: "Builder workshops that turn ideas into execution plans.",
-    title: "Operator Workshops",
-  },
-  {
-    src: "/images/event-energy-panel.png",
-    alt: "Panel discussion at an African innovation event",
-    caption: "Conversations with operators, investors, and policy voices.",
-    title: "Panel Conversations",
-  },
-  {
-    src: "/images/event-energy-networking.png",
-    alt: "Community event participants networking in Africa",
-    caption: "Cross-country connections that compound opportunity.",
-    title: "Ecosystem Networking",
-  },
-];
-
-
-const testimonials = [
-  {
-    quote:
-      "Youth+ Africa consistently delivers execution-focused talent and practical collaboration spaces.",
-    name: "Ecosystem Partner",
-    role: "Program Director, Nairobi",
-    avatars: [
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=240&q=80",
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=240&q=80",
-      "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?auto=format&fit=crop&w=240&q=80",
-    ],
-  },
-  {
-    quote:
-      "The quality of founders and operators in their network is exceptional and partnership-ready.",
-    name: "Investor Ally",
-    role: "Venture Partner, Lagos",
-    avatars: [
-      "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=240&q=80",
-      "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?auto=format&fit=crop&w=240&q=80",
-      "https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=240&q=80",
-    ],
-  },
-  {
-    quote:
-      "A trusted ecosystem collaborator for execution-focused youth programs and high-signal founder communities.",
-    name: "Strategic Partner",
-    role: "Regional Programs Lead, Kigali",
-    avatars: [
-      "https://images.unsplash.com/photo-1541535881962-3bb380b08458?auto=format&fit=crop&w=240&q=80",
-      "https://images.unsplash.com/photo-1557053910-d9eadeed1c58?auto=format&fit=crop&w=240&q=80",
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=240&q=80",
-    ],
-  },
-];
-
 const faqs = [
   {
     question: "Who is Youth+ Africa for?",
@@ -355,7 +205,6 @@ const faqs = [
 export default function AboutPage() {
   const { heroBackdropEase, heroEnterBadge, heroEnterBody, heroEnterCta, heroLeftOrchestra, reduceMotion } =
     useHeroEnterAnimations();
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const principles = [
     "Execution over optics",
     "Pan-African by design",
@@ -399,20 +248,12 @@ export default function AboutPage() {
     },
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveTestimonial((current) => (current + 1) % testimonials.length);
-    }, 4600);
-    return () => clearInterval(timer);
-  }, []);
-
-
   return (
     <main className="bg-white text-[#0A0A0A]">
       <StickyHeroSeam
         sheetClassName="rounded-t-[24px] overflow-hidden"
         hero={
-          <section className="relative min-h-[calc(100vh-84px)] overflow-hidden bg-[#0A0A0A]">
+          <section className="relative -mt-[var(--site-header-height)] min-h-[100dvh] overflow-hidden bg-[#0A0A0A] pt-[var(--site-header-height)]">
             <motion.div
               className="absolute inset-0"
               initial={reduceMotion ? false : { opacity: 0, scale: 1.05 }}
@@ -452,7 +293,7 @@ export default function AboutPage() {
               }}
             />
 
-            <div className="relative page mx-auto grid min-h-[calc(100vh-84px)] max-w-[1440px] items-center gap-7 py-12 md:py-14 xl:py-16 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="relative page mx-auto grid min-h-[calc(100dvh_-_var(--site-header-height))] max-w-[1440px] items-center gap-7 py-12 md:py-14 xl:py-16 lg:grid-cols-[1fr_auto] lg:items-center">
               <motion.div
                 className="max-w-[66ch] text-left text-white"
                 variants={heroLeftOrchestra}
@@ -496,19 +337,28 @@ export default function AboutPage() {
               Join upcoming sessions, start a strategic partnership, or connect
               directly with our team.
             </p>
-            <div className="mt-5 space-y-2.5">
-              <Link
+            <div className="mt-5 flex flex-col gap-2.5">
+              <SwapArrowButton
                 href="/events"
-                className="inline-flex h-11 w-full items-center justify-center rounded-md bg-accent px-4 text-[13px] font-[900] uppercase tracking-[0.08em] text-[#0A0A0A] transition hover:brightness-95"
+                compact
+                className="h-11 w-full justify-center rounded-md text-[13px] font-[900] uppercase tracking-[0.08em]"
               >
                 Join Community
-              </Link>
-              <Link
+              </SwapArrowButton>
+              <SwapArrowButton
                 href="/partner-with-us"
-                className="inline-flex h-11 w-full items-center justify-center rounded-md border border-white/25 bg-white/5 px-4 text-[13px] font-[800] uppercase tracking-[0.08em] text-white transition-colors hover:border-accent hover:text-accent"
+                compact
+                className="h-11 w-full justify-center rounded-md border border-white/25 text-[13px] font-[900] uppercase tracking-[0.08em]"
+                backgroundColor="rgba(255,255,255,0.06)"
+                backgroundHoverColor="#FFFFFF"
+                textColor="#FFFFFF"
+                textHoverColor="#0A0A0A"
+                fillColor="rgba(255,255,255,0.14)"
+                iconColor="#FFFFFF"
+                iconHoverFill="rgba(10,10,10,0.12)"
               >
                 Partner With Us
-              </Link>
+              </SwapArrowButton>
             </div>
             <p className="mt-4 text-[12px] leading-[1.6] text-white/75">
               Typical response: within 48 business hours.
@@ -671,53 +521,6 @@ export default function AboutPage() {
       </StickyHeroSeam>
 
       <ScrollJackSection
-        id="about-editorial-sessions"
-        className="relative overflow-hidden border-y border-white/10"
-        intensity={0.95}
-      >
-        <div className="absolute inset-0">
-          <Image
-            src={ABOUT_EDITORIAL_STRIP_IMAGE}
-            alt="African keynote speaker at a Youth+ style summit"
-            fill
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/88 via-[#0A0A0A]/58 to-[#0A0A0A]/28" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(229,194,34,0.13),transparent_40%)]" />
-        <div className="relative page mx-auto max-w-[1440px] flex min-h-[340px] items-center py-16 md:min-h-[430px] md:py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <p className="inline-flex rounded-md border border-accent/70 bg-black/30 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
-              Editorial Sessions
-            </p>
-            <h2 className="mt-4 max-w-[12ch] text-[34px] font-[900] leading-[0.95] tracking-[-0.04em] text-white md:text-[56px]">
-              Build with clarity. Pitch with confidence.
-            </h2>
-            <p className="mt-4 max-w-[56ch] text-[14px] leading-[1.75] text-white/85 md:text-[16px]">
-              Short formats, strong facilitation, and outcomes you can measure. Bring your idea,
-              leave with a plan.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {["Practical keynotes", "Builder workshops", "Real networking"].map((item) => (
-                <span
-                  key={item}
-                  className="inline-flex items-center rounded-md border border-white/20 bg-black/25 px-3 py-1.5 text-[12px] font-[700] text-white/90"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </ScrollJackSection>
-
-      <ScrollJackSection
         className="relative bg-white py-14 md:py-20"
         intensity={1.05}
       >
@@ -762,12 +565,8 @@ export default function AboutPage() {
                         className={["object-cover", member.avatarObjectPosition].filter(Boolean).join(" ")}
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center text-[12px] font-[900] uppercase tracking-[0.08em] text-[#0A0A0A]">
-                        {member.name
-                          .split(" ")
-                          .map((part) => part[0])
-                          .join("")
-                          .slice(0, 2)}
+                      <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_34%_22%,rgba(229,194,34,0.28),transparent_56%)] text-[#0A0A0A]">
+                        <UserRound className="h-6 w-6" strokeWidth={1.8} aria-hidden />
                       </div>
                     )}
                   </div>
@@ -834,202 +633,6 @@ export default function AboutPage() {
             </h2>
             <div className="mt-12">
               <MilestoneTimeline milestones={timelineMilestones} theme="light" />
-            </div>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      <section className="relative bg-white py-14 md:py-20">
-        <SectionDivider contentWidth className="absolute top-0 opacity-80" />
-        <div className="page mx-auto max-w-[1440px] pt-8 md:pt-10">
-          <div className="inline-flex items-center rounded-md border border-accent/80 bg-accent/15 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
-            What We Do
-          </div>
-          <h2 className="mt-4 max-w-[17ch] text-[32px] font-[900] leading-[1.02] tracking-[-0.04em] md:text-[48px]">
-            Four pillars that drive ecosystem outcomes.
-          </h2>
-          <p className="mt-3 max-w-[60ch] text-[15px] leading-[1.8] text-secondary md:text-[16px]">
-            Scroll to explore each pillar — cards stack as you move, anchoring the
-            full picture without losing the thread of any one program.
-          </p>
-          <div className="mt-10 md:mt-12">
-            <StackingPillars pillars={programPillars} />
-          </div>
-        </div>
-      </section>
-
-      <motion.section
-        className="relative bg-white py-14 md:py-20"
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionReveal}
-      >
-        <SectionDivider contentWidth className="absolute top-0 opacity-80" />
-        <div className="page mx-auto max-w-[1440px] pt-8 md:pt-10">
-          <div className="inline-flex items-center rounded-md border border-accent/80 bg-accent/15 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
-            African Event Energy
-          </div>
-          <h2 className="mt-4 max-w-[18ch] text-[32px] font-[900] leading-[1.02] tracking-[-0.04em] md:text-[48px]">
-            Spaces where collaboration feels local and continental.
-          </h2>
-          <motion.div
-            className="mt-8 grid gap-4 lg:grid-cols-12"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-          >
-            <motion.figure
-              key={eventImagery[0].src}
-              className="group relative h-[320px] overflow-hidden rounded-2xl border border-black/10 lg:col-span-7 lg:h-[430px]"
-              variants={itemReveal}
-              whileHover={{ y: -5, scale: 1.006 }}
-              transition={{ duration: 0.25 }}
-            >
-              <Image
-                src={eventImagery[0].src}
-                alt={eventImagery[0].alt}
-                fill
-                sizes="(max-width: 1024px) 100vw, 58vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-              <figcaption className="absolute inset-x-0 bottom-0 px-5 pb-5 pt-12 text-white md:px-6 md:pb-6">
-                <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
-                  {eventImagery[0].title}
-                </p>
-                <p className="mt-2 text-[14px] leading-[1.6] md:text-[15px]">
-                  {eventImagery[0].caption}
-                </p>
-              </figcaption>
-            </motion.figure>
-
-            <div className="grid gap-4 lg:col-span-5">
-              {eventImagery.slice(1).map((image) => (
-                <motion.figure
-                  key={image.src}
-                  className="group relative h-[210px] overflow-hidden rounded-2xl border border-black/10 md:h-[205px]"
-                  variants={itemReveal}
-                  whileHover={{ y: -4, scale: 1.006 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 40vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-                  <figcaption className="absolute inset-x-0 bottom-0 px-5 pb-5 pt-12 text-white">
-                    <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
-                      {image.title}
-                    </p>
-                    <p className="mt-1.5 text-[13px] leading-[1.55] md:text-[14px]">
-                      {image.caption}
-                    </p>
-                  </figcaption>
-                </motion.figure>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      <motion.section
-        className="relative bg-white py-14 md:py-20"
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionReveal}
-      >
-        <SectionDivider contentWidth className="absolute top-0 opacity-80" />
-        <div className="page mx-auto max-w-[1440px] pt-8 md:pt-10">
-          <div className="inline-flex items-center rounded-md border border-accent/80 bg-accent/15 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
-            Trust Signals
-          </div>
-          <h2 className="mt-4 max-w-[18ch] text-[32px] font-[900] leading-[1.02] tracking-[-0.04em] md:text-[48px]">
-            Built with leading ecosystem collaborators.
-          </h2>
-          <motion.div
-            className="mt-8"
-            initial={{ opacity: 0, y: 18, scale: 0.99 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <PartnerLogoMarquee
-              label="Partners"
-              variant="card"
-              durationSec={40}
-              logoTone="gold"
-              logos={ABOUT_PARTNER_LOGOS}
-              frameStyle="none"
-            />
-          </motion.div>
-          <motion.div
-            className="mt-10"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-          >
-            <AnimatePresence mode="wait">
-              <motion.blockquote
-                key={testimonials[activeTestimonial].name}
-                className="w-full"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-              >
-                <p className="text-[26px] leading-[1.35] tracking-[-0.02em] text-[#0A0A0A] md:text-[38px]">
-                  &ldquo;{testimonials[activeTestimonial].quote}&rdquo;
-                </p>
-                <footer className="mt-8 flex flex-wrap items-center gap-4 md:gap-6">
-                  <div className="flex -space-x-3">
-                    {testimonials[activeTestimonial].avatars.map((avatar) => (
-                      <span
-                        key={avatar}
-                        className="relative h-12 w-12 overflow-hidden rounded-full border border-borderLight bg-white"
-                      >
-                        <Image
-                          src={avatar}
-                          alt="Testimonial profile"
-                          fill
-                          sizes="48px"
-                          className="object-cover"
-                        />
-                      </span>
-                    ))}
-                  </div>
-                  <span className="hidden h-10 w-px bg-borderLight md:block" />
-                  <div className="text-[13px] leading-[1.6] text-secondary md:text-[15px]">
-                    <span className="font-[800] text-[#0A0A0A]">
-                      {testimonials[activeTestimonial].name}
-                    </span>
-                    {" · "}
-                    {testimonials[activeTestimonial].role}
-                  </div>
-                </footer>
-              </motion.blockquote>
-            </AnimatePresence>
-
-            <div className="mt-6 flex items-center gap-2">
-              {testimonials.map((item, idx) => (
-                <button
-                  key={item.name}
-                  type="button"
-                  onClick={() => setActiveTestimonial(idx)}
-                  aria-label={`Show testimonial ${idx + 1}`}
-                  className={`h-2.5 rounded-full transition-all ${
-                    idx === activeTestimonial
-                      ? "w-8 bg-accent"
-                      : "w-2.5 bg-borderLight"
-                  }`}
-                />
-              ))}
             </div>
           </motion.div>
         </div>

@@ -27,6 +27,24 @@ const SPONSORSHIP_OPPORTUNITIES = [
   },
 ] as const;
 
+const SPONSORSHIP_TIERS = [
+  {
+    name: "Community",
+    focus: "Consistent grassroots visibility",
+    benefits: ["Logo placement on selected sessions", "Community newsletter mention", "Social media feature slots"],
+  },
+  {
+    name: "Growth",
+    focus: "Campaign-level collaboration and reach",
+    benefits: ["Everything in Community", "Co-branded workshop activation", "Speaking or panel participation"],
+  },
+  {
+    name: "Headline",
+    focus: "Flagship positioning and strategic integration",
+    benefits: ["Everything in Growth", "Flagship event branding prominence", "Custom partnership storytelling rollout"],
+  },
+] as const;
+
 export default function PartnerWithUsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success">("idle");
@@ -239,6 +257,40 @@ export default function PartnerWithUsPage() {
             </FadeUp>
           </div>
         </div>
+
+        <FadeUp delayMs={120}>
+          <section className="mt-12 border-t border-borderLight pt-10 md:mt-14 md:pt-12">
+            <div className="inline-flex items-center rounded-md border border-accent/80 bg-accent/15 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
+              Sponsorship tiers
+            </div>
+            <h2 className="mt-4 max-w-[18ch] text-[30px] font-[900] leading-[1.02] tracking-[-0.035em] md:text-[44px]">
+              Choose the partnership depth that matches your goals.
+            </h2>
+            <p className="mt-3 max-w-[64ch] text-[14px] leading-[1.75] text-secondary md:text-[16px]">
+              Indicative benefits to help your team evaluate collaboration scope across Youth+ programs.
+            </p>
+
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {SPONSORSHIP_TIERS.map((tier) => (
+                <article key={tier.name} className="rounded-md border border-borderLight bg-white p-5 shadow-[0_10px_35px_rgba(10,10,10,0.05)]">
+                  <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">{tier.name}</p>
+                  <p className="mt-2 text-[20px] font-[900] leading-[1.08] tracking-[-0.02em] text-[#0A0A0A]">{tier.focus}</p>
+                  <ul className="mt-4 space-y-2.5 border-t border-borderLight pt-4">
+                    {tier.benefits.map((benefit) => (
+                      <li key={benefit} className="flex gap-2 text-[14px] leading-[1.6] text-secondary">
+                        <span className="mt-[8px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <BrandButton href="/contact" variant="outlineSubtle" uppercase className="mt-6 w-full">
+                    Request Package
+                  </BrandButton>
+                </article>
+              ))}
+            </div>
+          </section>
+        </FadeUp>
       </div>
     </section>
   );

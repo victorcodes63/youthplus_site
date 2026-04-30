@@ -8,9 +8,9 @@ import { FadeUp } from "@/components/motion/FadeUp";
 import { ScrollJackSection } from "@/components/motion/ScrollJackSection";
 import { StickyHeroSeam } from "@/components/motion/StickyHeroSeam";
 import { useHeroEnterAnimations } from "@/components/motion/useHeroEnterAnimations";
+import { BrandButton } from "@/components/ui/BrandButton";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import { SectionDivider } from "@/components/ui/SectionDivider";
-import { BrandButton } from "@/components/ui/BrandButton";
 
 type EventSession = {
   channel: "IG Live" | "Webinar" | "On-site";
@@ -167,21 +167,21 @@ const pastEvents = [
     schedule: "Friday 26, Sep 2025, 2PM - 6PM",
     location: "LaunchPad Coworking, Westlands Avenue",
     detail: "Flagship youth culture and policy forum bringing creators, leaders, and partners together.",
-    image: "https://www.youthplusafrica.com/images/connect-fxpesa.jpeg",
+    image: "/images/event-energy-networking.png",
   },
   {
     title: "The Currency of Exchange",
     schedule: "30th August 2025, 9AM - 3PM",
     location: "Strathmore Business School",
     detail: "Driving business evolution through practical cross-sector conversations and founder networking.",
-    image: "https://www.youthplusafrica.com/images/currency-exchange.jpeg",
+    image: "/images/event-energy-workshop.png",
   },
   {
     title: "The Wealth BluePrint",
     schedule: "16th and 23rd September 2025, 7PM - 8PM",
     location: "Online",
     detail: "Behavior, planning, and investment insights designed for Gen Z wealth confidence and growth.",
-    image: "https://www.youthplusafrica.com/images/wealth-bp.jpeg",
+    image: "/images/event-energy-panel.png",
   },
 ];
 
@@ -287,6 +287,43 @@ const monthPosterFallback: Record<string, string> = {
   December: "https://www.youthplusafrica.com/images/visioning_poster.png",
 };
 
+const ABOUT_EDITORIAL_STRIP_IMAGE = "/images/about-editorial-strip.png";
+const eventImagery = [
+  {
+    src: "/images/event-energy-workshop.png",
+    alt: "African founders collaborating during a strategy workshop in Nairobi",
+    caption: "Builder workshops that turn ideas into execution plans.",
+    title: "Operator Workshops",
+  },
+  {
+    src: "/images/event-energy-panel.png",
+    alt: "Panel discussion at an African innovation event",
+    caption: "Conversations with operators, investors, and policy voices.",
+    title: "Panel Conversations",
+  },
+  {
+    src: "/images/event-energy-networking.png",
+    alt: "Community event participants networking in Africa",
+    caption: "Cross-country connections that compound opportunity.",
+    title: "Ecosystem Networking",
+  },
+];
+
+function parseSessionDate(rawDate: string): Date | null {
+  const candidate = rawDate.split("&")[0].split("and")[0]?.trim();
+  if (!candidate) return null;
+  const parsed = new Date(candidate);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function splitPrice(price: string) {
+  const [currency = "", ...rest] = price.trim().split(" ");
+  return {
+    currency: currency || "KES",
+    amount: rest.join(" ") || price,
+  };
+}
+
 export function EventsClient() {
   const [activePosterKey, setActivePosterKey] = useState<string | null>(null);
   const [hoverPass, setHoverPass] = useState<number | null>(null);
@@ -329,6 +366,8 @@ export function EventsClient() {
       if (activeEvent) break;
     }
   }
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   return (
     <main className="bg-white text-[#0A0A0A]">
@@ -336,7 +375,7 @@ export function EventsClient() {
         hero={
           <section
             ref={heroRef}
-            className="relative overflow-hidden bg-[#0A0A0A] min-h-[calc(100vh-84px)]"
+            className="relative -mt-[var(--site-header-height)] min-h-[100dvh] overflow-hidden bg-[#0A0A0A] pt-[var(--site-header-height)]"
           >
             <motion.div className="absolute inset-0" style={{ y: heroImageY, scale: heroImageScale }}>
               <motion.div
@@ -378,7 +417,7 @@ export function EventsClient() {
               }}
             />
 
-            <div className="page relative z-10 mx-auto flex min-h-[calc(100vh-84px)] max-w-[1440px] items-center py-12 md:py-14 xl:py-16 text-white">
+            <div className="page relative z-10 mx-auto flex min-h-[calc(100dvh_-_var(--site-header-height))] max-w-[1440px] items-center py-12 md:py-14 xl:py-16 text-white">
               <motion.div
                 variants={heroLeftOrchestra}
                 initial="hidden"
@@ -409,14 +448,21 @@ export function EventsClient() {
               >
                 Get Summit Tickets
               </SwapArrowButton>
-              <BrandButton
+              <SwapArrowButton
                 href="#monthly-tracks"
-                variant="outlineSubtle"
-                uppercase
-                className="h-12 border-white/20 bg-white/5 px-4 text-[13px] text-white/90 hover:border-accent hover:text-accent"
+                compact
+                smoothScroll
+                className="h-12 min-w-[164px] rounded-md border border-white/20 px-4 text-[13px] font-[900] uppercase tracking-[0.06em]"
+                backgroundColor="rgba(255,255,255,0.05)"
+                backgroundHoverColor="#FFFFFF"
+                textColor="#FFFFFF"
+                textHoverColor="#0A0A0A"
+                fillColor="rgba(255,255,255,0.12)"
+                iconColor="#FFFFFF"
+                iconHoverFill="rgba(10,10,10,0.12)"
               >
                 View 2026 calendar
-              </BrandButton>
+              </SwapArrowButton>
             </motion.div>
             <motion.div variants={heroEnterLine} className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12px] font-[700] tracking-[0.02em] text-white/75 md:text-[13px]">
               <span>Secure checkout</span>
@@ -466,6 +512,9 @@ export function EventsClient() {
         <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3">
           {featuredExperiences.map((item, index) => (
             <FadeUp key={item.title} delayMs={index * 70}>
+              {(() => {
+                const priceParts = splitPrice(item.priceFrom);
+                return (
               <motion.article
                 whileHover={reduceMotion ? undefined : { y: -6, boxShadow: "0 22px 44px rgba(10,10,10,0.14)" }}
                 transition={{ type: "spring", stiffness: 210, damping: 24 }}
@@ -500,7 +549,14 @@ export function EventsClient() {
                   <div className="mt-5 grid grid-cols-2 gap-3">
                     <div className="rounded-md border border-borderLight bg-[#fafafa] px-3 py-2.5">
                       <p className="text-[10px] font-[800] uppercase tracking-[0.09em] text-secondary">From</p>
-                      <p className="mt-1 text-[20px] font-[900] leading-none tracking-[-0.03em]">{item.priceFrom}</p>
+                      <div className="mt-1 leading-none">
+                        <p className="text-[10px] font-[900] uppercase tracking-[0.1em] text-secondary">
+                          {priceParts.currency}
+                        </p>
+                        <p className="mt-1 text-[20px] font-[900] tracking-[-0.03em]">
+                          {priceParts.amount}
+                        </p>
+                      </div>
                     </div>
                     <div className="rounded-md border border-accent/50 bg-accent/10 px-3 py-2.5">
                       <p className="text-[10px] font-[800] uppercase tracking-[0.09em] text-secondary">Seats left</p>
@@ -525,6 +581,8 @@ export function EventsClient() {
                   </div>
                 </div>
               </motion.article>
+                );
+              })()}
             </FadeUp>
           ))}
         </div>
@@ -602,12 +660,15 @@ export function EventsClient() {
           <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3">
             {premiumPasses.map((pass, idx) => (
               <FadeUp key={pass.name} delayMs={idx * 70}>
+                {(() => {
+                  const priceParts = splitPrice(pass.price);
+                  return (
                 <motion.article
                   onMouseEnter={() => setHoverPass(idx)}
                   onMouseLeave={() => setHoverPass((prev) => (prev === idx ? null : prev))}
                   whileHover={reduceMotion ? undefined : { y: -6, boxShadow: "0 18px 42px rgba(10,10,10,0.12)" }}
                   transition={{ type: "spring", stiffness: 210, damping: 24 }}
-                  className={`relative overflow-hidden rounded-md border p-4 md:p-5 bg-white shadow-[0_6px_24px_rgba(10,10,10,0.04)] h-[220px] ${
+                  className={`relative overflow-hidden rounded-md border p-4 md:p-5 bg-white shadow-[0_6px_24px_rgba(10,10,10,0.04)] min-h-[260px] ${
                     pass.featured ? "border-accent" : "border-borderLight"
                   }`}
                 >
@@ -625,14 +686,25 @@ export function EventsClient() {
                         <div className="flex items-center justify-between gap-3">
                           <p className={`text-[13px] font-[900] uppercase tracking-[0.08em] ${textClass}`}>{pass.name}</p>
                           {pass.featured ? (
-                            <span className="rounded-full border border-accent/60 bg-accent/10 px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] text-[#0A0A0A]">
+                            <span
+                              className={`rounded-full border px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] transition-colors ${
+                                useLightText
+                                  ? "border-white/45 bg-white/12 text-white"
+                                  : "border-accent/60 bg-accent/10 text-[#0A0A0A]"
+                              }`}
+                            >
                               Best value
                             </span>
                           ) : null}
                         </div>
-                        <p className={`mt-4 text-[34px] font-[900] leading-none tracking-[-0.04em] ${textClass}`}>
-                          {pass.price}
-                        </p>
+                        <div className={`mt-4 leading-none ${textClass}`}>
+                          <p className="text-[14px] font-[900] uppercase tracking-[0.1em]">
+                            {priceParts.currency}
+                          </p>
+                          <p className="mt-1 text-[52px] font-[900] tracking-[-0.05em] break-words">
+                            {priceParts.amount}
+                          </p>
+                        </div>
                         <p className={`mt-2 text-[13px] ${textClass}`}>{pass.note}</p>
                         <div className={`mt-4 rounded-lg border px-3 py-2 ${seatsBoxClass}`}>
                           <p className={`text-[10px] font-[800] uppercase tracking-[0.08em] ${seatsLabelClass}`}>
@@ -660,11 +732,121 @@ export function EventsClient() {
                     <div className="absolute inset-0 bg-[#0A0A0A]/68" />
                   </motion.div>
                 </motion.article>
+                  );
+                })()}
               </FadeUp>
             ))}
           </div>
         </div>
       </section>
+
+      <motion.section
+        className="relative bg-white py-14 md:py-20"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.15 }}
+      >
+        <SectionDivider contentWidth className="absolute top-0 opacity-80" />
+        <div className="page mx-auto max-w-[1440px] pt-8 md:pt-10">
+          <div className="inline-flex items-center rounded-md border border-accent/80 bg-accent/15 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
+            African Event Energy
+          </div>
+          <h2 className="mt-4 max-w-[18ch] text-[32px] font-[900] leading-[1.02] tracking-[-0.04em] md:text-[48px]">
+            Spaces where collaboration feels local and continental.
+          </h2>
+          <motion.div className="mt-8 grid gap-4 lg:grid-cols-12">
+            <motion.figure
+              key={eventImagery[0].src}
+              className="group relative h-[320px] overflow-hidden rounded-2xl border border-black/10 lg:col-span-7 lg:h-[430px]"
+              whileHover={{ y: -5, scale: 1.006 }}
+              transition={{ duration: 0.25 }}
+            >
+              <Image
+                src={eventImagery[0].src}
+                alt={eventImagery[0].alt}
+                fill
+                sizes="(max-width: 1024px) 100vw, 58vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+              <figcaption className="absolute inset-x-0 bottom-0 px-5 pb-5 pt-12 text-white md:px-6 md:pb-6">
+                <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">{eventImagery[0].title}</p>
+                <p className="mt-2 text-[14px] leading-[1.6] md:text-[15px]">{eventImagery[0].caption}</p>
+              </figcaption>
+            </motion.figure>
+
+            <div className="grid gap-4 lg:col-span-5">
+              {eventImagery.slice(1).map((image) => (
+                <motion.figure
+                  key={image.src}
+                  className="group relative h-[210px] overflow-hidden rounded-2xl border border-black/10 md:h-[205px]"
+                  whileHover={{ y: -4, scale: 1.006 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                  <figcaption className="absolute inset-x-0 bottom-0 px-5 pb-5 pt-12 text-white">
+                    <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">{image.title}</p>
+                    <p className="mt-1.5 text-[13px] leading-[1.55] md:text-[14px]">{image.caption}</p>
+                  </figcaption>
+                </motion.figure>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      <ScrollJackSection
+        id="about-editorial-sessions"
+        className="relative overflow-hidden border-y border-white/10"
+        intensity={0.95}
+      >
+        <div className="absolute inset-0">
+          <Image
+            src={ABOUT_EDITORIAL_STRIP_IMAGE}
+            alt="African keynote speaker at a Youth+ style summit"
+            fill
+            sizes="100vw"
+            className="object-cover object-[52%_28%] md:object-[50%_24%]"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/88 via-[#0A0A0A]/58 to-[#0A0A0A]/28" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(229,194,34,0.13),transparent_40%)]" />
+        <div className="relative page mx-auto flex min-h-[340px] max-w-[1440px] items-center py-16 md:min-h-[430px] md:py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <p className="inline-flex rounded-md border border-accent/70 bg-black/30 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
+              Editorial Sessions
+            </p>
+            <h2 className="mt-4 max-w-[12ch] text-[34px] font-[900] leading-[0.95] tracking-[-0.04em] text-white md:text-[56px]">
+              Build with clarity. Pitch with confidence.
+            </h2>
+            <p className="mt-4 max-w-[56ch] text-[14px] leading-[1.75] text-white/85 md:text-[16px]">
+              Short formats, strong facilitation, and outcomes you can measure. Bring your idea, leave with a plan.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {["Practical keynotes", "Builder workshops", "Real networking"].map((item) => (
+                <span
+                  key={item}
+                  className="inline-flex items-center rounded-md border border-white/20 bg-black/25 px-3 py-1.5 text-[12px] font-[700] text-white/90"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </ScrollJackSection>
 
       <ScrollJackSection
         id="monthly-tracks"
@@ -699,13 +881,31 @@ export function EventsClient() {
 
                   <div className="grid gap-3 p-3 sm:p-4 md:grid-cols-3 md:gap-4 md:p-5">
                     {track.sessions.map((session) => (
+                      (() => {
+                        const parsedDate = parseSessionDate(session.date);
+                        const isPastSession = parsedDate ? parsedDate < today : false;
+                        return (
                       <motion.button
                         key={`${track.month}-${session.title}`}
                         whileHover={{ scale: 1.02 }}
                         transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                        className="rounded-xl border border-borderLight bg-[#fafafa] p-3.5 text-left sm:p-4"
+                        className={`rounded-[16px] border border-borderLight bg-[#fafafa] p-3.5 text-left sm:p-4 ${
+                          isPastSession ? "opacity-65" : ""
+                        }`}
                         onClick={() => setActivePosterKey(`${track.month}-${session.title}`)}
                       >
+                        <div className="mb-2 flex items-start justify-between gap-2">
+                          <span
+                            className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] ${channelPillClasses[session.channel]}`}
+                          >
+                            {session.channel}
+                          </span>
+                          {isPastSession ? (
+                            <span className="inline-flex rounded-full border border-black/25 bg-black/5 px-2 py-0.5 text-[9px] font-[800] uppercase tracking-[0.1em] text-secondary">
+                              Past
+                            </span>
+                          ) : null}
+                        </div>
                         {session.poster ? (
                           <div className="relative mb-3 aspect-[4/5] overflow-hidden rounded-lg border border-borderLight bg-[#F7F7F7]">
                             <Image
@@ -716,11 +916,6 @@ export function EventsClient() {
                             />
                           </div>
                         ) : null}
-                        <span
-                          className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] ${channelPillClasses[session.channel]}`}
-                        >
-                          {session.channel}
-                        </span>
                         <h3 className="mt-3 text-[16px] font-[900] leading-[1.15] tracking-[-0.018em] text-[#0A0A0A] sm:text-[18px]">
                           {session.title}
                         </h3>
@@ -731,6 +926,8 @@ export function EventsClient() {
                           Click to reveal poster
                         </span>
                       </motion.button>
+                        );
+                      })()
                     ))}
                   </div>
                 </div>

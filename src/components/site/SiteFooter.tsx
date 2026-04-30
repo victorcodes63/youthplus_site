@@ -132,10 +132,18 @@ export function SiteFooter() {
                 Company
               </div>
               <div className="flex flex-col gap-2 text-small text-white/80">
-                <a href="#about" className="hover:text-white transition-colors">About</a>
-                <Link href="/events" className="hover:text-white transition-colors">Our Events</Link>
-                <a href="#sponsors" className="hover:text-white transition-colors">Partners</a>
-                <Link href="/register" className="hover:text-white transition-colors">Register</Link>
+                <Link href="/about" className="hover:text-white transition-colors">
+                  About
+                </Link>
+                <Link href="/events" className="hover:text-white transition-colors">
+                  Our Events
+                </Link>
+                <Link href="/partner-with-us" className="hover:text-white transition-colors">
+                  Partners
+                </Link>
+                <Link href="/events" className="hover:text-white transition-colors">
+                  Register
+                </Link>
               </div>
             </div>
 
@@ -144,8 +152,17 @@ export function SiteFooter() {
                 Attend
               </div>
               <div className="flex flex-col gap-2 text-small text-white/80">
-                <Link href="/events" className="hover:text-white transition-colors">Buy Tickets</Link>
-                <Link href="/profile/tickets" className="hover:text-white transition-colors">My Tickets</Link>
+                <Link href="/events" className="hover:text-white transition-colors">
+                  Buy Tickets
+                </Link>
+                <a
+                  href="https://allaxs.vercel.app/events"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  My Tickets
+                </a>
                 <Link href="/events" className="hover:text-white transition-colors">Venue & Travel</Link>
                 <Link href="/events" className="hover:text-white transition-colors">FAQs</Link>
               </div>

@@ -3,10 +3,128 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import { CalendarHeart, Compass, Fingerprint, Handshake } from "lucide-react";
+import { useEffect, useState } from "react";
+import { StackingPillars, type Pillar } from "@/components/about/StackingPillars";
 import { FadeUp } from "@/components/motion/FadeUp";
 import { JoinUsCta } from "@/components/site/JoinUsCta";
 import { SectionDivider } from "@/components/ui/SectionDivider";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import { VENTURES } from "@/data/ventures";
+
+const programPillars: Pillar[] = [
+  {
+    number: "01",
+    title: "Community Infrastructure",
+    description:
+      "Curated spaces where high-agency young people build trust, skills, and execution rhythm.",
+    outcome: "A stronger pipeline of coordinated builders.",
+    icon: Fingerprint,
+    eyebrow: "Community",
+    offerings: [
+      "Founder Circles",
+      "Operator Cohorts",
+      "Weekly Builder Rooms",
+      "Onboarding Rituals",
+      "Cross-City Convenings",
+    ],
+    image: "/images/pillar1.jpeg",
+    imageAlt: "African youth founders collaborating in a community workspace",
+    ctaHref: "/events",
+    ctaLabel: "View Events",
+  },
+  {
+    number: "02",
+    title: "Founder & Talent Support",
+    description:
+      "Mentorship, strategic guidance, and ecosystem introductions for emerging founders and operators.",
+    outcome: "Faster validation and clearer growth paths.",
+    icon: Compass,
+    eyebrow: "Founder Support",
+    offerings: [
+      "1:1 Operator Mentorship",
+      "Strategic Office Hours",
+      "Investor Warm Intros",
+      "Skill-Up Sprints",
+      "Hiring Support",
+    ],
+    image: "/images/pillar2.jpeg",
+    imageAlt: "African mentors and founders discussing growth strategy",
+    ctaHref: "/partner-with-us",
+    ctaLabel: "Partner With Us",
+  },
+  {
+    number: "03",
+    title: "Convenings & Events",
+    description:
+      "High-intent forums, summits, and local gatherings that unlock practical collaboration.",
+    outcome: "More deals, partnerships, and opportunities.",
+    icon: CalendarHeart,
+    eyebrow: "Convenings",
+    offerings: [
+      "Annual Summit",
+      "Operator Forums",
+      "Investor Roundtables",
+      "City Salons",
+      "Workshop Series",
+    ],
+    image: "/images/pillar3.jpeg",
+    imageAlt: "African innovation event with speakers and attendees",
+    ctaHref: "/events",
+    ctaLabel: "See Events",
+  },
+  {
+    number: "04",
+    title: "Partnership Studio",
+    description:
+      "Co-designed events with institutions and brands aligned to youth-centered African growth.",
+    outcome: "Long-term, measurable ecosystem outcomes.",
+    icon: Handshake,
+    eyebrow: "Partnerships",
+    offerings: [
+      "Co-Designed Programs",
+      "Brand Collaborations",
+      "Talent Pipelines",
+      "Research Partnerships",
+      "Custom Cohorts",
+    ],
+    image: "/images/pillar4.jpeg",
+    imageAlt: "African professionals in a partnership planning meeting",
+    ctaHref: "/contact",
+    ctaLabel: "Start Collaboration",
+  },
+];
+
+function AnimatedStatValue({ value, reduceMotion }: { value: string; reduceMotion: boolean }) {
+  const match = value.match(/^(\d+)(.*)$/);
+  const target = match ? Number(match[1]) : Number.NaN;
+  const suffix = match?.[2] ?? "";
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (reduceMotion || Number.isNaN(target)) return;
+    let frameId = 0;
+    const durationMs = 900;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / durationMs, 1);
+      setCurrent(Math.round(progress * target));
+      if (progress < 1) frameId = requestAnimationFrame(tick);
+    };
+
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, [reduceMotion, target]);
+
+  if (reduceMotion || Number.isNaN(target)) return <>{value}</>;
+  return (
+    <>
+      {current}
+      {suffix}
+    </>
+  );
+}
 
 export default function VenturesPage() {
   const reduceMotion = useReducedMotion();
@@ -23,7 +141,7 @@ export default function VenturesPage() {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#fffdf6_38%,#ffffff_100%)] pt-20 pb-14 text-[#0A0A0A] sm:pt-24 sm:pb-16 md:pt-32 md:pb-24">
+    <section className="relative overflow-x-clip bg-[linear-gradient(180deg,#ffffff_0%,#fffdf6_38%,#ffffff_100%)] pt-20 pb-14 text-[#0A0A0A] sm:pt-24 sm:pb-16 md:pt-32 md:pb-24">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -top-24 left-1/2 h-[360px] w-[760px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(229,194,34,0.16)_0%,rgba(229,194,34,0.05)_45%,transparent_75%)]"
@@ -34,42 +152,75 @@ export default function VenturesPage() {
             initial={reduceMotion ? false : { opacity: 0, y: 14, scale: 0.995 }}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="relative overflow-hidden rounded-2xl border border-borderLight bg-white/92 p-5 shadow-[0_18px_60px_rgba(10,10,10,0.09)] backdrop-blur-sm sm:p-7 md:p-10"
+            className="relative overflow-hidden rounded-2xl border border-borderLight p-5 shadow-[0_18px_60px_rgba(10,10,10,0.09)] sm:p-7 md:p-10"
           >
+            <div aria-hidden className="pointer-events-none absolute inset-0">
+              <Image
+                src="/images/ventures-hero-stage.png"
+                alt=""
+                fill
+                sizes="(max-width: 1024px) 100vw, 1440px"
+                className="object-cover object-[52%_48%]"
+                priority
+              />
+            </div>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-[linear-gradient(104deg,rgba(255,255,255,0.94)_0%,rgba(255,255,255,0.9)_46%,rgba(10,10,10,0.72)_100%)]"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_16%,rgba(229,194,34,0.22),transparent_40%)]"
+            />
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#E5C222]/70 to-transparent"
             />
-            <div className="inline-flex items-center rounded-md border border-accent bg-accent/10 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-[#0A0A0A]">
-              Venture ecosystem
+            <div className="relative z-10 grid grid-cols-1 items-center gap-7 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-8">
+              <div>
+                <div className="inline-flex items-center rounded-md border border-accent bg-accent/10 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-[#0A0A0A]">
+                  Venture ecosystem
+                </div>
+                <h1 className="mt-5 max-w-[15ch] text-[34px] font-[900] leading-[0.94] tracking-[-0.045em] md:text-[58px]">
+                  Invest your attention where youth momentum compounds.
+                </h1>
+                <p className="mt-4 max-w-[68ch] text-[15px] leading-[1.75] text-secondary md:text-[18px]">
+                  Youth+ ventures are built to move from conversation to outcomes.
+                  Each track is purpose-built for distribution, collaboration, and
+                  practical impact across Africa&apos;s next generation of builders.
+                </p>
+                <motion.div
+                  className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center"
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, ease: "easeOut", delay: 0.1 }}
+                >
+                  <SwapArrowButton
+                    href="/partner-with-us"
+                    compact
+                    className="h-11 px-5 text-[14px]"
+                  >
+                    Partner with a venture
+                  </SwapArrowButton>
+                  <SwapArrowButton
+                    href="/contact"
+                    compact
+                    className="h-11 border border-borderLight px-5 text-[14px]"
+                    backgroundColor="#FFFFFF"
+                    backgroundHoverColor="#0A0A0A"
+                    textColor="#0A0A0A"
+                    textHoverColor="#FFFFFF"
+                    fillColor="rgba(10,10,10,0.08)"
+                    iconColor="#0A0A0A"
+                    iconHoverFill="rgba(255,255,255,0.18)"
+                  >
+                    Talk to our team
+                  </SwapArrowButton>
+                </motion.div>
+              </div>
+
+              <div className="hidden lg:block" aria-hidden />
             </div>
-            <h1 className="mt-5 max-w-[15ch] text-[34px] font-[900] leading-[0.94] tracking-[-0.045em] md:text-[58px]">
-              Invest your attention where youth momentum compounds.
-            </h1>
-            <p className="mt-4 max-w-[68ch] text-[15px] leading-[1.75] text-secondary md:text-[18px]">
-              Youth+ ventures are built to move from conversation to outcomes.
-              Each track is purpose-built for distribution, collaboration, and
-              practical impact across Africa&apos;s next generation of builders.
-            </p>
-            <motion.div
-              className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center"
-              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease: "easeOut", delay: 0.1 }}
-            >
-              <Link
-                href="/partner-with-us"
-                className="inline-flex h-11 items-center justify-center rounded-md bg-accent px-6 text-[14px] font-[900] text-[#0A0A0A] transition hover:brightness-95"
-              >
-                Partner with a venture
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex h-11 items-center justify-center rounded-md border border-borderLight bg-white px-6 text-[14px] font-[800] text-[#0A0A0A] transition-colors hover:border-accent"
-              >
-                Talk to our team
-              </Link>
-            </motion.div>
           </motion.div>
         </FadeUp>
 
@@ -81,23 +232,48 @@ export default function VenturesPage() {
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
-            {proofStats.map((stat) => (
+            {proofStats.map((stat, idx) => (
               <motion.div
                 key={stat.label}
-                className="border-l-2 border-accent/65 pl-3"
-                whileHover={reduceMotion ? undefined : { x: 2 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
+                className="flex flex-col items-center justify-center border-l-2 border-accent/65 px-3 py-1 text-center first:border-l-0 last:border-r-2 sm:first:border-l-2"
+                initial={reduceMotion ? false : { opacity: 0, y: 14, scale: 0.98 }}
+                whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, amount: 0.6 }}
+                whileHover={reduceMotion ? undefined : { y: -2, scale: 1.015 }}
+                transition={{
+                  duration: 0.28,
+                  ease: "easeOut",
+                  delay: reduceMotion ? 0 : idx * 0.06,
+                }}
               >
                 <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-secondary">
                   {stat.label}
                 </p>
                 <p className="mt-1 text-[30px] font-[900] leading-none tracking-[-0.03em]">
-                  {stat.value}
+                  <AnimatedStatValue value={stat.value} reduceMotion={!!reduceMotion} />
                 </p>
               </motion.div>
             ))}
           </motion.div>
         </FadeUp>
+
+        <section className="relative mt-12 py-2 lg:mt-14">
+          <SectionDivider className="absolute inset-x-0 top-0" />
+          <div className="pt-8">
+            <div className="inline-flex items-center rounded-md border border-accent/80 bg-accent/15 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
+              Our Core Programs
+            </div>
+            <h2 className="mt-4 max-w-[17ch] text-[32px] font-[900] leading-[1.02] tracking-[-0.04em] md:text-[48px]">
+              Four pillars that drive ecosystem outcomes.
+            </h2>
+            <p className="mt-3 max-w-[60ch] text-[15px] leading-[1.8] text-secondary md:text-[16px]">
+              These programs anchor how Youth+ ventures support founders, communities, and institutions.
+            </p>
+            <div className="mt-10 md:mt-12">
+              <StackingPillars pillars={programPillars} />
+            </div>
+          </div>
+        </section>
 
         <div className="mt-12 space-y-12 lg:mt-14">
           {VENTURES.map((group, groupIndex) => (

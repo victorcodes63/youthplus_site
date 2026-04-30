@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   AnimatePresence,
   motion,
@@ -10,7 +9,7 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import { AlertCircle, CalendarClock, CheckCircle2, MapPin, Sparkles, Wrench } from "lucide-react";
+import { AlertCircle, CalendarClock, CheckCircle2, MapPin, Wrench } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { FadeUp } from "@/components/motion/FadeUp";
 import { ScrollJackSection } from "@/components/motion/ScrollJackSection";
@@ -33,7 +32,7 @@ const FEATURED_EVENTS = [
   {
     title: "AI+ Summit Lab",
     meta: "AI • Product • Leadership",
-    date: "Thu, 20 Feb 2027",
+    date: "Thu, 19 Feb 2026",
     venue: "Sarit Expo Centre, Nairobi",
     image: "/images/AI+.webp",
     value:
@@ -50,7 +49,7 @@ const FEATURED_EVENTS = [
   {
     title: "Blueprint+ Growth Sprint",
     meta: "Strategy • Operations • GTM",
-    date: "Fri, 21 Feb 2027",
+    date: "Fri, 20 Feb 2026",
     venue: "Sarit Expo Centre, Nairobi",
     image: "/images/blueprint+.webp",
     value:
@@ -66,7 +65,7 @@ const FEATURED_EVENTS = [
   {
     title: "Visioning+ Africa Forum",
     meta: "Futures • Policy • Innovation",
-    date: "Sat, 22 Feb 2027",
+    date: "Sat, 21 Feb 2026",
     venue: "Sarit Expo Centre, Nairobi",
     image: "/images/visioning+.webp",
     value:
@@ -82,7 +81,7 @@ const FEATURED_EVENTS = [
   {
     title: "Future of Work",
     meta: "Capital • Revenue • Scale",
-    date: "Sun, 23 Feb 2027",
+    date: "Sun, 22 Feb 2026",
     venue: "Sarit Expo Centre, Nairobi",
     image: "/images/future_of_work+.webp",
     value:
@@ -110,7 +109,7 @@ const TICKET_TIERS = [
     name: "Standard",
     price: "KES 12,000",
     note: "Core summit access",
-    seatsLeft: 380,
+    seatsLeft: 318,
     image: "https://images.unsplash.com/photo-1767884161189-ed2f04d87550?auto=format&fit=crop&w=1200&q=80",
     textTone: "dark",
   },
@@ -118,7 +117,7 @@ const TICKET_TIERS = [
     name: "VIP",
     price: "KES 22,000",
     note: "Priority seating + private networking",
-    seatsLeft: 94,
+    seatsLeft: 82,
     image: "https://images.unsplash.com/photo-1773730356782-e3044e73cf6f?auto=format&fit=crop&w=1200&q=80",
     textTone: "light",
   },
@@ -252,6 +251,14 @@ function LiveStat({
       </div>
     </div>
   );
+}
+
+function splitPrice(price: string) {
+  const [currency = "", ...rest] = price.trim().split(" ");
+  return {
+    currency: currency || "KES",
+    amount: rest.join(" ") || price,
+  };
 }
 
 export default function Home() {
@@ -612,7 +619,7 @@ export default function Home() {
       <section
         id="hero"
         ref={heroRef}
-        className="relative overflow-hidden bg-[#0A0A0A] w-full min-h-[calc(100vh-84px)]"
+        className="relative -mt-[var(--site-header-height)] w-full overflow-hidden bg-[#0A0A0A] pt-[var(--site-header-height)] min-h-[100dvh]"
       >
         <motion.div
           className="absolute inset-0"
@@ -668,7 +675,7 @@ export default function Home() {
         />
 
         <motion.div
-          className="relative page mx-auto max-w-[1440px] min-h-[calc(100vh-84px)] py-12 md:py-14 xl:py-16 flex items-center"
+          className="relative page mx-auto flex min-h-[calc(100dvh_-_var(--site-header-height))] max-w-[1440px] items-center py-12 md:py-14 xl:py-16"
           style={{ y: heroContentY }}
         >
           <motion.div
@@ -714,12 +721,20 @@ export default function Home() {
                 >
                   Tickets
                 </SwapArrowButton>
-                <Link
+                <SwapArrowButton
                   href="/events"
-                  className="inline-flex min-w-0 flex-1 basis-0 items-center justify-center h-12 px-3 sm:px-5 rounded-md border border-white/20 bg-white/5 text-white text-[0.9375rem] font-[600] tracking-[0.01em] hover:border-accent hover:text-accent transition-colors text-center leading-snug md:inline-flex md:flex-none md:basis-auto md:w-auto"
+                  compact
+                  className="h-12 min-w-0 flex-1 basis-0 justify-center rounded-md border border-white/20 px-3 font-[600] text-[0.9375rem] tracking-[0.01em] sm:px-5 md:flex-none md:basis-auto md:px-5"
+                  backgroundColor="rgba(255,255,255,0.05)"
+                  backgroundHoverColor="#FFFFFF"
+                  textColor="#FFFFFF"
+                  textHoverColor="#0A0A0A"
+                  fillColor="rgba(255,255,255,0.12)"
+                  iconColor="#FFFFFF"
+                  iconHoverFill="rgba(10,10,10,0.12)"
                 >
-                  Pass Types
-                </Link>
+                  Pass types
+                </SwapArrowButton>
               </motion.div>
 
               <motion.div
@@ -890,7 +905,6 @@ export default function Home() {
       <section id="editorial-sessions" className="relative overflow-hidden border-y border-white/10">
         <motion.div
           className="absolute inset-0"
-          style={{ y: "6%" }}
           animate={{ scale: [1, 1.035, 1] }}
           transition={{ duration: 22, ease: "easeInOut", repeat: Infinity, repeatType: "mirror" }}
         >
@@ -900,10 +914,10 @@ export default function Home() {
             fill
             priority
             sizes="100vw"
-            className="object-cover object-top"
+            className="object-cover object-[82%_28%] md:object-[80%_24%]"
           />
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/88 via-[#0A0A0A]/72 to-[#0A0A0A]/84" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/84 via-[#0A0A0A]/64 to-[#0A0A0A]/82" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(229,194,34,0.08),transparent_40%)]" />
         <div className="relative page mx-auto max-w-[1440px] py-16 md:py-20">
           <div className="grid grid-cols-12 gap-8 lg:gap-10 items-start lg:items-center">
@@ -936,219 +950,257 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured events — layout: phone (stack) → md (full width row) → lg (image + copy columns, stagger). */}
-      <section id="featured-events" className="page mx-auto max-w-[1440px] py-14">
-        <div className="flex items-end justify-between gap-6 flex-wrap">
-          <FadeUp>
-            <div>
-              <div className="text-label text-secondary">
+      {/* Featured events — poster + content split, line-language details, Summit 2026 dates */}
+      <section
+        id="featured-events"
+        className="border-t border-borderLight/80 bg-[linear-gradient(180deg,#fafafa_0%,#ffffff_22%,#ffffff_100%)]"
+      >
+        <div className="page mx-auto max-w-[1440px] py-14 md:py-16">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <FadeUp>
+              <p className="inline-flex w-fit rounded-full border border-accent/55 bg-accent/10 px-4 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
                 Featured events
-              </div>
-              <h2 className="mt-4 text-h2 text-primary">
+              </p>
+              <h2 className="mt-4 max-w-[18ch] text-h2 text-primary md:max-w-[22ch]">
                 Choose your track. Reserve your seat.
               </h2>
-            </div>
-          </FadeUp>
-          <div className="hidden md:block">
-            <Link
-              href="/events"
-              className="text-[0.9375rem] font-[500] text-primary inline-flex items-center gap-2 hover:underline underline-offset-4"
-            >
-              View all <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-10 space-y-6 md:space-y-8">
-          {FEATURED_EVENTS.map((event, idx) => (
-            <FadeUp key={event.title} delayMs={idx * 80}>
-              <motion.article
-                className={`overflow-hidden border border-borderLight rounded-xl bg-white shadow-[0_12px_40px_rgba(10,10,10,0.07)] md:rounded-xl md:shadow-[0_10px_30px_rgba(10,10,10,0.06)] lg:rounded-md max-md:border-l-[3px] max-md:border-l-accent ${
-                  idx % 2 === 0 ? "lg:mr-10" : "lg:ml-10"
-                }`}
-                onMouseEnter={() => {
-                  if (fineHover) setOpenFeatured(idx);
-                }}
-                onMouseLeave={() => {
-                  if (fineHover) setOpenFeatured((prev) => (prev === idx ? null : prev));
-                }}
-                initial={{ opacity: 0, y: 22, scale: 0.992 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-60px" }}
-                whileHover={
-                  fineHover
-                    ? {
-                        y: -6,
-                        scale: 1.005,
-                        boxShadow: "0 20px 52px rgba(10,10,10,0.12)",
-                      }
-                    : undefined
-                }
-                transition={{ duration: 0.28, ease: "easeOut" }}
-              >
-                <div
-                  className={`grid grid-cols-1 lg:grid-cols-12 ${
-                    idx % 2 === 1 ? "lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1" : ""
-                  }`}
-                >
-                  <div className="relative h-[min(52vw,240px)] min-h-[200px] sm:min-h-[220px] md:h-[260px] lg:h-full lg:col-span-5 overflow-hidden max-md:rounded-t-xl">
-                    <motion.div
-                      className="absolute inset-0"
-                      animate={{
-                        scale: openFeatured === idx ? 1.055 : 1,
-                        y: openFeatured === idx ? -6 : 0,
-                      }}
-                      transition={{ duration: 0.45, ease: "easeOut" }}
-                    >
-                      <Image
-                        src={event.image}
-                        alt={`${event.title} featured visual`}
-                        fill
-                        sizes="(min-width: 1024px) 40vw, 100vw"
-                        className="object-cover"
-                      />
-                    </motion.div>
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent"
-                      animate={{ opacity: openFeatured === idx ? 0.9 : 1 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
-                    />
-                    <div className="absolute left-4 bottom-4">
-                      <div className="inline-flex items-center rounded-md border border-accent/70 bg-black/35 px-2.5 py-1 text-accent text-[10px] font-[800] tracking-[0.1em] uppercase">
-                        Event
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-7 p-4 sm:p-5 md:p-6">
-                    <h3 className="text-h3 text-primary">
-                      {event.title}
-                    </h3>
-                    <div className="mt-2.5 inline-flex items-center gap-1.5 text-[12px] sm:text-[13px] font-[700] text-secondary">
-                      <Sparkles size={14} aria-hidden="true" />
-                      {event.meta}
-                    </div>
-                    <div className="mt-3 flex flex-col gap-1 rounded-md border border-borderLight/80 bg-[#fafafa] px-3 py-2.5 sm:flex-row sm:items-center sm:gap-3 sm:border-0 sm:bg-transparent sm:p-0">
-                      <div className="inline-flex items-center gap-1.5 text-[13px] font-[800] text-primary">
-                        <CalendarClock size={14} aria-hidden="true" />
-                        {event.date}
-                      </div>
-                      <span className="hidden h-3 w-px bg-borderLight sm:block" aria-hidden="true" />
-                      <div className="inline-flex items-center gap-1.5 text-[13px] font-[700] text-secondary leading-snug">
-                        <MapPin size={14} aria-hidden="true" />
-                        {event.venue}
-                      </div>
-                    </div>
-                    <p className="mt-3 text-[14px] md:text-[15px] leading-[1.65] text-secondary max-w-[64ch]">
-                      {event.value}
-                    </p>
-                    <div className="mt-4 grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-2">
-                      {event.tiers.map((tier, tierIdx) => (
-                        <span
-                          key={tier}
-                          className={`flex items-center justify-center rounded-md border px-1.5 py-2 text-[10px] sm:inline-flex sm:px-2.5 sm:py-1 sm:text-[11px] font-[800] uppercase tracking-[0.06em] sm:tracking-[0.08em] text-center leading-tight ${
-                            tierIdx === 0
-                              ? "border-accent bg-accent/10 text-[#0A0A0A]"
-                              : "border-borderLight text-secondary"
-                          }`}
-                        >
-                          {tier}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-3 text-[12px] sm:text-[13px] font-[800] text-[#0A0A0A]">
-                      {event.urgency}
-                    </div>
-
-                    {!fineHover && (
-                      <p className="mt-4 text-[12px] sm:text-[13px] font-[700] text-secondary leading-snug">
-                        Tap <span className="text-primary">Show details</span> for the full brief.
-                      </p>
-                    )}
-                    {fineHover && (
-                      <motion.div
-                        className="mt-4 hidden md:inline-flex items-center gap-2 text-[13px] font-[800] text-primary/90"
-                        animate={{ x: openFeatured === idx ? 2 : 0 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
-                      >
-                        Hover to reveal more
-                        <motion.span
-                          aria-hidden="true"
-                          animate={{ rotate: openFeatured === idx ? 45 : 0 }}
-                          transition={{ duration: 0.22, ease: "easeOut" }}
-                        >
-                          +
-                        </motion.span>
-                      </motion.div>
-                    )}
-
-                    <AnimatePresence initial={false}>
-                      {openFeatured === idx && (
-                        <motion.div
-                          key="details"
-                          initial={{ height: 0, opacity: 0, y: -6 }}
-                          animate={{ height: "auto", opacity: 1, y: 0 }}
-                          exit={{ height: 0, opacity: 0, y: -6 }}
-                          transition={{ duration: 0.28, ease: "easeOut" }}
-                          className="overflow-hidden"
-                        >
-                          <div className="mt-4 border-t border-borderLight pt-4 space-y-2.5">
-                            {event.details.map((item) => (
-                              <motion.div
-                                key={item}
-                                className="flex gap-2.5 text-[13px] text-secondary leading-[1.55]"
-                                initial={{ opacity: 0, x: -6 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.2, ease: "easeOut" }}
-                              >
-                                <span className="mt-[7px] h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
-                                <span>{item}</span>
-                              </motion.div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-                      <SwapArrowButton
-                        href="/events"
-                        className="h-12 w-full justify-center px-4 rounded-md text-[0.9375rem] font-[600] tracking-[0.01em] sm:h-[42px] sm:w-auto"
-                        hoverTextClassName="hover:text-white"
-                        hoverBgClassName="hover:bg-[#0A0A0A]"
-                      >
-                        Reserve ticket
-                      </SwapArrowButton>
-                      <Link
-                        href="/events"
-                        className="inline-flex h-12 w-full sm:h-[42px] sm:w-auto items-center justify-center rounded-md border border-borderLight px-4 text-[0.9375rem] font-[600] tracking-[0.01em] text-primary hover:border-accent transition-colors"
-                      >
-                        View agenda
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => setOpenFeatured((prev) => (prev === idx ? null : idx))}
-                        className={`inline-flex h-12 w-full sm:h-[42px] sm:w-auto items-center justify-center rounded-md border border-borderLight bg-white px-4 text-[0.9375rem] font-[600] tracking-[0.01em] text-primary/90 hover:border-accent transition-colors ${
-                          fineHover ? "md:hidden" : ""
-                        }`}
-                      >
-                        {openFeatured === idx ? "Hide details" : "Show details"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </motion.article>
+              <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-secondary md:text-[16px]">
+                Summit-week labs at Sarit — each built for a clear outcome, with transparent tiers and instant
+                confirmation after checkout.
+              </p>
             </FadeUp>
-          ))}
-        </div>
+            <FadeUp delayMs={60} className="shrink-0">
+              <SwapArrowButton
+                href="/events"
+                compact
+                className="h-11 justify-center rounded-full border border-borderLight px-5 text-[13px] font-[800] uppercase tracking-[0.06em] sm:min-w-[148px]"
+                backgroundColor="#FFFFFF"
+                backgroundHoverColor="#0A0A0A"
+                textColor="#0A0A0A"
+                textHoverColor="#FFFFFF"
+                fillColor="rgba(10,10,10,0.08)"
+                iconColor="#0A0A0A"
+                iconHoverFill="rgba(255,255,255,0.18)"
+              >
+                View all
+              </SwapArrowButton>
+            </FadeUp>
+          </div>
 
-        <div className="mt-10 md:hidden">
-          <Link
-            href="/events"
-            className="inline-flex items-center justify-center w-full h-[46px] rounded-md bg-accent text-[#0A0A0A] font-[900]"
-          >
-            View all events
-          </Link>
+          <div className="mt-12 space-y-10 md:space-y-12">
+            {FEATURED_EVENTS.map((event, idx) => {
+              const previewDetails = event.details.slice(0, 2);
+              const extraDetails = event.details.slice(2);
+              const hasExtra = extraDetails.length > 0;
+              return (
+                <FadeUp key={event.title} delayMs={idx * 70}>
+                  <motion.article
+                    className="overflow-hidden rounded-2xl border border-black/[0.07] bg-white shadow-[0_1px_0_rgba(10,10,10,0.04),0_24px_60px_rgba(10,10,10,0.07)]"
+                    onMouseEnter={() => {
+                      if (fineHover) setOpenFeatured(idx);
+                    }}
+                    onMouseLeave={() => {
+                      if (fineHover) setOpenFeatured((prev) => (prev === idx ? null : prev));
+                    }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    whileHover={
+                      fineHover
+                        ? { y: -4, boxShadow: "0 28px 70px rgba(10,10,10,0.1)" }
+                        : undefined
+                    }
+                    transition={{ duration: 0.32, ease: "easeOut" }}
+                  >
+                    <div
+                      className={`grid grid-cols-1 lg:grid-cols-[minmax(280px,42%)_1fr] ${
+                        idx % 2 === 1 ? "lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1" : ""
+                      }`}
+                    >
+                      <div className="relative aspect-[5/3] min-h-[200px] sm:aspect-[16/9] sm:min-h-[240px] lg:min-h-[min(100%,340px)] lg:aspect-auto overflow-hidden">
+                        <motion.div
+                          className="absolute inset-0"
+                          animate={{
+                            scale: openFeatured === idx ? 1.04 : 1,
+                          }}
+                          transition={{ duration: 0.5, ease: "easeOut" }}
+                        >
+                          <Image
+                            src={event.image}
+                            alt={`${event.title} — featured session visual`}
+                            fill
+                            sizes="(min-width: 1024px) 38vw, 100vw"
+                            className="object-cover"
+                          />
+                        </motion.div>
+                        <div
+                          className="absolute inset-0 bg-gradient-to-br from-[#1a0f32]/95 via-[#0a0a0a]/78 to-black/35"
+                          aria-hidden
+                        />
+                        <div
+                          className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_90%_100%,rgba(229,194,34,0.2),transparent_55%)]"
+                          aria-hidden
+                        />
+                        <div className="absolute inset-x-0 top-0 flex justify-end p-4 sm:p-5">
+                          <div className="max-w-[14rem] rounded-lg border border-white/20 bg-black/40 px-3 py-2 text-right backdrop-blur-[6px] sm:max-w-[16rem] sm:px-3.5 sm:py-2.5">
+                            <p className="text-[10px] font-[800] uppercase tracking-[0.12em] text-accent">
+                              Session date
+                            </p>
+                            <p className="mt-1 text-[12px] font-[800] leading-snug text-white sm:text-[13px]">
+                              {event.date}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 md:p-6">
+                          <span className="inline-flex rounded-full border border-accent/60 bg-black/40 px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.12em] text-accent backdrop-blur-sm">
+                            Event
+                          </span>
+                          <p className="mt-3 max-w-[36ch] font-[family-name:var(--font-body)] text-[11px] font-[700] uppercase tracking-[0.14em] text-white/75">
+                            {event.meta}
+                          </p>
+                          <p className="mt-1.5 text-[22px] font-[900] leading-[1.08] tracking-[-0.03em] text-white sm:text-[26px] md:text-[28px]">
+                            {event.title}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex min-h-0 flex-col border-t border-borderLight/90 p-5 sm:p-6 md:p-8 lg:border-l lg:border-t-0 lg:border-borderLight/90">
+                        <h3 className="sr-only">{event.title}</h3>
+                        <div className="mt-4 grid gap-2 rounded-xl border border-borderLight bg-[#fafafa] p-3 sm:grid-cols-[1fr_auto] sm:items-center sm:gap-4 sm:p-4">
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <span className="inline-flex items-center gap-1.5 text-[13px] font-[800] text-primary">
+                              <CalendarClock className="h-4 w-4 shrink-0 text-accent" aria-hidden />
+                              {event.date}
+                            </span>
+                            <span className="hidden h-4 w-px bg-borderLight sm:inline-block" aria-hidden />
+                            <span className="inline-flex min-w-0 items-start gap-1.5 text-[13px] font-[600] leading-snug text-secondary">
+                              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden />
+                              {event.venue}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="mt-5 text-[15px] leading-[1.7] text-secondary md:text-[16px] md:leading-[1.75]">
+                          {event.value}
+                        </p>
+                        <div className="mt-5 flex flex-wrap gap-2">
+                          {event.tiers.map((tier, tierIdx) => (
+                            <span
+                              key={tier}
+                              className={`inline-flex items-center rounded-full border px-3 py-1.5 text-[11px] font-[800] uppercase tracking-[0.08em] ${
+                                tierIdx === 0
+                                  ? "border-accent bg-accent text-[#0A0A0A] shadow-[0_2px_12px_rgba(229,194,34,0.35)]"
+                                  : "border-borderLight bg-white text-secondary"
+                              }`}
+                            >
+                              {tier}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="mt-4 inline-flex items-center gap-2 border-l-[3px] border-accent pl-3 text-[13px] font-[800] text-primary">
+                          {event.urgency}
+                        </p>
+
+                        <div className="mt-6 border-l-2 border-borderLight pl-4">
+                          <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-secondary">
+                            Track snapshot
+                          </p>
+                          <ul className="mt-3 space-y-2.5">
+                            {previewDetails.map((item) => (
+                              <li key={item} className="flex gap-3 text-[13px] leading-[1.55] text-secondary">
+                                <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          <AnimatePresence initial={false}>
+                            {openFeatured === idx && hasExtra ? (
+                              <motion.div
+                                key="extra"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.26, ease: "easeOut" }}
+                                className="overflow-hidden"
+                              >
+                                <ul className="mt-3 space-y-2.5 border-t border-borderLight pt-3">
+                                  {extraDetails.map((item) => (
+                                    <li key={item} className="flex gap-3 text-[13px] leading-[1.55] text-secondary">
+                                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                                      <span>{item}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </motion.div>
+                            ) : null}
+                          </AnimatePresence>
+                          {fineHover && hasExtra ? (
+                            <p className="mt-3 hidden text-[12px] font-[700] text-secondary md:block">
+                              Hover card for the full brief
+                            </p>
+                          ) : null}
+                          {!fineHover && hasExtra ? (
+                            <button
+                              type="button"
+                              onClick={() => setOpenFeatured((prev) => (prev === idx ? null : idx))}
+                              className="mt-3 text-left text-[12px] font-[800] text-primary underline decoration-primary/35 underline-offset-[5px] md:hidden"
+                            >
+                              {openFeatured === idx ? "Hide full brief" : "Show full brief"}
+                            </button>
+                          ) : null}
+                        </div>
+
+                        <div className="mt-8 flex flex-col gap-2.5 border-t border-borderLight pt-6 sm:flex-row sm:flex-wrap sm:items-center">
+                          <SwapArrowButton
+                            href="/events"
+                            compact
+                            className="h-11 w-full justify-center rounded-full px-5 text-[13px] font-[800] uppercase tracking-[0.05em] sm:w-auto"
+                            hoverTextClassName="hover:text-white"
+                            hoverBgClassName="hover:bg-[#0A0A0A]"
+                          >
+                            Reserve ticket
+                          </SwapArrowButton>
+                          <SwapArrowButton
+                            href="/events"
+                            compact
+                            className="h-11 w-full justify-center rounded-full border border-borderLight px-5 text-[13px] font-[800] uppercase tracking-[0.05em] sm:w-auto"
+                            backgroundColor="#FFFFFF"
+                            backgroundHoverColor="#0A0A0A"
+                            textColor="#0A0A0A"
+                            textHoverColor="#FFFFFF"
+                            fillColor="rgba(10,10,10,0.08)"
+                            iconColor="#0A0A0A"
+                            iconHoverFill="rgba(255,255,255,0.18)"
+                          >
+                            View agenda
+                          </SwapArrowButton>
+                          {fineHover || !hasExtra ? null : (
+                            <button
+                              type="button"
+                              onClick={() => setOpenFeatured((prev) => (prev === idx ? null : idx))}
+                              className="inline-flex h-11 w-full items-center justify-center rounded-full border border-dashed border-borderLight px-4 text-[13px] font-[700] text-secondary transition-colors hover:border-accent hover:text-primary sm:w-auto"
+                            >
+                              {openFeatured === idx ? "Hide full brief" : "Show full brief"}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.article>
+                </FadeUp>
+              );
+            })}
+          </div>
+
+          <div className="mt-12 md:hidden">
+            <SwapArrowButton
+              href="/events"
+              className="h-12 w-full justify-center rounded-full text-[14px] font-[800] uppercase tracking-[0.06em]"
+              hoverTextClassName="hover:text-white"
+              hoverBgClassName="hover:bg-[#0A0A0A]"
+            >
+              View all events
+            </SwapArrowButton>
+          </div>
         </div>
       </section>
 
@@ -1156,80 +1208,80 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
           <div className="lg:col-span-5">
             <FadeUp>
-              <div className="text-label text-secondary">
-                Ticket tiers
-              </div>
+              <p className="inline-flex w-fit rounded-full border border-accent/60 bg-accent/10 px-4 py-1 text-[11px] font-[800] uppercase tracking-[0.1em]">
+                Passes and pricing
+              </p>
               <h3 className="mt-4 text-h2 text-primary">
-                Pick your pass before this batch closes.
+                Choose your Youth+ Summit 2026 pass before this batch closes.
               </h3>
               <p className="mt-4 text-lead max-w-[52ch]">
-                Transparent pricing windows, secure checkout, and instant QR delivery.
-                Early Bird inventory updates in real-time.
+                Transparent tiers, clear value, and instant confirmation after checkout.
               </p>
             </FadeUp>
           </div>
           <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-3 gap-4">
             {TICKET_TIERS.map((tier, idx) => (
               <FadeUp key={tier.name} delayMs={idx * 70}>
+                {(() => {
+                  const priceParts = splitPrice(tier.price);
+                  return (
                 <motion.article
                   onMouseEnter={() => setHoverTier(idx)}
                   onMouseLeave={() => setHoverTier((prev) => (prev === idx ? null : prev))}
-                  className={`rounded-md border p-4 md:p-5 bg-white shadow-[0_6px_24px_rgba(10,10,10,0.04)] h-[220px] ${
+                  className={`relative overflow-hidden rounded-md border p-4 md:p-5 bg-white shadow-[0_6px_24px_rgba(10,10,10,0.04)] min-h-[260px] ${
                     tier.active ? "border-accent" : "border-borderLight"
-                  } relative overflow-hidden`}
-                  whileHover={{ y: -5, boxShadow: "0 18px 38px rgba(10,10,10,0.12)" }}
-                  transition={{ duration: 0.24, ease: "easeOut" }}
+                  }`}
+                  whileHover={{ y: -6, boxShadow: "0 18px 42px rgba(10,10,10,0.12)" }}
+                  transition={{ type: "spring", stiffness: 210, damping: 24 }}
                 >
-                  {/*
-                    Default state uses black text on white card.
-                    On reveal, tone switches per tier via textTone.
-                  */}
                   {(() => {
                     const isRevealed = hoverTier === idx;
-                    const useLightText = isRevealed && tier.textTone === "light";
+                    const useLightText = isRevealed;
+                    const textClass = useLightText ? "text-white" : "text-black";
+                    const seatsBoxClass = useLightText
+                      ? "border-white/35 bg-black/20"
+                      : "border-borderLight bg-[#FAFAFA]";
+                    const seatsLabelClass = useLightText ? "text-white/80" : "text-secondary";
+
                     return (
                       <div className="relative z-10 flex h-full flex-col justify-between">
-                        <div
-                          className={`text-label ${
-                            useLightText ? "text-white" : "text-black"
-                          }`}
-                        >
-                          {tier.name}
+                        <div className="flex items-center justify-between gap-3">
+                          <p className={`text-[13px] font-[900] uppercase tracking-[0.08em] ${textClass}`}>{tier.name}</p>
+                          {tier.active ? (
+                            <span
+                              className={`rounded-full border px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] transition-colors ${
+                                useLightText
+                                  ? "border-white/45 bg-white/12 text-white"
+                                  : "border-accent/60 bg-accent/10 text-[#0A0A0A]"
+                              }`}
+                            >
+                              Best value
+                            </span>
+                          ) : null}
                         </div>
-                        <div>
-                          <div
-                            className={`mt-2 text-[2.15rem] md:text-[2.35rem] leading-[0.95] tracking-[-0.02em] font-[800] ${
-                              useLightText ? "text-white" : "text-black"
-                            }`}
-                            style={{ fontVariationSettings: '"opsz" 30' }}
-                          >
-                            {tier.price}
-                          </div>
-                          <div
-                            className={`mt-2 text-[13px] ${
-                              useLightText ? "text-white" : "text-black"
-                            }`}
-                          >
-                            {tier.note}
-                          </div>
+
+                        <div className={`mt-4 leading-none ${textClass}`}>
+                          <p className="text-[14px] font-[900] uppercase tracking-[0.1em]">{priceParts.currency}</p>
+                          <p className="mt-1 text-[52px] font-[900] tracking-[-0.05em] break-words">{priceParts.amount}</p>
                         </div>
-                        <div
-                          className={`mt-4 text-[12px] font-[800] ${
-                            useLightText ? "text-white" : "text-black"
-                          }`}
-                        >
-                          {tier.seatsLeft} seats left
+
+                        <p className={`mt-2 text-[13px] ${textClass}`}>{tier.note}</p>
+
+                        <div className={`mt-4 rounded-lg border px-3 py-2 ${seatsBoxClass}`}>
+                          <p className={`text-[10px] font-[800] uppercase tracking-[0.08em] ${seatsLabelClass}`}>
+                            Seats left
+                          </p>
+                          <p className={`mt-1 text-[22px] font-[900] leading-none tracking-[-0.03em] ${textClass}`}>
+                            {tier.seatsLeft}
+                          </p>
                         </div>
                       </div>
                     );
                   })()}
-                  {tier.textTone === "dark" && (
-                    <div className="absolute inset-0 bg-white z-[1]" />
-                  )}
                   <motion.div
-                    className="absolute inset-0 z-[2]"
+                    className="absolute inset-0 z-[1]"
                     animate={{ opacity: hoverTier === idx ? 1 : 0 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    transition={{ duration: 0.26, ease: "easeOut" }}
                   >
                     <Image
                       src={tier.image}
@@ -1238,9 +1290,11 @@ export default function Home() {
                       sizes="(min-width: 768px) 33vw, 100vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-[#0A0A0A]/72" />
+                    <div className="absolute inset-0 bg-[#0A0A0A]/68" />
                   </motion.div>
                 </motion.article>
+                  );
+                })()}
               </FadeUp>
             ))}
           </div>
@@ -1261,22 +1315,24 @@ export default function Home() {
           </div>
           <div className="lg:col-span-8">
             <motion.div
-              className="space-y-3"
+              className="border-l-2 border-borderLight pl-5 md:pl-7"
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, margin: "-50px" }}
               variants={staggerContainer}
             >
-              {AGENDA_TEASER.map((slot) => (
+              {AGENDA_TEASER.map((slot, rowIdx) => (
                 <motion.div
                   key={slot.time}
                   variants={staggerItem}
-                  className="grid grid-cols-[74px_1fr] gap-4 rounded-md border border-borderLight bg-white p-4 md:p-5"
+                  className={`grid grid-cols-[minmax(0,4.5rem)_1fr] gap-x-4 gap-y-1 py-5 md:grid-cols-[5.5rem_1fr] md:gap-x-6 md:py-6 ${
+                    rowIdx < AGENDA_TEASER.length - 1 ? "border-b border-borderLight" : ""
+                  }`}
                 >
-                  <div className="text-h3 text-accent">{slot.time}</div>
+                  <div className="text-[15px] font-[900] tabular-nums text-accent md:text-[17px]">{slot.time}</div>
                   <div>
-                    <div className="text-h3 text-primary">{slot.title}</div>
-                    <div className="mt-1 text-small">{slot.detail}</div>
+                    <div className="text-[17px] font-[800] leading-snug text-primary md:text-[19px]">{slot.title}</div>
+                    <div className="mt-1.5 text-[14px] leading-relaxed text-secondary md:text-[15px]">{slot.detail}</div>
                   </div>
                 </motion.div>
               ))}

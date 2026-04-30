@@ -2,14 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { FormEvent, useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FadeUp } from "@/components/motion/FadeUp";
 import { ScrollJackSection } from "@/components/motion/ScrollJackSection";
 import { BrandedFaqSection } from "@/components/site/BrandedFaqSection";
 import { PartnerLogoMarquee } from "@/components/site/PartnerLogoMarquee";
 import { SectionDivider } from "@/components/ui/SectionDivider";
-import { BrandButton } from "@/components/ui/BrandButton";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
+import { SPEAKERS } from "@/components/home/SpeakersCarousel";
 
 const faqs = [
   {
@@ -34,11 +35,28 @@ const faqs = [
   },
 ];
 const CONTACT_HERO_IMAGE = "/images/contact-hero-stage.png";
+const testimonialQuotes = [
+  "Youth+ helped us design a high-signal founder session that converted into real partnerships within weeks.",
+  "Practical, fast, and collaborative — we shipped a strong summit format without execution friction.",
+  "From planning to delivery, Youth+ gave us the structure to engage talent and sustain momentum after the room ended.",
+];
+
+const testimonials = [0, 1, 2].map((speakerIdx, i) => {
+  const s = SPEAKERS[speakerIdx];
+  return {
+    quote: testimonialQuotes[i],
+    name: s.name,
+    role: s.title,
+    company: s.company,
+    image: s.image,
+  };
+});
 
 export default function ContactPage() {
   const reduceMotion = useReducedMotion();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success">("idle");
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const heroEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
   const heroOrchestra = {
     hidden: {},
@@ -87,6 +105,13 @@ export default function ContactPage() {
     setTimeout(() => setSubmitStatus("idle"), 3500);
     e.currentTarget.reset();
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveTestimonial((current) => (current + 1) % testimonials.length);
+    }, 5200);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="w-full min-w-0 overflow-x-clip">
@@ -157,11 +182,12 @@ export default function ContactPage() {
             </motion.div>
           </div>
 
-          <div className="relative mt-6 grid w-full min-w-0 gap-6 sm:mt-7 sm:gap-7 md:mt-9 md:gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(300px,1fr)] lg:items-start lg:gap-x-10 xl:gap-x-14">
+          <div className="relative mt-6 rounded-2xl border border-black/10 bg-white p-4 shadow-[0_8px_30px_rgba(10,10,10,0.06)] sm:mt-7 sm:p-5 md:mt-9 md:p-7 lg:p-8">
+            <div className="grid w-full min-w-0 gap-7 sm:gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(300px,1fr)] lg:items-start lg:gap-x-10 xl:gap-x-14">
             <FadeUp>
               <form
                 onSubmit={handleSubmit}
-                className="min-w-0 overflow-hidden rounded-[18px] border border-black/10 bg-white/85 px-3 py-3 shadow-[0_8px_30px_rgba(10,10,10,0.06)] backdrop-blur-[1.5px] sm:px-4 sm:py-4 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0 md:shadow-none md:backdrop-blur-0"
+                className="min-w-0"
               >
                 <div className="mb-4 sm:mb-5">
                   <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
@@ -265,7 +291,7 @@ export default function ContactPage() {
                     We use this information to respond to your inquiry. Please
                     review our{" "}
                     <Link
-                      href="/offline"
+                      href="/privacy"
                       className="underline decoration-black/25 underline-offset-2 hover:text-black"
                     >
                       privacy policy
@@ -279,16 +305,16 @@ export default function ContactPage() {
                     </div>
                   )}
 
-                  <BrandButton
-                    type="submit"
+                  <SwapArrowButton
+                    submit
                     disabled={isSubmitting}
-                    variant="dark"
-                    size="md"
-                    icon="arrow-right"
-                    className="w-full sm:w-auto"
+                    compact
+                    className="w-full min-h-[48px] justify-center rounded-full sm:w-auto sm:min-h-[44px]"
+                    hoverTextClassName="hover:text-white"
+                    hoverBgClassName="hover:bg-[#0A0A0A]"
                   >
-                    {isSubmitting ? "Sending..." : "Contact us"}
-                  </BrandButton>
+                    {isSubmitting ? "Sending…" : "Contact us"}
+                  </SwapArrowButton>
                 </motion.div>
               </form>
             </FadeUp>
@@ -329,43 +355,108 @@ export default function ContactPage() {
                       </a>
                     </div>
 
-                    <div className="py-4">
-                      <div className="text-[11px] uppercase tracking-[0.08em] text-black/45 font-[700]">
-                        Phone
-                      </div>
-                      <a
-                        href="tel:+254700000000"
-                        className="mt-1 block text-[15px] text-[#0A0A0A] hover:underline underline-offset-4"
-                      >
-                        +254 700 000 000
-                      </a>
-                    </div>
                   </div>
                 </div>
               </FadeUp>
-
-              <FadeUp delayMs={90}>
-                <div className="min-w-0 px-1 py-1 sm:px-2 md:px-0">
-                  <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
-                    Partners
-                  </p>
-                  <h4 className="mt-2 text-[20px] font-[900] leading-[1.15] text-[#0A0A0A]">
-                    Trusted by ecosystem leaders.
-                  </h4>
-                  <PartnerLogoMarquee
-                    label=""
-                    variant="card"
-                    logoTone="gold"
-                    durationSec={42}
-                    frameStyle="none"
-                    className="w-full min-w-0 overflow-hidden pt-4"
-                  />
-                </div>
-              </FadeUp>
+            </div>
             </div>
           </div>
         </div>
       </ScrollJackSection>
+
+      <section className="relative w-full min-w-0 bg-white py-12 md:py-20">
+        <SectionDivider contentWidth className="absolute top-0 bg-black/[0.06]" />
+        <div className="page mx-auto w-full min-w-0 max-w-[1440px] pt-6 md:pt-10">
+          <p className="inline-flex rounded-full border border-accent px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.14em] text-accent">
+            Trust signals
+          </p>
+          <h2 className="mt-5 max-w-[20ch] text-h1 text-primary md:max-w-[24ch]">
+            Built with leading ecosystem collaborators.
+          </h2>
+
+          <PartnerLogoMarquee
+            label="Partners"
+            variant="card"
+            logoTone="gold"
+            durationSec={42}
+            frameStyle="none"
+            className="mt-8 w-full min-w-0 md:mt-10"
+          />
+
+          <div className="mt-10 md:mt-14">
+            <AnimatePresence mode="wait">
+              <motion.blockquote
+                key={testimonials[activeTestimonial].name}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.32, ease: "easeOut" }}
+                className="max-w-none font-[family-name:var(--font-body)] text-[clamp(1.35rem,3.2vw,2.125rem)] font-[500] leading-[1.38] tracking-[-0.02em] text-[#0A0A0A] md:leading-[1.42] md:tracking-[-0.025em]"
+              >
+                &ldquo;{testimonials[activeTestimonial].quote}&rdquo;
+              </motion.blockquote>
+            </AnimatePresence>
+
+            <div className="mt-8 flex flex-col gap-6 sm:mt-10 md:flex-row md:items-center md:gap-10 lg:gap-14">
+              <div className="flex shrink-0 flex-col gap-3.5">
+                <div className="flex items-center pl-0.5">
+                  {testimonials.map((item, idx) => {
+                    const isActive = idx === activeTestimonial;
+                    return (
+                      <button
+                        key={item.name}
+                        type="button"
+                        onClick={() => setActiveTestimonial(idx)}
+                        aria-current={isActive ? "true" : undefined}
+                        aria-label={`Show quote from ${item.name}`}
+                        style={{ zIndex: isActive ? 30 : 10 + idx }}
+                        className={`relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-white bg-borderLight shadow-[0_2px_8px_rgba(10,10,10,0.08)] outline-none transition-all md:h-[52px] md:w-[52px] ${
+                          idx > 0 ? "-ml-3 md:-ml-3.5" : ""
+                        } ${
+                          isActive
+                            ? "scale-[1.04] ring-2 ring-accent ring-offset-2 ring-offset-white"
+                            : "opacity-90 hover:opacity-100"
+                        } `}
+                      >
+                        <Image
+                          src={item.image}
+                          alt=""
+                          fill
+                          sizes="52px"
+                          className="object-cover object-top"
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-1.5 pl-0.5">
+                  {testimonials.map((item, idx) => (
+                    <button
+                      key={`bar-${item.name}`}
+                      type="button"
+                      onClick={() => setActiveTestimonial(idx)}
+                      aria-label={`Show quote from ${item.name}`}
+                      className={`h-[3px] rounded-sm transition-all duration-300 ${
+                        idx === activeTestimonial
+                          ? "w-11 bg-accent"
+                          : "w-9 bg-borderLight hover:bg-black/12"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <p className="min-w-0 max-w-none text-[14px] leading-[1.65] text-secondary md:text-[15px] md:leading-[1.7]">
+                <span className="font-[900] text-[#0A0A0A]">{testimonials[activeTestimonial].name}</span>
+                <span>
+                  {" "}
+                  · {testimonials[activeTestimonial].role}, {testimonials[activeTestimonial].company}
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="relative w-full min-w-0 overflow-x-clip" aria-label="Office location map">
         <SectionDivider contentWidth className="absolute top-0 bg-black/[0.06]" />

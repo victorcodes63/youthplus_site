@@ -2,15 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "./Logo";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import { BrandButton } from "@/components/ui/BrandButton";
 
+/** Primary nav order: who we are → what’s on → how to engage → CTA. */
 const DESKTOP_LINKS = [
-  { label: "Events", href: "/events" },
   { label: "About", href: "/about" },
+  { label: "Events", href: "/events" },
 ] as const;
 
 const VENTURE_ITEMS = [
@@ -86,6 +87,14 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", onEscape);
   }, [menuOpen]);
 
+  useEffect(() => {
+    startTransition(() => {
+      setVenturesOpen(false);
+      setMobileVenturesOpen(false);
+      setMenuOpen(false);
+    });
+  }, [pathname]);
+
   const openVenturesMenu = () => {
     setVenturesOpen(true);
   };
@@ -96,18 +105,18 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-50 border-b transition-all duration-300 ${
+      className={`fixed left-0 right-0 top-0 z-50 border-b border-black/[0.07] transition-[background-color,box-shadow,backdrop-filter] duration-200 ease-out ${
         scrolled
-          ? "border-borderLight bg-white shadow-[0_10px_40px_rgba(10,10,10,0.08)]"
-          : "border-borderLight/80 bg-white/98 shadow-[0_8px_28px_rgba(10,10,10,0.04)]"
+          ? "bg-white shadow-[0_10px_36px_rgba(10,10,10,0.08)]"
+          : "bg-white/[0.96] shadow-[0_4px_18px_rgba(10,10,10,0.04)] backdrop-blur-[10px] supports-[backdrop-filter]:bg-white/88"
       }`}
       onMouseLeave={closeDesktopMenus}
     >
-      <div className="relative page mx-auto max-w-[1440px] h-[84px] flex items-center justify-between">
+      <div className="relative page mx-auto max-w-[1440px] flex h-[var(--site-header-height)] items-center justify-between">
         <Logo />
 
         <nav className="font-body-ui hidden lg:flex items-center gap-8 text-[0.9375rem] font-[600] tracking-[0.005em]">
-          {DESKTOP_LINKS.slice(0, 1).map((item) => (
+          {DESKTOP_LINKS.map((item) => (
             <Link
               key={item.label}
               href={item.href}
@@ -129,6 +138,7 @@ export function SiteHeader() {
             href="/ventures"
             onMouseEnter={openVenturesMenu}
             onFocus={openVenturesMenu}
+            onClick={() => setVenturesOpen(false)}
             className={`relative inline-flex items-center gap-2 transition-colors ${
               pathname.startsWith("/ventures") ||
               pathname === "/partner-with-us" ||
@@ -149,24 +159,6 @@ export function SiteHeader() {
               }`}
             />
           </Link>
-          {DESKTOP_LINKS.slice(1).map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              onMouseEnter={closeDesktopMenus}
-              onFocus={closeDesktopMenus}
-              className={`relative inline-flex items-center gap-2 transition-colors ${
-                pathname === item.href ? "text-[#0A0A0A]" : "text-foreground/80 hover:text-[#0A0A0A]"
-              }`}
-            >
-              <span className="accent-underline">{item.label}</span>
-              <span
-                className={`h-1.5 w-1.5 rounded-full bg-accent transition-opacity ${
-                  pathname === item.href ? "opacity-100" : "opacity-0"
-                }`}
-              />
-            </Link>
-          ))}
 
           <span
             onMouseEnter={closeDesktopMenus}
@@ -268,15 +260,29 @@ export function SiteHeader() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.985 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute left-0 right-0 top-full z-50 max-h-[calc(100vh-84px)] overflow-y-auto border-t border-borderLight bg-white shadow-[0_18px_44px_rgba(10,10,10,0.16)] lg:hidden"
+              className="absolute left-0 right-0 top-full z-50 max-h-[calc(100dvh-var(--site-header-height))] overflow-y-auto border-t border-borderLight bg-white shadow-[0_18px_44px_rgba(10,10,10,0.16)] lg:hidden"
             >
               <div className="font-body-ui page py-5">
                 <div className="flex flex-col rounded-xl border border-borderLight bg-white p-4 shadow-[0_10px_28px_rgba(10,10,10,0.06)]">
                   <div className="space-y-4">
-                    <Link href="/events" onClick={() => {
-                      setMobileVenturesOpen(false);
-                      setMenuOpen(false);
-                    }} className="block text-[17px] font-[700] tracking-[0.005em] text-[#0A0A0A]">
+                    <Link
+                      href="/about"
+                      onClick={() => {
+                        setMobileVenturesOpen(false);
+                        setMenuOpen(false);
+                      }}
+                      className="block text-[17px] font-[700] tracking-[0.005em] text-[#0A0A0A]"
+                    >
+                      About
+                    </Link>
+                    <Link
+                      href="/events"
+                      onClick={() => {
+                        setMobileVenturesOpen(false);
+                        setMenuOpen(false);
+                      }}
+                      className="block text-[17px] font-[700] tracking-[0.005em] text-[#0A0A0A]"
+                    >
                       Events
                     </Link>
                     <button
@@ -317,12 +323,6 @@ export function SiteHeader() {
                         </motion.div>
                       )}
                     </AnimatePresence>
-                    <Link href="/about" onClick={() => {
-                      setMobileVenturesOpen(false);
-                      setMenuOpen(false);
-                    }} className="block text-[17px] font-[700] tracking-[0.005em] text-[#0A0A0A]">
-                      About
-                    </Link>
                   </div>
                   <div className="pt-5">
                     <BrandButton

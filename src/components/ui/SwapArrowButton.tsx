@@ -5,7 +5,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 
 type SwapArrowButtonProps = {
-  href: string;
+  /** Navigation target. Omit when using `submit` for a form button. */
+  href?: string;
   children: ReactNode;
   className?: string;
   ariaLabel?: string;
@@ -32,6 +33,9 @@ type SwapArrowButtonProps = {
   iconColor?: string;
   /** Icon-chip fill color on hover/focus. */
   iconHoverFill?: string;
+  /** Render `<button type="submit">` for use inside forms. Do not pass `href`. */
+  submit?: boolean;
+  disabled?: boolean;
 };
 
 function StrongArrow({ className = "" }: { className?: string }) {
@@ -75,9 +79,16 @@ export function SwapArrowButton({
   fillColor = "rgba(10, 10, 10, 0.12)",
   iconColor = "#0A0A0A",
   iconHoverFill = "rgba(255, 255, 255, 0.18)",
+  submit = false,
+  disabled = false,
 }: SwapArrowButtonProps) {
   const [isActive, setIsActive] = useState(false);
-  const isAnchorOnly = href.startsWith("#");
+
+  if (!submit && !href) {
+    throw new Error("SwapArrowButton: pass `href` for links or `submit` for a form submit button.");
+  }
+
+  const isAnchorOnly = href ? href.startsWith("#") : false;
 
   const target = newTab ? "_blank" : undefined;
   const rel = newTab ? "noopener noreferrer" : undefined;
@@ -88,14 +99,20 @@ export function SwapArrowButton({
     () => ({
       borderRadius: toCssSize(buttonRadius),
       fontSize: fontSize ? toCssSize(fontSize) : undefined,
-      color: isActive ? textHoverColor : textColor,
+      color: disabled ? textColor : isActive ? textHoverColor : textColor,
       backgroundColor,
+      opacity: disabled ? 0.55 : 1,
+      cursor: disabled ? ("not-allowed" as const) : undefined,
     }),
-    [backgroundColor, buttonRadius, fontSize, isActive, textColor, textHoverColor]
+    [backgroundColor, buttonRadius, disabled, fontSize, isActive, textColor, textHoverColor]
   );
 
+  const setHover = (next: boolean) => {
+    if (!disabled) setIsActive(next);
+  };
+
   const handleSmoothScroll = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!smoothScroll || !isAnchorOnly) return;
+    if (!href || !smoothScroll || !isAnchorOnly) return;
     const targetId = href.slice(1);
     if (!targetId) return;
     const element = document.getElementById(targetId);
@@ -161,19 +178,40 @@ export function SwapArrowButton({
     </>
   );
 
-  if (isAnchorOnly || isExternalHref(href)) {
+  if (submit) {
+    return (
+      <button
+        type="submit"
+        disabled={disabled}
+        className={commonClassName}
+        aria-label={ariaLabel}
+        aria-busy={disabled ? true : undefined}
+        style={computedStyle}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onFocus={() => setHover(true)}
+        onBlur={() => setHover(false)}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  const linkHref = href as string;
+
+  if (isAnchorOnly || isExternalHref(linkHref)) {
     return (
       <a
-        href={href}
+        href={linkHref}
         target={target}
         rel={rel}
         className={commonClassName}
         aria-label={ariaLabel}
         style={computedStyle}
-        onMouseEnter={() => setIsActive(true)}
-        onMouseLeave={() => setIsActive(false)}
-        onFocus={() => setIsActive(true)}
-        onBlur={() => setIsActive(false)}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onFocus={() => setHover(true)}
+        onBlur={() => setHover(false)}
         onClick={handleSmoothScroll}
       >
         {content}
@@ -183,16 +221,16 @@ export function SwapArrowButton({
 
   return (
     <Link
-      href={href}
+      href={linkHref}
       target={target}
       rel={rel}
       className={commonClassName}
       aria-label={ariaLabel}
       style={computedStyle}
-      onMouseEnter={() => setIsActive(true)}
-      onMouseLeave={() => setIsActive(false)}
-      onFocus={() => setIsActive(true)}
-      onBlur={() => setIsActive(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onFocus={() => setHover(true)}
+      onBlur={() => setHover(false)}
     >
       {content}
     </Link>

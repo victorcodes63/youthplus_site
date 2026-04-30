@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 :root {
+  /** Fixed site header; keep in sync with `SiteHeader` inner bar height. */
+  --site-header-height: 84px;
   --background: #ffffff;
   --foreground: #0a0a0a;
   --accent: #e5c222;
@@ -137,8 +139,8 @@
 
 html {
   color-scheme: light;
-  /* Fixed header (84px): anchor jumps and scrollIntoView account for overlap */
-  scroll-padding-top: 84px;
+  /* Fixed header: anchor jumps and scrollIntoView account for overlap */
+  scroll-padding-top: var(--site-header-height);
   /* Prevent rare horizontal bleed from grids, marquees, or absolute children */
   overflow-x: clip;
 }

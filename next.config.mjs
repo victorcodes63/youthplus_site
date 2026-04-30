@@ -1,3 +1,8 @@
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -20,8 +25,10 @@ const nextConfig = {
       },
     ],
   },
-  // Next.js 16 uses Turbopack by default; keep config explicit.
-  turbopack: {},
+  // Pin workspace root when multiple lockfiles exist (avoids wrong inferred root).
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;

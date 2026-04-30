@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   motion,
   useReducedMotion,
@@ -10,7 +9,6 @@ import {
   type MotionValue,
 } from "framer-motion";
 import {
-  ArrowRight,
   BadgeCheck,
   BriefcaseBusiness,
   CalendarDays,
@@ -23,6 +21,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useRef } from "react";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 
 export type Pillar = {
   number: string;
@@ -234,18 +233,13 @@ function PillarCard({
             ) : null}
 
             <div className="mt-8">
-              <Link
+              <SwapArrowButton
                 href={pillar.ctaHref}
-                className="group inline-flex h-[56px] w-full items-center justify-center gap-3 rounded-full bg-accent text-[14px] font-[900] uppercase tracking-[0.08em] text-[#0A0A0A] transition-[background-color,color] duration-300 hover:bg-[#0A0A0A] hover:text-white"
+                className="h-[56px] w-full text-[14px] uppercase tracking-[0.08em]"
+                buttonRadius={999}
               >
-                <span>{pillar.ctaLabel}</span>
-                <span
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/10 transition-colors duration-300 group-hover:bg-white/15"
-                  aria-hidden
-                >
-                  <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.4} />
-                </span>
-              </Link>
+                {pillar.ctaLabel}
+              </SwapArrowButton>
             </div>
           </div>
 
