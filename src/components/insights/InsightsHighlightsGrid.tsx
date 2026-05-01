@@ -12,7 +12,7 @@ type Props = {
 
 export function InsightsHighlightsGrid({ items }: Props) {
   return (
-    <div className="mt-8 grid grid-cols-1 gap-5 md:mt-9 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
       {items.map((item, index) => (
         <FadeUp key={item.slug} delayMs={index * 60}>
           <motion.article
