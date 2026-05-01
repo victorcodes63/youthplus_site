@@ -6,7 +6,6 @@ import { startTransition, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Logo } from "./Logo";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
-import { BrandButton } from "@/components/ui/BrandButton";
 
 /** Primary nav order: who we are → what’s on → how to engage → CTA. */
 const DESKTOP_LINKS = [
@@ -285,16 +284,28 @@ export function SiteHeader() {
                     >
                       Events
                     </Link>
-                    <button
-                      type="button"
-                      onClick={() => setMobileVenturesOpen((prev) => !prev)}
-                      className="flex w-full items-center justify-between text-left text-[17px] font-[700] tracking-[0.005em] text-[#0A0A0A]"
-                      aria-expanded={mobileVenturesOpen}
-                      aria-controls="mobile-ventures-submenu"
-                    >
-                      <span>Ventures</span>
-                      <span className={`text-[18px] transition-transform ${mobileVenturesOpen ? "rotate-90" : ""}`}>›</span>
-                    </button>
+                    <div className="flex w-full min-w-0 items-center gap-1">
+                      <Link
+                        href="/ventures"
+                        className="min-w-0 flex-1 py-1 text-left text-[17px] font-[700] tracking-[0.005em] text-[#0A0A0A]"
+                        onClick={() => {
+                          setMobileVenturesOpen(false);
+                          setMenuOpen(false);
+                        }}
+                      >
+                        Ventures
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setMobileVenturesOpen((prev) => !prev)}
+                        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-borderLight text-[18px] text-[#0A0A0A] transition-colors hover:border-accent"
+                        aria-expanded={mobileVenturesOpen}
+                        aria-controls="mobile-ventures-submenu"
+                        aria-label={mobileVenturesOpen ? "Hide venture links" : "Show venture links"}
+                      >
+                        <span className={`transition-transform ${mobileVenturesOpen ? "rotate-90" : ""}`}>›</span>
+                      </button>
+                    </div>
                     <AnimatePresence initial={false}>
                       {mobileVenturesOpen && (
                         <motion.div
@@ -325,20 +336,12 @@ export function SiteHeader() {
                     </AnimatePresence>
                   </div>
                   <div className="pt-5">
-                    <BrandButton
+                    <SwapArrowButton
                       href="/contact"
-                      onClick={() => {
-                        setMobileVenturesOpen(false);
-                        setMenuOpen(false);
-                      }}
-                      variant="gold"
-                      fullWidth
-                      icon="arrow-up-right"
-                      iconPosition="end"
-                      className="h-12 text-[1rem] font-[700]"
+                      className="h-12 w-full justify-center text-[1rem] font-[700] tracking-[0.005em] shadow-[0_4px_18px_rgba(229,194,34,0.35)]"
                     >
                       Contact us
-                    </BrandButton>
+                    </SwapArrowButton>
                   </div>
                 </div>
               </div>

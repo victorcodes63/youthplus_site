@@ -259,25 +259,6 @@ dd {
   border-radius: var(--radius-pill-button);
 }
 
-/* Normalize button-like and pill-like rounded edges across the site. */
-button.rounded-md,
-button.rounded-lg,
-button.rounded-xl,
-button.rounded-2xl,
-button.rounded-3xl,
-[role="button"].rounded-md,
-[role="button"].rounded-lg,
-[role="button"].rounded-xl,
-[role="button"].rounded-2xl,
-[role="button"].rounded-3xl,
-.inline-flex.rounded-md,
-.inline-flex.rounded-lg,
-.inline-flex.rounded-xl,
-.inline-flex.rounded-2xl,
-.inline-flex.rounded-3xl {
-  border-radius: var(--radius-pill-button);
-}
-
 html,
 body,
 * {

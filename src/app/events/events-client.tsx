@@ -884,15 +884,25 @@ export function EventsClient() {
                       (() => {
                         const parsedDate = parseSessionDate(session.date);
                         const isPastSession = parsedDate ? parsedDate < today : false;
+                        const posterKey = `${track.month}-${session.title}`;
+                        const openPoster = () => setActivePosterKey(posterKey);
                         return (
-                      <motion.button
-                        key={`${track.month}-${session.title}`}
+                      <motion.div
+                        key={posterKey}
+                        role="button"
+                        tabIndex={0}
                         whileHover={{ scale: 1.02 }}
                         transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                        className={`rounded-[16px] border border-borderLight bg-[#fafafa] p-3.5 text-left sm:p-4 ${
+                        className={`cursor-pointer select-none rounded-[var(--radius-xl)] border border-borderLight bg-[#fafafa] p-3.5 text-left sm:p-4 ${
                           isPastSession ? "opacity-65" : ""
                         }`}
-                        onClick={() => setActivePosterKey(`${track.month}-${session.title}`)}
+                        onClick={openPoster}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            openPoster();
+                          }
+                        }}
                       >
                         <div className="mb-2 flex items-start justify-between gap-2">
                           <span
@@ -925,7 +935,7 @@ export function EventsClient() {
                         <span className="mt-4 inline-flex text-[13px] font-[800] text-[#0A0A0A]">
                           Click to reveal poster
                         </span>
-                      </motion.button>
+                      </motion.div>
                         );
                       })()
                     ))}

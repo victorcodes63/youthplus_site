@@ -973,7 +973,7 @@ export default function Home() {
               <SwapArrowButton
                 href="/events"
                 compact
-                className="h-11 justify-center rounded-full border border-borderLight px-5 text-[13px] font-[800] uppercase tracking-[0.06em] sm:min-w-[148px]"
+                className="h-11 justify-center rounded-full border border-borderLight px-4 text-[12px] font-[800] uppercase tracking-[0.06em] sm:min-w-[168px] sm:px-5 sm:text-[13px]"
                 backgroundColor="#FFFFFF"
                 backgroundHoverColor="#0A0A0A"
                 textColor="#0A0A0A"
@@ -982,7 +982,7 @@ export default function Home() {
                 iconColor="#0A0A0A"
                 iconHoverFill="rgba(255,255,255,0.18)"
               >
-                View all
+                View all events
               </SwapArrowButton>
             </FadeUp>
           </div>
@@ -1194,6 +1194,7 @@ export default function Home() {
           <div className="mt-12 md:hidden">
             <SwapArrowButton
               href="/events"
+              compact
               className="h-12 w-full justify-center rounded-full text-[14px] font-[800] uppercase tracking-[0.06em]"
               hoverTextClassName="hover:text-white"
               hoverBgClassName="hover:bg-[#0A0A0A]"

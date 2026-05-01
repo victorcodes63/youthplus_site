@@ -145,11 +145,11 @@ export function SwapArrowButton({
           backgroundColor: backgroundHoverColor,
         }}
       />
-      <span className="relative z-10 inline-flex items-center gap-3">
-        <span>{children}</span>
+      <span className="relative z-10 inline-flex min-w-0 items-center gap-3">
+        <span className="min-w-0">{children}</span>
         <span
           aria-hidden="true"
-          className="relative inline-flex h-[1.75em] w-[1.75em] items-center justify-center overflow-hidden rounded-full transition-colors duration-300"
+          className="relative inline-flex h-[1.75em] w-[1.75em] shrink-0 items-center justify-center overflow-hidden rounded-full transition-colors duration-300"
           style={{
             backgroundColor: isActive ? iconHoverFill : fillColor,
             color: isActive ? textHoverColor : iconColor,
