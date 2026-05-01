@@ -177,6 +177,9 @@ export function SiteFooter() {
                 <Link href="/resources/partnership-pack" className="hover:text-white transition-colors">Partnership Pack</Link>
                 <Link href="/resources/media-kit" className="hover:text-white transition-colors">Media Kit</Link>
                 <Link href="/resources/community" className="hover:text-white transition-colors">Community</Link>
+                <Link href="/insights" className="hover:text-white transition-colors">
+                  Insights
+                </Link>
               </div>
             </div>
 

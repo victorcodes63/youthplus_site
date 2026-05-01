@@ -11,6 +11,7 @@ import { useHeroEnterAnimations } from "@/components/motion/useHeroEnterAnimatio
 import { BrandButton } from "@/components/ui/BrandButton";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import { SectionDivider } from "@/components/ui/SectionDivider";
+import { INSIGHT_HIGHLIGHTS } from "@/data/insights";
 
 type EventSession = {
   channel: "IG Live" | "Webinar" | "On-site";
@@ -158,30 +159,6 @@ const monthlyTracks: MonthlyTrack[] = [
       { channel: "Webinar", title: "Planning for 2027", date: "Dec 08, 2026" },
       { channel: "On-site", title: "Community Party", date: "Dec 25, 2026" },
     ],
-  },
-];
-
-const pastEvents = [
-  {
-    title: "Connect: Charting the Capital of You.",
-    schedule: "Friday 26, Sep 2025, 2PM - 6PM",
-    location: "LaunchPad Coworking, Westlands Avenue",
-    detail: "Flagship youth culture and policy forum bringing creators, leaders, and partners together.",
-    image: "/images/event-energy-networking.png",
-  },
-  {
-    title: "The Currency of Exchange",
-    schedule: "30th August 2025, 9AM - 3PM",
-    location: "Strathmore Business School",
-    detail: "Driving business evolution through practical cross-sector conversations and founder networking.",
-    image: "/images/event-energy-workshop.png",
-  },
-  {
-    title: "The Wealth BluePrint",
-    schedule: "16th and 23rd September 2025, 7PM - 8PM",
-    location: "Online",
-    detail: "Behavior, planning, and investment insights designed for Gen Z wealth confidence and growth.",
-    image: "/images/event-energy-panel.png",
   },
 ];
 
@@ -960,15 +937,15 @@ export function EventsClient() {
           </FadeUp>
 
           <div className="mt-8 grid grid-cols-1 gap-5 md:mt-9 md:grid-cols-3">
-            {pastEvents.map((item, index) => (
-              <FadeUp key={item.title} delayMs={index * 60}>
+            {INSIGHT_HIGHLIGHTS.slice(0, 3).map((item, index) => (
+              <FadeUp key={item.slug} delayMs={index * 60}>
                 <motion.article
                   whileHover={{ y: -5 }}
                   transition={{ type: "spring", stiffness: 230, damping: 24 }}
-                  className="flex h-full flex-col overflow-hidden rounded-2xl border border-borderLight bg-white"
+                  className="flex h-full flex-col overflow-hidden rounded-[var(--radius-xl)] border border-borderLight bg-white shadow-[0_12px_34px_rgba(10,10,10,0.05)]"
                 >
                   <div className="relative aspect-[16/10]">
-                    <Image src={item.image} alt={item.title} fill className="object-cover" />
+                    <Image src={item.image} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 100vw, 33vw" />
                   </div>
                   <div className="flex flex-1 flex-col p-5">
                     <h3 className="text-[25px] font-[900] leading-[1.03] tracking-[-0.025em]">{item.title}</h3>
@@ -977,14 +954,31 @@ export function EventsClient() {
                     </p>
                     <p className="mt-1 text-[13px] font-[700] text-secondary">{item.location}</p>
                     <p className="mt-4 text-[14px] leading-[1.75] text-secondary">{item.detail}</p>
-                    <span className="mt-auto pt-5 inline-flex items-center text-[13px] font-[800] text-[#0A0A0A]">
-                      View details ?
-                    </span>
+                    <div className="mt-auto pt-5">
+                      <SwapArrowButton
+                        href={`/insights#${item.slug}`}
+                        compact
+                        className="h-11 w-full justify-center rounded-full text-[12px] font-[800] uppercase tracking-[0.06em] sm:w-auto"
+                      >
+                        Read insight
+                      </SwapArrowButton>
+                    </div>
                   </div>
                 </motion.article>
               </FadeUp>
             ))}
           </div>
+          <FadeUp delayMs={200}>
+            <div className="mt-10 flex justify-center md:mt-12">
+              <SwapArrowButton
+                href="/insights"
+                compact
+                className="h-11 justify-center rounded-full px-6 text-[12px] font-[800] uppercase tracking-[0.06em]"
+              >
+                Browse all insights
+              </SwapArrowButton>
+            </div>
+          </FadeUp>
         </div>
       </section>
 

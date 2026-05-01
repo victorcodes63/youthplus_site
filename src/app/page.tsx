@@ -23,6 +23,7 @@ import { usePrefersFineHover } from "@/lib/usePrefersFineHover";
 import { useMobileTicketCta } from "@/lib/useMobileTicketCta";
 import { MobileTicketCta } from "@/components/site/MobileTicketCta";
 import { PARTNER_LOGOS } from "@/data/partnerLogos";
+import { type CarouselGestureIntent, resolveCarouselTouchIntent } from "@/lib/carouselTouchScroll";
 
 const HERO_IMAGE = "/images/women-s-panel-discussion.jpg";
 const SUMMIT_IMAGE = "/images/woman-giving-speech.jpg";
@@ -295,8 +296,10 @@ export default function Home() {
   const [caseDragOffset, setCaseDragOffset] = useState(0);
   const [caseActiveIndex, setCaseActiveIndex] = useState(0);
   const caseDragStartXRef = useRef(0);
+  const caseDragStartYRef = useRef(0);
   const caseDragOffsetRef = useRef(0);
   const casePointerIdRef = useRef<number | null>(null);
+  const caseIntentRef = useRef<CarouselGestureIntent>("idle");
   const caseMovedRef = useRef(false);
   const [caseCardWidth, setCaseCardWidth] = useState(0);
   const [caseGap, setCaseGap] = useState(16);
@@ -436,15 +439,45 @@ export default function Home() {
     if (event.pointerType === "mouse" && event.button !== 0) return;
     casePointerIdRef.current = event.pointerId;
     caseDragStartXRef.current = event.clientX;
+    caseDragStartYRef.current = event.clientY;
     caseDragOffsetRef.current = 0;
     caseMovedRef.current = false;
-    setCaseIsDragging(true);
     setCaseDragOffset(0);
-    event.currentTarget.setPointerCapture(event.pointerId);
+    if (event.pointerType === "mouse") {
+      caseIntentRef.current = "horizontal";
+      setCaseIsDragging(true);
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } else {
+      caseIntentRef.current = "pending";
+      setCaseIsDragging(false);
+    }
   };
 
   const onCasePointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    if (!caseIsDragging || casePointerIdRef.current !== event.pointerId) return;
+    if (casePointerIdRef.current !== event.pointerId) return;
+
+    if (caseIntentRef.current === "pending") {
+      const next = resolveCarouselTouchIntent(
+        event.clientX,
+        event.clientY,
+        caseDragStartXRef.current,
+        caseDragStartYRef.current,
+      );
+      if (next === "vertical") {
+        caseIntentRef.current = "vertical";
+        caseDragOffsetRef.current = 0;
+        setCaseDragOffset(0);
+        setCaseIsDragging(false);
+        return;
+      }
+      if (next === "pending") return;
+      caseIntentRef.current = "horizontal";
+      setCaseIsDragging(true);
+    }
+
+    if (caseIntentRef.current === "vertical") return;
+    if (caseIntentRef.current !== "horizontal") return;
+
     const delta = event.clientX - caseDragStartXRef.current;
     if (Math.abs(delta) > 4) caseMovedRef.current = true;
     const atStart = caseSafeIndex === 0;
@@ -459,11 +492,16 @@ export default function Home() {
 
   const endCasePointer = (pointerId: number) => {
     if (casePointerIdRef.current !== pointerId) return;
+    const intent = caseIntentRef.current;
     const finalOffset = caseDragOffsetRef.current;
     setCaseIsDragging(false);
     casePointerIdRef.current = null;
+    caseIntentRef.current = "idle";
     caseDragOffsetRef.current = 0;
     setCaseDragOffset(0);
+
+    if (intent === "vertical") return;
+
     if (finalOffset <= -CASE_DRAG_THRESHOLD) {
       goToCaseStudy(caseSafeIndex + 1);
       return;

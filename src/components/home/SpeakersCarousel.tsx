@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { brandAssetPath } from "@/lib/brandAssetPath";
 import { SectionDivider } from "@/components/ui/SectionDivider";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { type CarouselGestureIntent, resolveCarouselTouchIntent } from "@/lib/carouselTouchScroll";
 
 type Speaker = {
   name: string;
@@ -200,8 +201,10 @@ export function SpeakersCarousel() {
   const [gap, setGap] = useState(20);
   const [visibleCount, setVisibleCount] = useState(1);
   const dragStartXRef = useRef(0);
+  const dragStartYRef = useRef(0);
   const dragOffsetRef = useRef(0);
   const pointerIdRef = useRef<number | null>(null);
+  const intentRef = useRef<CarouselGestureIntent>("idle");
   const DRAG_THRESHOLD = 60;
 
   useEffect(() => {
@@ -243,14 +246,44 @@ export function SpeakersCarousel() {
     if (event.pointerType === "mouse" && event.button !== 0) return;
     pointerIdRef.current = event.pointerId;
     dragStartXRef.current = event.clientX;
+    dragStartYRef.current = event.clientY;
     dragOffsetRef.current = 0;
-    setIsDragging(true);
     setDragOffset(0);
-    event.currentTarget.setPointerCapture(event.pointerId);
+    if (event.pointerType === "mouse") {
+      intentRef.current = "horizontal";
+      setIsDragging(true);
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } else {
+      intentRef.current = "pending";
+      setIsDragging(false);
+    }
   };
 
   const onPointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    if (!isDragging || pointerIdRef.current !== event.pointerId) return;
+    if (pointerIdRef.current !== event.pointerId) return;
+
+    if (intentRef.current === "pending") {
+      const next = resolveCarouselTouchIntent(
+        event.clientX,
+        event.clientY,
+        dragStartXRef.current,
+        dragStartYRef.current,
+      );
+      if (next === "vertical") {
+        intentRef.current = "vertical";
+        dragOffsetRef.current = 0;
+        setDragOffset(0);
+        setIsDragging(false);
+        return;
+      }
+      if (next === "pending") return;
+      intentRef.current = "horizontal";
+      setIsDragging(true);
+    }
+
+    if (intentRef.current === "vertical") return;
+    if (intentRef.current !== "horizontal") return;
+
     const delta = event.clientX - dragStartXRef.current;
     const atStart = safeIndex === 0;
     const atEnd = safeIndex === maxIndex;
@@ -261,11 +294,15 @@ export function SpeakersCarousel() {
 
   const endPointer = (pointerId: number) => {
     if (pointerIdRef.current !== pointerId) return;
+    const intent = intentRef.current;
     const finalOffset = dragOffsetRef.current;
     setIsDragging(false);
     pointerIdRef.current = null;
+    intentRef.current = "idle";
     dragOffsetRef.current = 0;
     setDragOffset(0);
+
+    if (intent === "vertical") return;
 
     if (finalOffset <= -DRAG_THRESHOLD) {
       goTo(safeIndex + 1);
