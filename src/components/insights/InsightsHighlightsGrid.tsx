@@ -24,7 +24,7 @@ export function InsightsHighlightsGrid({ items }: Props) {
             <div className="relative aspect-[16/10]">
               <Image
                 src={item.image}
-                alt={`${item.title} — cover image`}
+                alt={`${item.title} - cover image`}
                 fill
                 className="object-cover"
                 sizes="(max-width:768px) 100vw, 33vw"

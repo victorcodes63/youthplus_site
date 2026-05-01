@@ -1,5 +1,5 @@
 /**
- * Editorial highlights and recaps — surfaced on /insights and the Events “Past events” strip.
+ * Editorial highlights and recaps - surfaced on /insights and the Events "Past events" strip.
  */
 export type InsightHighlight = {
   slug: string;
@@ -17,7 +17,7 @@ export const INSIGHT_HIGHLIGHTS: InsightHighlight[] = [
   {
     slug: "connect-charting-the-capital-of-you",
     title: "Connect: Charting the Capital of You.",
-    schedule: "Friday 26, Sep 2025, 2PM – 6PM",
+    schedule: "Friday 26, Sep 2025, 2PM - 6PM",
     location: "LaunchPad Coworking, Westlands Avenue",
     detail:
       "Flagship youth culture and policy forum bringing creators, leaders, and partners together.",
@@ -28,7 +28,7 @@ export const INSIGHT_HIGHLIGHTS: InsightHighlight[] = [
   {
     slug: "the-currency-of-exchange",
     title: "The Currency of Exchange",
-    schedule: "30th August 2025, 9AM – 3PM",
+    schedule: "30th August 2025, 9AM - 3PM",
     location: "Strathmore Business School",
     detail:
       "Driving business evolution through practical cross-sector conversations and founder networking.",
@@ -39,7 +39,7 @@ export const INSIGHT_HIGHLIGHTS: InsightHighlight[] = [
   {
     slug: "the-wealth-blueprint",
     title: "The Wealth BluePrint",
-    schedule: "16th and 23rd September 2025, 7PM – 8PM",
+    schedule: "16th and 23rd September 2025, 7PM - 8PM",
     location: "Online",
     detail:
       "Behavior, planning, and investment insights designed for Gen Z wealth confidence and growth.",

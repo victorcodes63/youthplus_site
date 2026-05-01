@@ -21,7 +21,7 @@ export default function InsightsPage() {
             Highlights from recent Youth+ Connect activities
           </h1>
           <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.8] text-secondary md:text-[16px]">
-            Long-form recaps, forum outcomes, and signals from the field — with clear next steps when you want to go
+            Long-form recaps, forum outcomes, and signals from the field - with clear next steps when you want to go
             deeper.
           </p>
         </div>
