@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { FadeUp } from "@/components/motion/FadeUp";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import type { VentureContent } from "@/data/ventures";
 
 type VentureDetailPageProps = {
@@ -166,13 +166,20 @@ export function VentureDetailPage({ venture }: VentureDetailPageProps) {
                 <p className="mt-1.5 text-[14px] leading-[1.7] text-secondary">
                   Discover the full Youth+ venture ecosystem and how each track contributes to leadership, innovation, and impact.
                 </p>
-                <Link
+                <SwapArrowButton
                   href="/ventures"
-                  className="mt-3 inline-flex text-[13px] font-[800] text-[#0A0A0A] underline underline-offset-4"
-                  style={{ textDecorationColor: venture.brandColor }}
+                  compact
+                  className="mt-3 h-11 w-full justify-center border border-borderLight px-4 text-[12px] uppercase tracking-[0.07em] sm:w-auto"
+                  backgroundColor="#FFFFFF"
+                  backgroundHoverColor="#0A0A0A"
+                  textColor="#0A0A0A"
+                  textHoverColor="#FFFFFF"
+                  fillColor="rgba(10,10,10,0.08)"
+                  iconColor="#0A0A0A"
+                  iconHoverFill="rgba(255,255,255,0.18)"
                 >
                   Back to all ventures
-                </Link>
+                </SwapArrowButton>
               </div>
             </aside>
           </FadeUp>

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { PARTNER_LOGOS } from "@/data/partnerLogos";
 
 type Variant = "hero" | "card";
-type LogoTone = "auto" | "white" | "gold";
+type LogoTone = "auto" | "white" | "gold" | "color";
 type TileStyle = "plain" | "boxed";
 type FrameStyle = "default" | "none";
 const BRAND_GOLD_FILTER =
@@ -37,8 +37,9 @@ export function PartnerLogoMarquee({
     (_, idx) => logos[idx % logos.length]
   );
   const row = [...baseLoop, ...baseLoop];
+  /** `color` = original logo colors (light UI). `white` = monochrome for dark hero. */
   const resolvedTone: Exclude<LogoTone, "auto"> =
-    logoTone === "auto" ? (isHero ? "white" : "white") : logoTone;
+    logoTone === "auto" ? (isHero ? "white" : "color") : logoTone;
   const marqueeX: [string, string] = ["0%", "-50%"];
   const noFrame = frameStyle === "none";
   const frameClass = noFrame
@@ -87,11 +88,10 @@ export function PartnerLogoMarquee({
         >
           {row.map((logo, i) => (
             (() => {
-              const hasSolidBg =
-                logo.src.includes("blaze_logo") ||
-                logo.src.includes("nairobi_county");
+              const hasSolidBg = logo.src.includes("nairobi_county");
               const useGoldTone = resolvedTone === "gold" && !hasSolidBg;
               const useWhiteTone = resolvedTone === "white";
+              const useNaturalColor = resolvedTone === "color";
               return (
             <div
               key={`${logo.src}-${i}`}
@@ -101,27 +101,49 @@ export function PartnerLogoMarquee({
                   : ""
               }`}
             >
-              <div className="relative inline-block max-h-[34px] md:max-h-[42px]">
-                <Image
-                  src={logo.src}
-                  alt={logo.alt}
-                  width={138}
-                  height={42}
-                  className={
-                    useWhiteTone
-                      ? "max-h-[34px] w-auto object-contain brightness-0 invert opacity-85 md:max-h-[42px]"
-                      : useGoldTone
-                        ? "max-h-[34px] w-auto object-contain md:max-h-[42px]"
-                        : "max-h-[34px] w-auto object-contain md:max-h-[42px]"
-                  }
-                  style={
-                    useGoldTone
-                      ? {
-                          filter: BRAND_GOLD_FILTER,
-                        }
-                      : undefined
-                  }
-                />
+              <div className="relative inline-flex max-h-[34px] min-h-[28px] min-w-0 max-w-[min(280px,78vw)] items-center justify-center md:max-h-[42px] md:min-h-[34px]">
+                {logo.src.endsWith(".svg") ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- next/image SVG handling is unreliable for wide partner marks
+                  <img
+                    src={logo.src}
+                    alt={logo.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className={
+                      useWhiteTone
+                        ? "h-[28px] w-auto max-w-full object-contain object-left brightness-0 invert opacity-85 md:h-[34px]"
+                        : useNaturalColor
+                          ? "h-[28px] w-auto max-w-full object-contain object-left opacity-100 md:h-[34px]"
+                          : useGoldTone
+                            ? "h-[28px] w-auto max-w-full object-contain object-left md:h-[34px]"
+                            : "h-[28px] w-auto max-w-full object-contain object-left md:h-[34px]"
+                    }
+                    style={useGoldTone ? { filter: BRAND_GOLD_FILTER } : undefined}
+                  />
+                ) : (
+                  <Image
+                    src={logo.src}
+                    alt={logo.alt}
+                    width={200}
+                    height={48}
+                    className={
+                      useWhiteTone
+                        ? "max-h-[34px] w-auto max-w-full object-contain brightness-0 invert opacity-85 md:max-h-[42px]"
+                        : useNaturalColor
+                          ? "max-h-[34px] w-auto max-w-full object-contain opacity-100 md:max-h-[42px]"
+                          : useGoldTone
+                            ? "max-h-[34px] w-auto max-w-full object-contain md:max-h-[42px]"
+                            : "max-h-[34px] w-auto max-w-full object-contain md:max-h-[42px]"
+                    }
+                    style={
+                      useGoldTone
+                        ? {
+                            filter: BRAND_GOLD_FILTER,
+                          }
+                        : undefined
+                    }
+                  />
+                )}
               </div>
             </div>
               );

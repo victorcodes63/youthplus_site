@@ -1,12 +1,15 @@
+import {
+  CTA_END_CARD_SWAP_BASE,
+  CTA_END_CARD_SWAP_CLASSNAME_CORE,
+} from "@/components/site/ctaEndCardSwapArrow";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 
 /**
- * FooterTicketBanner - design system summit ticket announcement.
+ * FooterTicketBanner - design system festival ticket announcement.
  *
  * Sits at the top of the SiteFooter as a compact, dark surface CTA.
  * - Semantic <aside> with aria-label.
- * - Single primary action that mirrors JoinUsCta primary button styling
- *   for visual consistency across the system.
+ * - Single primary action matches JoinUsCta / end-card SwapArrow outline pill.
  * - All values reference tokens defined in globals.css.
  */
 
@@ -24,8 +27,8 @@ export type FooterTicketBannerProps = {
 };
 
 export function FooterTicketBanner({
-  eyebrow = "Youth+ Summit 2026",
-  heading = "Youth+ Summit 2026 Ticket Sales Are Live",
+  eyebrow = "Youth Plus Festival 2026",
+  heading = "Youth Plus Festival 2026 Ticket Sales Are Live",
   cta = { href: "/events", label: "Reserve Tickets" },
   className = "",
 }: FooterTicketBannerProps) {
@@ -45,7 +48,8 @@ export function FooterTicketBanner({
         href={cta.href}
         ariaLabel={cta.ariaLabel ?? cta.label}
         newTab={Boolean(cta.external)}
-        className="h-12 px-8 text-[0.9375rem] font-[600] tracking-[0.01em]"
+        {...CTA_END_CARD_SWAP_BASE}
+        className={`${CTA_END_CARD_SWAP_CLASSNAME_CORE} w-auto shrink-0 px-8`}
       >
         {cta.label}
       </SwapArrowButton>

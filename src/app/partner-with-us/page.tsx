@@ -2,7 +2,9 @@
 
 import { FormEvent, useState } from "react";
 import { FadeUp } from "@/components/motion/FadeUp";
+import { CTA_END_CARD_SWAP_BASE, CTA_END_CARD_SWAP_CLASSNAME } from "@/components/site/ctaEndCardSwapArrow";
 import { BrandButton } from "@/components/ui/BrandButton";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 
 const ROLE_OPTIONS = ["Facilitator / Trainer", "Mentor", "Volunteer"] as const;
 
@@ -20,7 +22,7 @@ const SPONSORSHIP_OPPORTUNITIES = [
     impact: "Storytelling at scale",
   },
   {
-    title: "Youth+ Festival",
+    title: "Youth Plus Festival",
     description:
       "Power flagship experiences that convene founders, creatives, and builders through bold programming and partnerships.",
     impact: "Flagship annual platform",
@@ -270,12 +272,17 @@ export default function PartnerWithUsPage() {
               Indicative benefits to help your team evaluate collaboration scope across Youth+ programs.
             </p>
 
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="mt-8 grid auto-rows-fr gap-4 md:grid-cols-3">
               {SPONSORSHIP_TIERS.map((tier) => (
-                <article key={tier.name} className="rounded-md border border-borderLight bg-white p-5 shadow-[0_10px_35px_rgba(10,10,10,0.05)]">
+                <article
+                  key={tier.name}
+                  className="flex h-full min-h-0 flex-col rounded-md border border-borderLight bg-white p-5 shadow-[0_10px_35px_rgba(10,10,10,0.05)]"
+                >
                   <p className="text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">{tier.name}</p>
-                  <p className="mt-2 text-[20px] font-[900] leading-[1.08] tracking-[-0.02em] text-[#0A0A0A]">{tier.focus}</p>
-                  <ul className="mt-4 space-y-2.5 border-t border-borderLight pt-4">
+                  <p className="mt-2 min-h-[2.75rem] text-[20px] font-[900] leading-[1.15] tracking-[-0.02em] text-[#0A0A0A] md:min-h-[3.25rem]">
+                    {tier.focus}
+                  </p>
+                  <ul className="mt-4 flex-1 space-y-2.5 border-t border-borderLight pt-4">
                     {tier.benefits.map((benefit) => (
                       <li key={benefit} className="flex gap-2 text-[14px] leading-[1.6] text-secondary">
                         <span className="mt-[8px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
@@ -283,9 +290,16 @@ export default function PartnerWithUsPage() {
                       </li>
                     ))}
                   </ul>
-                  <BrandButton href="/contact" variant="outlineSubtle" uppercase className="mt-6 w-full">
-                    Request Package
-                  </BrandButton>
+                  <div className="mt-auto pt-6">
+                    <SwapArrowButton
+                      href="/contact"
+                      ariaLabel={`Request ${tier.name} sponsorship package`}
+                      {...CTA_END_CARD_SWAP_BASE}
+                      className={`${CTA_END_CARD_SWAP_CLASSNAME} text-[12px] font-[800] uppercase tracking-[0.08em]`}
+                    >
+                      Request package
+                    </SwapArrowButton>
+                  </div>
                 </article>
               ))}
             </div>

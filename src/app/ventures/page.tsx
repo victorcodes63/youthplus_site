@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { CalendarHeart, Compass, Fingerprint, Handshake } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -57,12 +56,12 @@ const programPillars: Pillar[] = [
     number: "03",
     title: "Convenings & Events",
     description:
-      "High-intent forums, summits, and local gatherings that unlock practical collaboration.",
+      "High-intent forums, festivals, and local gatherings that unlock practical collaboration.",
     outcome: "More deals, partnerships, and opportunities.",
     icon: CalendarHeart,
     eyebrow: "Convenings",
     offerings: [
-      "Annual Summit",
+      "Annual Festival",
       "Operator Forums",
       "Investor Roundtables",
       "City Salons",
@@ -316,22 +315,31 @@ export default function VenturesPage() {
                       </div>
                     </div>
 
-                    <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                       <motion.div whileHover={reduceMotion ? undefined : { y: -1 }} transition={{ duration: 0.2 }}>
-                        <Link
+                        <SwapArrowButton
                           href={`/ventures/${group.slug}`}
-                          className="inline-flex h-11 items-center justify-center rounded-md bg-accent px-5 text-[13px] font-[900] uppercase tracking-[0.07em] text-[#0A0A0A] transition hover:brightness-95"
+                          compact
+                          className="h-11 min-h-0 w-full justify-center px-5 text-[13px] uppercase tracking-[0.07em] sm:w-auto"
                         >
                           Explore {group.name}
-                        </Link>
+                        </SwapArrowButton>
                       </motion.div>
                       <motion.div whileHover={reduceMotion ? undefined : { y: -1 }} transition={{ duration: 0.2 }}>
-                        <Link
+                        <SwapArrowButton
                           href="/contact"
-                          className="inline-flex h-11 items-center justify-center rounded-md border border-borderLight px-5 text-[13px] font-[800] uppercase tracking-[0.07em] text-[#0A0A0A] transition-colors hover:border-accent"
+                          compact
+                          className="h-11 min-h-0 w-full justify-center border border-borderLight px-5 text-[13px] uppercase tracking-[0.07em] sm:w-auto"
+                          backgroundColor="#FFFFFF"
+                          backgroundHoverColor="#0A0A0A"
+                          textColor="#0A0A0A"
+                          textHoverColor="#FFFFFF"
+                          fillColor="rgba(10,10,10,0.08)"
+                          iconColor="#0A0A0A"
+                          iconHoverFill="rgba(255,255,255,0.18)"
                         >
                           Discuss partnership
-                        </Link>
+                        </SwapArrowButton>
                       </motion.div>
                     </div>
                   </div>

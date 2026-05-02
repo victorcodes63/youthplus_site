@@ -236,7 +236,6 @@ function PillarCard({
               <SwapArrowButton
                 href={pillar.ctaHref}
                 className="h-[56px] w-full text-[14px] uppercase tracking-[0.08em]"
-                buttonRadius={999}
               >
                 {pillar.ctaLabel}
               </SwapArrowButton>

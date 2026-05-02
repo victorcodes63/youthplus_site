@@ -70,9 +70,9 @@ export const INSIGHT_HIGHLIGHTS: InsightHighlight[] = [
     ctaLabel: "Take the survey",
   },
   {
-    slug: "summit-labs-2026",
-    title: "Summit labs: what builders asked for next",
-    schedule: "Summit season 2026",
+    slug: "festival-labs-2026",
+    title: "Festival labs: what builders asked for next",
+    schedule: "Festival season 2026",
     location: "Sarit Expo Centre, Nairobi",
     detail:
       "Early signals from labs and forums: AI execution, leadership depth, and capital readiness.",

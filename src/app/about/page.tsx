@@ -2,15 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import {
-  Building2,
-  Glasses,
-  Mail,
-  Network,
-  Rocket,
-  UserRound,
-} from "lucide-react";
-import { type SVGProps } from "react";
+import { Building2, Glasses, Network, Rocket } from "lucide-react";
 import { MilestoneTimeline, type Milestone } from "@/components/about/MilestoneTimeline";
 import { HeroHeading } from "@/components/home/HeroHeading";
 import { StickyHeroSeam } from "@/components/motion/StickyHeroSeam";
@@ -20,95 +12,6 @@ import { JoinUsCta } from "@/components/site/JoinUsCta";
 import { SectionDivider } from "@/components/ui/SectionDivider";
 import { ScrollJackSection } from "@/components/motion/ScrollJackSection";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
-
-/** Lucide dropped the branded LinkedIn icon; keep a small outline glyph for team links. */
-function LinkedinIcon({
-  className,
-  strokeWidth = 1.75,
-  ...props
-}: SVGProps<SVGSVGElement> & { strokeWidth?: number }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      {...props}
-    >
-      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" />
-      <rect x="2" y="9" width="4" height="12" rx="1" />
-      <circle cx="4" cy="4" r="2" />
-    </svg>
-  );
-}
-
-const teamMembers: Array<{
-  name: string;
-  role: string;
-  bio: string;
-  photo?: string;
-  linkedin: string;
-  email: string;
-  /** Tailwind object-position utility; source crops vary — tune per portrait. */
-  avatarObjectPosition?: string;
-}> = [
-  {
-    name: "Freddy Mulli",
-    role: "Founder",
-    bio: "Leads Youth+ Africa's long-term vision, strategic partnerships, and ecosystem growth across youth innovation communities.",
-    photo: "https://www.youthplusafrica.com/images/freddy.jpeg",
-    linkedin: "#",
-    email: "mailto:team@youthplusafrica.com",
-  },
-  {
-    name: "Christine Tetty",
-    role: "CEO",
-    bio: "Leads strategic execution across programs, partnerships, and operations to scale Youth+ Africa's continental impact.",
-    linkedin: "#",
-    email: "mailto:team@youthplusafrica.com",
-  },
-  {
-    name: "Samuel Muli",
-    role: "Technical Lead",
-    bio: "Leads platform and product execution, ensuring Youth+ digital experiences are reliable, scalable, and user-centered.",
-    photo: "https://www.youthplusafrica.com/images/Muli.jpeg",
-    avatarObjectPosition: "object-[center_18%]",
-    linkedin: "#",
-    email: "mailto:team@youthplusafrica.com",
-  },
-  {
-    name: "Miriam Njeri",
-    role: "Partnerships Lead",
-    bio: "Builds high-trust relationships with ecosystem partners, sponsors, and institutions to expand Youth+ impact.",
-    photo: "https://www.youthplusafrica.com/images/miriam.jpeg",
-    linkedin: "#",
-    email: "mailto:team@youthplusafrica.com",
-  },
-  {
-    name: "J. I. Mideva Muhandale",
-    role: "Digital Communication & Social Media Manager",
-    bio: "Leads Youth+ digital storytelling, social strategy, and audience engagement across campaigns and community touchpoints.",
-    linkedin: "#",
-    email: "mailto:team@youthplusafrica.com",
-  },
-  {
-    name: "Jeff Geoffrey",
-    role: "Project Manager",
-    bio: "Owns project delivery across key initiatives, coordinating teams and timelines for high-quality execution.",
-    photo: "https://www.youthplusafrica.com/images/jeff_2.jpg",
-    linkedin: "#",
-    email: "mailto:team@youthplusafrica.com",
-  },
-];
-
-function getLinkedInHref(member: { name: string; linkedin: string }) {
-  if (member.linkedin && member.linkedin !== "#") return member.linkedin;
-  const query = encodeURIComponent(`${member.name} Youth+ Africa`);
-  return `https://www.linkedin.com/search/results/all/?keywords=${query}`;
-}
 
 const operatingModes = [
   {
@@ -124,7 +27,7 @@ const operatingModes = [
   {
     title: "Convenings & events",
     description:
-      "High-signal forums and summits built for outcomes — not optics — with clear follow-through after the room ends.",
+      "High-signal forums and festivals built for outcomes — not optics — with clear follow-through after the room ends.",
   },
   {
     title: "Partnership studio",
@@ -147,10 +50,10 @@ const timelineMilestones: Milestone[] = [
   },
   {
     year: "2021",
-    label: "First Summit",
-    title: "Youth+ Summit launches",
+    label: "First Festival",
+    title: "Youth Plus Festival launches",
     description:
-      "Hosted the inaugural summit bringing together 200+ young founders, investors, and operators.",
+      "Hosted the inaugural festival bringing together 200+ young founders, investors, and operators.",
     image: "/images/timeline-story-2021.png",
     icon: <Building2 className="h-4.5 w-4.5" strokeWidth={2.1} aria-hidden />,
   },
@@ -519,95 +422,6 @@ export default function AboutPage() {
         </div>
       </ScrollJackSection>
       </StickyHeroSeam>
-
-      <ScrollJackSection
-        className="relative bg-white py-14 md:py-20"
-        intensity={1.05}
-      >
-        <SectionDivider contentWidth className="absolute top-0 opacity-80" />
-        <div className="page mx-auto max-w-[1440px] pt-8 md:pt-10">
-          <div className="mx-auto max-w-[920px]">
-            <div className="inline-flex items-center rounded-md border border-accent/80 bg-accent/15 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
-              Team
-            </div>
-            <h2 className="mt-4 max-w-[16ch] text-[32px] font-[900] leading-[1.02] tracking-[-0.04em] md:text-[48px]">
-              Leadership with operator DNA.
-            </h2>
-            <p className="mt-3 max-w-[62ch] text-[15px] leading-[1.8] text-secondary md:text-[16px]">
-              A multidisciplinary team shaping trusted spaces for youth
-              leadership, practical innovation, and ecosystem-scale outcomes.
-            </p>
-
-            <motion.div
-              className="mt-11 space-y-7 md:space-y-8"
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.1 }}
-              variants={staggerContainer}
-            >
-              {teamMembers.map((member) => {
-                const linkedInHref = getLinkedInHref(member);
-                return (
-                <motion.article
-                  key={member.name}
-                  className="grid gap-5 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-start md:gap-7"
-                  variants={itemReveal}
-                  whileHover={{ y: -3 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-[#f1f1f1] shadow-[0_8px_24px_rgba(10,10,10,0.12)] md:mt-1.5">
-                    {member.photo ? (
-                      <Image
-                        src={member.photo}
-                        alt={`${member.name} portrait`}
-                        fill
-                        sizes="56px"
-                        className={["object-cover", member.avatarObjectPosition].filter(Boolean).join(" ")}
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_34%_22%,rgba(229,194,34,0.28),transparent_56%)] text-[#0A0A0A]">
-                        <UserRound className="h-6 w-6" strokeWidth={1.8} aria-hidden />
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <h3 className="text-[22px] font-[900] leading-[1.08] tracking-[-0.02em] text-[#0A0A0A]">
-                      {member.name}
-                    </h3>
-                    <p className="mt-2 text-[12px] font-[800] uppercase tracking-[0.08em] text-accent">
-                      {member.role}
-                    </p>
-                    <p className="mt-3 text-[14px] leading-[1.75] text-secondary">
-                      {member.bio}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-1 md:justify-end md:self-center">
-                    <a
-                      href={linkedInHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${member.name} on LinkedIn`}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full text-accent transition-colors hover:bg-accent/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 focus-visible:ring-offset-2"
-                    >
-                      <LinkedinIcon className="h-[22px] w-[22px]" strokeWidth={1.75} aria-hidden />
-                    </a>
-                    <a
-                      href={member.email}
-                      aria-label={`Email ${member.name}`}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full text-accent transition-colors hover:bg-accent/10 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 focus-visible:ring-offset-2"
-                    >
-                      <Mail className="h-[22px] w-[22px]" strokeWidth={1.75} aria-hidden />
-                    </a>
-                  </div>
-                </motion.article>
-                );
-              })}
-            </motion.div>
-          </div>
-        </div>
-      </ScrollJackSection>
 
       <motion.section
         className="relative bg-white py-14 md:py-20"

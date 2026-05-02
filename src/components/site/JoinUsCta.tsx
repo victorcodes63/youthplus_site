@@ -1,11 +1,12 @@
-import { BrandButton } from "@/components/ui/BrandButton";
+import { CTA_END_CARD_SWAP_BASE, CTA_END_CARD_SWAP_CLASSNAME } from "@/components/site/ctaEndCardSwapArrow";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 
 /**
  * JoinUsCta - design system CTA section.
  *
  * Production rules baked into this component:
  *  - Semantic <section> with aria-labelledby pointing to the heading.
- *  - Buttons that navigate are <Link> (renders <a>), not <button>.
+ *  - Actions use SwapArrowButton (pill, white field, black border) for consistency with end-of-page CTAs.
  *  - All colors / spacing / radii come from tokens in globals.css.
  *  - Hover micro-interactions only animate transform + colors + shadow,
  *    never layout (width / height / top / left).
@@ -84,39 +85,36 @@ export function JoinUsCta({
 
           <div className="cta-actions">
             {primary ? (
-              <BrandButton
+              <SwapArrowButton
                 href={primary.href}
-                aria-label={primary.ariaLabel ?? primary.label}
-                variant="gold"
-                fullWidth
+                ariaLabel={primary.ariaLabel ?? primary.label}
+                {...CTA_END_CARD_SWAP_BASE}
+                className={CTA_END_CARD_SWAP_CLASSNAME}
               >
                 {primary.label}
-              </BrandButton>
+              </SwapArrowButton>
             ) : null}
 
             {secondary ? (
-              <BrandButton
+              <SwapArrowButton
                 href={secondary.href}
-                aria-label={secondary.ariaLabel ?? secondary.label}
-                variant="outline"
-                fullWidth
+                ariaLabel={secondary.ariaLabel ?? secondary.label}
+                {...CTA_END_CARD_SWAP_BASE}
+                className={CTA_END_CARD_SWAP_CLASSNAME}
               >
                 {secondary.label}
-              </BrandButton>
+              </SwapArrowButton>
             ) : null}
 
             {tertiary ? (
-              <BrandButton
+              <SwapArrowButton
                 href={tertiary.href}
-                aria-label={tertiary.ariaLabel ?? tertiary.label}
-                variant="outline"
-                icon="arrow-right"
-                iconPosition="end"
-                fullWidth
-                className="cta-tertiary-button"
+                ariaLabel={tertiary.ariaLabel ?? tertiary.label}
+                {...CTA_END_CARD_SWAP_BASE}
+                className={`${CTA_END_CARD_SWAP_CLASSNAME} cta-tertiary-button`}
               >
                 {tertiary.label}
-              </BrandButton>
+              </SwapArrowButton>
             ) : null}
 
             {helper ? <p className="cta-helper">{helper}</p> : null}

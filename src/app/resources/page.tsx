@@ -1,5 +1,5 @@
-import Link from "next/link";
 import type { Metadata } from "next";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 
 export const metadata: Metadata = {
   title: "Resources",
@@ -11,7 +11,7 @@ const resourceLinks = [
   {
     title: "Speaker Deck",
     description:
-      "A concise overview of summit themes, audience profile, and session expectations for speakers.",
+      "A concise overview of festival themes, audience profile, and session expectations for speakers.",
     href: "/resources/speaker-deck",
   },
   {
@@ -62,12 +62,21 @@ export default function ResourcesPage() {
               <p className="mt-2 text-[14px] leading-[1.7] text-secondary">
                 {item.description}
               </p>
-              <Link
+              <SwapArrowButton
                 href={item.href}
-                className="mt-5 inline-flex h-10 items-center justify-center rounded-md border border-accent px-4 text-[12px] font-[900] uppercase tracking-[0.08em] transition-colors hover:bg-accent/10"
+                compact
+                buttonRadius="var(--radius-md)"
+                className="mt-5 h-11 w-full justify-center border border-accent px-4 text-[12px] uppercase tracking-[0.08em] sm:w-auto"
+                backgroundColor="#FFFFFF"
+                backgroundHoverColor="#0A0A0A"
+                textColor="#0A0A0A"
+                textHoverColor="#FFFFFF"
+                fillColor="rgba(229,194,34,0.2)"
+                iconColor="#0A0A0A"
+                iconHoverFill="rgba(255,255,255,0.18)"
               >
                 Open resource
-              </Link>
+              </SwapArrowButton>
             </article>
           ))}
         </div>

@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 
 type ResourceKey = "speaker-deck" | "partnership-pack" | "media-kit" | "community";
 
@@ -22,7 +22,7 @@ const resourceContent: Record<
     description:
       "This resource helps speakers align with Youth+ audience context, event format, and session delivery standards.",
     bullets: [
-      "Summit narrative, audience profile, and content expectations.",
+      "Festival narrative, audience profile, and content expectations.",
       "Session structure guide for keynotes, panels, and workshops.",
       "Production notes including timing, A/V setup, and rehearsal flow.",
       "Speaker support timelines and point-of-contact details.",
@@ -111,8 +111,6 @@ export default async function ResourceDetailPage({ params }: ResourcePageProps) 
     notFound();
   }
 
-  const isMailto = content.ctaHref.startsWith("mailto:");
-
   return (
     <main className="bg-white text-[#0A0A0A] pt-24 pb-16 sm:pt-28 md:pt-32 md:pb-20">
       <section className="page mx-auto max-w-[900px]">
@@ -140,22 +138,33 @@ export default async function ResourceDetailPage({ params }: ResourcePageProps) 
           </ul>
         </article>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Link
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <SwapArrowButton
             href={content.ctaHref}
-            className="inline-flex h-11 items-center justify-center rounded-md bg-accent px-5 text-[13px] font-[900] uppercase tracking-[0.07em] text-[#0A0A0A] transition hover:brightness-95"
+            compact
+            buttonRadius="var(--radius-md)"
+            className="h-11 w-full justify-center px-5 text-[13px] uppercase tracking-[0.07em] sm:w-auto"
           >
             {content.ctaLabel}
-          </Link>
-          <Link
+          </SwapArrowButton>
+          <SwapArrowButton
             href="/resources"
-            className="inline-flex h-11 items-center justify-center rounded-md border border-borderLight bg-white px-5 text-[13px] font-[800] uppercase tracking-[0.07em] text-[#0A0A0A] transition-colors hover:border-accent"
+            compact
+            buttonRadius="var(--radius-md)"
+            className="h-11 w-full justify-center border border-borderLight px-5 text-[13px] uppercase tracking-[0.07em] sm:w-auto"
+            backgroundColor="#FFFFFF"
+            backgroundHoverColor="#0A0A0A"
+            textColor="#0A0A0A"
+            textHoverColor="#FFFFFF"
+            fillColor="rgba(10,10,10,0.08)"
+            iconColor="#0A0A0A"
+            iconHoverFill="rgba(255,255,255,0.18)"
           >
             All resources
-          </Link>
+          </SwapArrowButton>
         </div>
 
-        {isMailto ? (
+        {content.ctaHref.startsWith("mailto:") ? (
           <p className="mt-3 text-[12px] leading-[1.65] text-secondary">{content.supportNote}</p>
         ) : null}
       </section>

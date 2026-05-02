@@ -47,7 +47,7 @@ export function SiteFooter() {
             </p>
             <div className="flex justify-center md:justify-start">
               <div className="inline-flex items-center rounded-md border-[1.5px] border-accent px-3 py-1 text-label text-accent">
-                Youth+ Summit 2026 • Nairobi
+                Youth Plus Festival 2026 • Nairobi
               </div>
             </div>
 

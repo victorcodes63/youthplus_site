@@ -11,7 +11,7 @@ const PRODUCTS = [
     name: "Youth+ Signature Hoodie",
     category: "Apparel",
     price: "KES 4,900",
-    details: "Premium cotton blend hoodie for cool summit evenings and travel days.",
+    details: "Premium cotton blend hoodie for cool festival evenings and travel days.",
   },
   {
     name: "Youth+ Tote Bag",
@@ -20,7 +20,7 @@ const PRODUCTS = [
     details: "Durable canvas tote sized for notebooks, tablets, and daily carry.",
   },
   {
-    name: "Youth+ Summit Cap",
+    name: "Youth Plus Festival Cap",
     category: "Accessories",
     price: "KES 1,950",
     details: "Structured cap with adjustable fit and clean embroidered crest.",

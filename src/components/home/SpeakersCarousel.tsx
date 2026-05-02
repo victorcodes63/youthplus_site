@@ -133,7 +133,7 @@ export const SPEAKERS: Speaker[] = [
   {
     name: "Angela Boateng",
     title: "Programs Manager",
-    company: "Africa Fintech Summit",
+    company: "Africa Fintech Festival",
     bio: "Runs high-impact founder and investor programming across markets.",
     image: "https://images.unsplash.com/photo-1744040866587-e3ac6dcde112?auto=format&fit=crop&w=900&q=80",
     linkedin: "https://www.linkedin.com/in/angela-boateng",
@@ -205,7 +205,9 @@ export function SpeakersCarousel() {
   const dragOffsetRef = useRef(0);
   const pointerIdRef = useRef<number | null>(null);
   const intentRef = useRef<CarouselGestureIntent>("idle");
+  const visibleCountRef = useRef(1);
   const DRAG_THRESHOLD = 60;
+  const AUTOPLAY_MS = 5200;
 
   useEffect(() => {
     const measure = () => {
@@ -221,12 +223,29 @@ export function SpeakersCarousel() {
       setCardWidth(nextCardWidth);
       setGap(Number.isFinite(nextGap) ? nextGap : 20);
       setVisibleCount(nextVisible);
+      visibleCountRef.current = nextVisible;
     };
 
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    const id = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      if (pointerIdRef.current !== null) return;
+      setActiveIndex((prev) => {
+        const vc = visibleCountRef.current;
+        const max = Math.max(0, cards.length - vc);
+        const cur = Math.min(prev, max);
+        if (cur >= max) return 0;
+        return cur + 1;
+      });
+    }, AUTOPLAY_MS);
+    return () => window.clearInterval(id);
+  }, [reduceMotion, cards.length]);
 
   const maxIndex = Math.max(0, cards.length - visibleCount);
   const safeIndex = Math.min(activeIndex, maxIndex);

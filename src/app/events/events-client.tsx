@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { MapPin, Video } from "lucide-react";
+import { type ReactNode, useRef, useState } from "react";
 import { HeroHeading } from "@/components/home/HeroHeading";
 import { FadeUp } from "@/components/motion/FadeUp";
 import { ScrollJackSection } from "@/components/motion/ScrollJackSection";
@@ -13,11 +14,25 @@ import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import { SectionDivider } from "@/components/ui/SectionDivider";
 import { INSIGHT_HIGHLIGHTS } from "@/data/insights";
 
+type EventSessionPreview = {
+  /** One supporting line under the session title */
+  subtitle: string;
+  /** Practical bullets for the quick-preview drawer */
+  bullets: string[];
+  /** Room / city / delivery note */
+  venueLine?: string;
+  /** Session length or cadence */
+  durationLine?: string;
+  /** Who this room is built for */
+  audienceLine?: string;
+};
+
 type EventSession = {
-  channel: "IG Live" | "Webinar" | "On-site";
+  channel: "Webinar" | "On-site";
   title: string;
   date: string;
   poster?: string;
+  preview?: EventSessionPreview;
 };
 
 type MonthlyTrack = {
@@ -31,18 +46,39 @@ const monthlyTracks: MonthlyTrack[] = [
     month: "January",
     theme: "Goal Setting & Vision 2026",
     sessions: [
-      { channel: "IG Live", title: "Reset & Realign", date: "Jan 06, 2026" },
       {
         channel: "Webinar",
         title: "BLUEPRINT: Turning Vision into an Action Plan",
         date: "Jan 13, 2026",
         poster: "https://www.youthplusafrica.com/images/blueprint.png",
+        preview: {
+          subtitle: "Turn the year’s intent into a one-page execution map you can defend in rooms and reviews.",
+          bullets: [
+            "Live facilitation with a repeatable blueprint canvas and worked examples.",
+            "Breakout prompts to pressure-test milestones, owners, and weekly execution rhythm.",
+            "Q&A on sequencing priorities when capital, time, and team capacity are all constrained.",
+          ],
+          venueLine: "Online · Youth+ live studio",
+          durationLine: "≈ 2.5 hours",
+          audienceLine: "Founders, PMs, program leads",
+        },
       },
       {
         channel: "On-site",
         title: "Visioning Workshop",
         date: "Jan 23, 2026",
         poster: "https://www.youthplusafrica.com/images/visioning_poster.png",
+        preview: {
+          subtitle: "A tactile, high-trust room to translate ambition into a shared narrative for 2026.",
+          bullets: [
+            "Facilitated story arcs for personal, team, and community outcomes.",
+            "Peer mirrors and rapid feedback loops to sharpen language and commitments.",
+            "Take-home artifacts you can reuse for town-halls, boards, and partner updates.",
+          ],
+          venueLine: "Nairobi · curated cohort room",
+          durationLine: "Half-day",
+          audienceLine: "Builders, creatives, civic leaders",
+        },
       },
     ],
   },
@@ -51,22 +87,38 @@ const monthlyTracks: MonthlyTrack[] = [
     theme: "AI x Creativity x Human Potential",
     sessions: [
       {
-        channel: "IG Live",
-        title: "AI for Everyday Life",
-        date: "Feb 03, 2026",
-        poster: "https://www.youthplusafrica.com/images/ai_for_everyday_life.jpg",
-      },
-      {
         channel: "Webinar",
         title: "State of Women in AI",
         date: "Feb 10, 2026 & Feb 17, 2026",
         poster: "https://www.youthplusafrica.com/images/state_of_women_ai_1.jpg",
+        preview: {
+          subtitle: "Two connected webinars on who is building, funding, and governing AI across the continent.",
+          bullets: [
+            "Data-backed snapshots of talent pipelines, policy windows, and capital flows.",
+            "Operator stories on shipping responsible AI inside real products and teams.",
+            "Office hours on hiring, partnerships, and ethical review checkpoints.",
+          ],
+          venueLine: "Online · two-part series",
+          durationLine: "Two 90-minute sessions",
+          audienceLine: "Women founders, researchers, allies",
+        },
       },
       {
         channel: "On-site",
         title: "The Future of Work",
         date: "Feb 27, 2026",
         poster: "https://www.youthplusafrica.com/images/future_of_work.jpg",
+        preview: {
+          subtitle: "An immersive Sarit Expo experience on AI, skills, careers, and the next decade of work.",
+          bullets: [
+            "Keynotes and panels mapped to hiring, productivity, and creativity under AI pressure.",
+            "Live demos and partner alley for tools, learning paths, and community programs.",
+            "Curated networking blocks for operators, students, and ecosystem partners.",
+          ],
+          venueLine: "Sarit Expo Centre, Nairobi",
+          durationLine: "Afternoon · doors 2:00 PM",
+          audienceLine: "Professionals, founders, students",
+        },
       },
     ],
   },
@@ -74,90 +126,114 @@ const monthlyTracks: MonthlyTrack[] = [
     month: "March",
     theme: "Women's Month",
     sessions: [
-      { channel: "IG Live", title: "Women Shaping Their Stories", date: "Mar 03, 2026" },
-      { channel: "Webinar", title: "Leadership & Economic Empowerment", date: "Mar 10, 2026" },
-      { channel: "Webinar", title: "Give to Gain Webinar Series", date: "Mar 24, 2026" },
+      {
+        channel: "Webinar",
+        title: "Leadership & Economic Empowerment",
+        date: "Mar 10, 2026",
+        preview: {
+          subtitle: "A tactical masterclass for women translating leadership capital into economic outcomes.",
+          bullets: [
+            "Frameworks for pricing power, delegation, and board-ready storytelling.",
+            "Breakouts on contracts, partnerships, and repeatable revenue motions.",
+            "Resource drops on grants, credit readiness, and community leverage.",
+          ],
+          venueLine: "Online · secure webinar room",
+          durationLine: "≈ 2 hours",
+          audienceLine: "Women-led teams & operators",
+        },
+      },
+      {
+        channel: "Webinar",
+        title: "Give to Gain Webinar Series",
+        date: "Mar 24, 2026",
+        preview: {
+          subtitle: "A generosity-first playbook for building trust before you ask for anything in return.",
+          bullets: [
+            "Case studies on community-led distribution and volunteer flywheels.",
+            "Templates for lightweight experiments that compound credibility.",
+            "Live coaching on sequencing offers without burning social capital.",
+          ],
+          venueLine: "Online",
+          durationLine: "Series kickoff · 75 minutes",
+          audienceLine: "Community builders, creators",
+        },
+      },
     ],
   },
   {
     month: "April",
     theme: "Wellness & Self-Leadership",
     sessions: [
-      { channel: "IG Live", title: "Navigating Pressure as Gen Z", date: "Apr 07, 2026" },
-      { channel: "Webinar", title: "Nervous System 101", date: "Apr 14, 2026" },
-      { channel: "On-site", title: "Mindset & Balance Retreat", date: "Apr 24, 2026" },
+      {
+        channel: "Webinar",
+        title: "Nervous System 101",
+        date: "Apr 14, 2026",
+        preview: {
+          subtitle: "Evidence-informed practices to regulate stress while sustaining ambitious output.",
+          bullets: [
+            "Guided mapping of stress triggers across work, travel, and digital habits.",
+            "Micro-practices for recovery between sprints and high-stakes meetings.",
+            "Q&A on sleep, focus, and sustainable performance for operators on the move.",
+          ],
+          venueLine: "Online",
+          durationLine: "≈ 90 minutes",
+          audienceLine: "Founders, students, caregivers",
+        },
+      },
+      {
+        channel: "On-site",
+        title: "Mindset & Balance Retreat",
+        date: "Apr 24, 2026",
+        preview: {
+          subtitle: "A restorative on-site day to reset defaults before the festival sprint.",
+          bullets: [
+            "Guided movement, breathwork, and journaling in a low-noise environment.",
+            "Small-group circles on boundaries, courage, and creative risk.",
+            "Take-home rituals you can stack into weekly execution cadence.",
+          ],
+          venueLine: "Nairobi · retreat venue TBA",
+          durationLine: "Full day",
+          audienceLine: "Builders seeking grounded pace",
+        },
+      },
     ],
   },
   {
     month: "May",
     theme: "Climate & Sustainability",
     sessions: [
-      { channel: "IG Live", title: "Climate Reality", date: "May 05, 2026" },
-      { channel: "Webinar", title: "Green Skills & Jobs", date: "May 12, 2026" },
-      { channel: "On-site", title: "Eco Futures Expo", date: "May 29, 2026" },
-    ],
-  },
-  {
-    month: "June",
-    theme: "Taxation & Money",
-    sessions: [
-      { channel: "IG Live", title: "Taxation 101", date: "Jun 02, 2026" },
-      { channel: "Webinar", title: "Side-Hustle Economy", date: "Jun 09, 2026" },
-      { channel: "On-site", title: "Money Map Summit", date: "Jun 26, 2026" },
-    ],
-  },
-  {
-    month: "July",
-    theme: "Dear Money Month",
-    sessions: [
-      { channel: "IG Live", title: "Your Money Story", date: "Jul 07, 2026" },
-      { channel: "Webinar", title: "Money Psychology", date: "Jul 14, 2026" },
-      { channel: "On-site", title: "Dear Money Experience", date: "Jul 31, 2026" },
-    ],
-  },
-  {
-    month: "August",
-    theme: "Tech, Innovation & Digital Skills",
-    sessions: [
-      { channel: "IG Live", title: "Digital Skills That Pay", date: "Aug 04, 2026" },
-      { channel: "Webinar", title: "Innovation for Beginners", date: "Aug 11, 2026" },
-      { channel: "On-site", title: "Tech Future Fair", date: "Aug 28, 2026" },
-    ],
-  },
-  {
-    month: "September",
-    theme: "Career & Workplace Readiness",
-    sessions: [
-      { channel: "IG Live", title: "Career Pivoting", date: "Sep 01, 2026" },
-      { channel: "Webinar", title: "Gen Z Workplace Culture", date: "Sep 08, 2026" },
-      { channel: "On-site", title: "CareerConnect Expo", date: "Sep 25, 2026" },
-    ],
-  },
-  {
-    month: "October",
-    theme: "Entrepreneurship Month",
-    sessions: [
-      { channel: "IG Live", title: "Idea to Income", date: "Oct 06, 2026" },
-      { channel: "Webinar", title: "Funding 101", date: "Oct 13, 2026" },
-      { channel: "On-site", title: "StartUp Connect", date: "Oct 30, 2026" },
-    ],
-  },
-  {
-    month: "November",
-    theme: "Lifestyle & Wellness",
-    sessions: [
-      { channel: "IG Live", title: "Lifestyle Design", date: "Nov 03, 2026" },
-      { channel: "Webinar", title: "Burnout & Boundaries", date: "Nov 10, 2026" },
-      { channel: "On-site", title: "Wellness Day Experience", date: "Nov 27, 2026" },
-    ],
-  },
-  {
-    month: "December",
-    theme: "Reflection & Celebration",
-    sessions: [
-      { channel: "IG Live", title: "2026 Wrapped", date: "Dec 01, 2026" },
-      { channel: "Webinar", title: "Planning for 2027", date: "Dec 08, 2026" },
-      { channel: "On-site", title: "Community Party", date: "Dec 25, 2026" },
+      {
+        channel: "Webinar",
+        title: "Green Skills & Jobs",
+        date: "May 12, 2026",
+        preview: {
+          subtitle: "A practical scan of green pathways, credentials, and hiring signals for youth operators.",
+          bullets: [
+            "Sector snapshots on energy, mobility, circularity, and climate finance.",
+            "Skill ladders with portfolio prompts you can start this quarter.",
+            "Partner desk for internships, apprenticeships, and pilot collaborations.",
+          ],
+          venueLine: "Online",
+          durationLine: "≈ 2 hours",
+          audienceLine: "Students, career switchers, HR partners",
+        },
+      },
+      {
+        channel: "On-site",
+        title: "Eco Futures Expo",
+        date: "May 29, 2026",
+        preview: {
+          subtitle: "Hands-on expo floor connecting climate literacy with tools, founders, and capital.",
+          bullets: [
+            "Live demos from builders shipping low-carbon products and services.",
+            "Lightning talks on policy, procurement, and community-scale action.",
+            "Matchmaking for pilots, media, and distribution partners.",
+          ],
+          venueLine: "Nairobi · expo floor",
+          durationLine: "Full afternoon",
+          audienceLine: "Founders, investors, civic teams",
+        },
+      },
     ],
   },
 ];
@@ -195,14 +271,15 @@ const featuredExperiences: FeaturedExperience[] = [
     image: "https://www.youthplusafrica.com/images/state_of_women_ai_2.jpg",
   },
   {
-    month: "July",
-    title: "Dear Money Experience",
-    date: "Jul 31, 2026",
+    month: "May",
+    title: "Eco Futures Expo",
+    date: "May 29, 2026",
     channel: "On-site",
     priceFrom: "KES 5,000",
     seatsLeft: 64,
-    value: "An immersive live experience designed to transform money mindset, planning behavior, and execution discipline.",
-    image: "https://www.youthplusafrica.com/images/wealth-bp.jpeg",
+    value:
+      "A hands-on expo connecting climate literacy, green career pathways, and practical tools for sustainable impact.",
+    image: "https://www.youthplusafrica.com/images/events-bg.jpg",
   },
 ];
 
@@ -219,7 +296,7 @@ const premiumPasses = [
   {
     name: "Standard",
     price: "KES 12,000",
-    note: "Core summit access",
+    note: "Core festival access",
     seatsLeft: 318,
     featured: false,
     image: "https://images.unsplash.com/photo-1767884161189-ed2f04d87550?auto=format&fit=crop&w=1200&q=80",
@@ -244,24 +321,19 @@ const socialProofStats = [
 ];
 
 const channelPillClasses: Record<EventSession["channel"], string> = {
-  "IG Live": "bg-[#5A189A]/10 text-[#5A189A] border-[#5A189A]/30",
   Webinar: "bg-[#0A0A0A]/5 text-[#0A0A0A] border-[#0A0A0A]/15",
   "On-site": "bg-[#E5C222]/20 text-[#0A0A0A] border-[#E5C222]/50",
 };
 
+const WEBINAR_LANE_BORDER = "border-l-4 border-l-[#0A0A0A]";
+const ONSITE_LANE_BORDER = "border-l-4 border-l-[#E5C222]";
+
 const monthPosterFallback: Record<string, string> = {
   January: "https://www.youthplusafrica.com/images/visioning_poster.png",
-  February: "https://www.youthplusafrica.com/images/ai_for_everyday_life.jpg",
+  February: "https://www.youthplusafrica.com/images/state_of_women_ai_2.jpg",
   March: "https://www.youthplusafrica.com/images/state_of_women_ai_2.jpg",
   April: "https://www.youthplusafrica.com/images/events-bg.jpg",
   May: "https://www.youthplusafrica.com/images/events-bg.jpg",
-  June: "https://www.youthplusafrica.com/images/connect-fxpesa.jpeg",
-  July: "https://www.youthplusafrica.com/images/wealth-bp.jpeg",
-  August: "https://www.youthplusafrica.com/images/currency-exchange.jpeg",
-  September: "https://www.youthplusafrica.com/images/connect-fxpesa.jpeg",
-  October: "https://www.youthplusafrica.com/images/currency-exchange.jpeg",
-  November: "https://www.youthplusafrica.com/images/events-bg.jpg",
-  December: "https://www.youthplusafrica.com/images/visioning_poster.png",
 };
 
 const ABOUT_EDITORIAL_STRIP_IMAGE = "/images/about-editorial-strip.png";
@@ -301,6 +373,91 @@ function splitPrice(price: string) {
   };
 }
 
+function SessionCard({
+  session,
+  trackMonth,
+  today,
+  onOpenPoster,
+  borderAccentClass,
+}: {
+  session: EventSession;
+  trackMonth: string;
+  today: Date;
+  onOpenPoster: (key: string) => void;
+  borderAccentClass: string;
+}) {
+  const parsedDate = parseSessionDate(session.date);
+  const isPastSession = parsedDate ? parsedDate < today : false;
+  const posterKey = `${trackMonth}-${session.title}`;
+  return (
+    <motion.div
+      role="button"
+      tabIndex={0}
+      whileHover={{ scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      className={`flex cursor-pointer select-none flex-col rounded-xl border border-borderLight bg-white p-4 text-left shadow-[0_2px_12px_rgba(10,10,10,0.04)] ${borderAccentClass} pl-4 ${
+        isPastSession ? "opacity-70" : ""
+      }`}
+      onClick={() => onOpenPoster(posterKey)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onOpenPoster(posterKey);
+        }
+      }}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <span
+          className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-[800] uppercase tracking-[0.08em] ${channelPillClasses[session.channel]}`}
+        >
+          {session.channel}
+        </span>
+        {isPastSession ? (
+          <span className="inline-flex shrink-0 rounded-full border border-black/20 bg-black/[0.04] px-2 py-0.5 text-[9px] font-[800] uppercase tracking-[0.1em] text-secondary">
+            Past
+          </span>
+        ) : null}
+      </div>
+      {session.poster ? (
+        <div className="relative mt-3 aspect-[4/5] max-h-[200px] w-full overflow-hidden rounded-lg border border-borderLight bg-[#F7F7F7] sm:max-h-[220px]">
+          <Image
+            src={session.poster}
+            alt={session.title}
+            fill
+            className="object-contain p-1.5"
+            sizes="(max-width:768px) 100vw, 320px"
+          />
+        </div>
+      ) : null}
+      <h3 className="mt-3 text-[16px] font-[900] leading-[1.18] tracking-[-0.02em] text-[#0A0A0A] sm:text-[17px]">{session.title}</h3>
+      <p className="mt-2 text-[12px] font-[700] uppercase tracking-[0.07em] text-secondary">{session.date}</p>
+      <span className="mt-3 inline-flex text-[12px] font-[800] text-[#0A0A0A] underline decoration-black/20 underline-offset-4">
+        View poster
+      </span>
+    </motion.div>
+  );
+}
+
+function EmptySessionLane({
+  title,
+  body,
+  icon,
+}: {
+  title: string;
+  body: string;
+  icon: ReactNode;
+}) {
+  return (
+    <div className="flex min-h-[160px] flex-col rounded-xl border border-dashed border-black/12 bg-[#fafafa] p-5 text-left">
+      <div className="flex items-center gap-2 text-[#0A0A0A]">
+        <span className="text-accent">{icon}</span>
+        <p className="text-[11px] font-[800] uppercase tracking-[0.12em] text-secondary">{title}</p>
+      </div>
+      <p className="mt-3 text-[13px] leading-[1.65] text-secondary">{body}</p>
+    </div>
+  );
+}
+
 export function EventsClient() {
   const [activePosterKey, setActivePosterKey] = useState<string | null>(null);
   const [hoverPass, setHoverPass] = useState<number | null>(null);
@@ -321,6 +478,7 @@ export function EventsClient() {
     date: string;
     channel: EventSession["channel"];
     poster: string;
+    preview?: EventSessionPreview;
   } | null = null;
 
   if (activePosterKey) {
@@ -336,6 +494,7 @@ export function EventsClient() {
             date: session.date,
             channel: session.channel,
             poster: session.poster ?? monthPosterFallback[track.month],
+            preview: session.preview,
           };
           break;
         }
@@ -405,31 +564,33 @@ export function EventsClient() {
               variants={heroEnterBadge}
               className="inline-flex w-fit items-center rounded-full border border-accent/70 bg-black/25 px-4 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent"
             >
-              Youth+ Summit 2026
+              Youth Plus Festival 2026
             </motion.p>
             <HeroHeading
               className="mt-5 text-balance text-[40px] md:text-[62px] tracking-[-0.04em]"
               lines={["High-impact rooms for Africa's", "next generation of builders."]}
             />
             <motion.p variants={heroEnterBody} className="mt-5 max-w-[60ch] text-[15px] leading-[1.8] text-white/85 md:text-[17px]">
-              Tickets on this page are for Youth+ Summit 2026. Explore a curated 12-month build-up calendar with
-              livestreams, tactical webinars, and premium in-person activations.
+              Tickets on this page are for Youth Plus Festival 2026. Explore the January–May 2026 build-up calendar with
+              tactical webinars and premium in-person activations.
             </motion.p>
             <motion.div variants={heroEnterCta} className="mt-8 flex flex-wrap items-center gap-3">
               <SwapArrowButton
                 href="https://allaxs.vercel.app/events"
                 compact
-                className="h-12 min-w-[164px] rounded-md px-4 text-[13px] font-[900] uppercase tracking-[0.06em]"
+                buttonRadius="var(--radius-md)"
+                className="h-12 min-w-[164px] px-4 text-[13px] font-[900] uppercase tracking-[0.06em]"
                 hoverTextClassName="hover:text-white"
                 hoverBgClassName="hover:bg-[#0A0A0A]"
               >
-                Get Summit Tickets
+                Get Festival Tickets
               </SwapArrowButton>
               <SwapArrowButton
                 href="#monthly-tracks"
                 compact
                 smoothScroll
-                className="h-12 min-w-[164px] rounded-md border border-white/20 px-4 text-[13px] font-[900] uppercase tracking-[0.06em]"
+                buttonRadius="var(--radius-md)"
+                className="h-12 min-w-[164px] border border-white/20 px-4 text-[13px] font-[900] uppercase tracking-[0.06em]"
                 backgroundColor="rgba(255,255,255,0.05)"
                 backgroundHoverColor="#FFFFFF"
                 textColor="#FFFFFF"
@@ -446,14 +607,14 @@ export function EventsClient() {
               <span aria-hidden="true">&bull;</span>
               <span>Instant QR confirmation</span>
               <span aria-hidden="true">&bull;</span>
-              <span>12 themed months</span>
+              <span>5 themed months</span>
             </motion.div>
             <motion.div variants={heroEnterLine} className="mt-8 grid grid-cols-2 gap-3 md:max-w-[620px] md:grid-cols-4">
               {[
-                { value: "12", label: "Months" },
-                { value: "36+", label: "Sessions" },
-                { value: "3", label: "Formats" },
-                { value: "2026", label: "Calendar" },
+                { value: "5", label: "Months" },
+                { value: "10", label: "Sessions" },
+                { value: "2", label: "Ways to join" },
+                { value: "2026", label: "Season" },
               ].map((stat) => (
                 <motion.div
                   key={stat.label}
@@ -466,6 +627,29 @@ export function EventsClient() {
                 </motion.div>
               ))}
             </motion.div>
+            <motion.div
+              variants={heroEnterLine}
+              className="mt-10 grid max-w-[720px] grid-cols-1 gap-3 sm:grid-cols-2"
+            >
+              <div className="rounded-lg border border-white/15 bg-black/25 px-4 py-3.5 backdrop-blur-sm">
+                <div className="flex items-center gap-2 text-accent">
+                  <Video className="h-4 w-4 shrink-0" aria-hidden />
+                  <span className="text-[11px] font-[800] uppercase tracking-[0.1em]">Webinar</span>
+                </div>
+                <p className="mt-2 text-[13px] leading-[1.55] text-white/75">
+                  Live online sessions with tactical playbooks, Q&amp;A, and focused facilitation.
+                </p>
+              </div>
+              <div className="rounded-lg border border-white/15 bg-black/25 px-4 py-3.5 backdrop-blur-sm">
+                <div className="flex items-center gap-2 text-accent">
+                  <MapPin className="h-4 w-4 shrink-0" aria-hidden />
+                  <span className="text-[11px] font-[800] uppercase tracking-[0.1em]">On-site</span>
+                </div>
+                <p className="mt-2 text-[13px] leading-[1.55] text-white/75">
+                  In-person rooms in Nairobi — limited seats, high-trust facilitation, and festival-week energy.
+                </p>
+              </div>
+            </motion.div>
               </motion.div>
             </div>
           </section>
@@ -476,82 +660,124 @@ export function EventsClient() {
         <SectionDivider contentWidth className="absolute top-0 opacity-80" />
         <FadeUp className="pt-6 md:pt-8">
           <p className="inline-flex w-fit rounded-full border border-accent/60 bg-accent/10 px-4 py-1 text-[11px] font-[800] uppercase tracking-[0.1em]">
-            Flagship experiences
+            Spotlight — Jan to May
           </p>
           <h2 className="mt-5 text-balance text-[33px] font-[900] leading-[0.98] tracking-[-0.03em] md:text-[50px]">
-            Start with the highest-demand rooms.
+            Start with the rooms everyone asks about first.
           </h2>
           <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.8] text-secondary">
-            Handpicked sessions with the strongest attendance pull, practical takeaways, and limited-seat releases.
+            Three anchor experiences across webinars and on-site formats — each with clear pricing, seat counts, and a
+            fast path to checkout.
           </p>
         </FadeUp>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <div className="mt-10 grid w-full min-w-0 auto-rows-fr grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-3 lg:gap-6 xl:gap-8">
           {featuredExperiences.map((item, index) => (
-            <FadeUp key={item.title} delayMs={index * 70}>
+            <FadeUp key={item.title} delayMs={index * 70} className="h-full min-h-0">
               {(() => {
                 const priceParts = splitPrice(item.priceFrom);
+                const ruleClass = "border-black/[0.08]";
+                const labelClass = "text-secondary";
                 return (
               <motion.article
                 whileHover={reduceMotion ? undefined : { y: -6, boxShadow: "0 22px 44px rgba(10,10,10,0.14)" }}
                 transition={{ type: "spring", stiffness: 210, damping: 24 }}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-borderLight bg-white shadow-[0_12px_34px_rgba(10,10,10,0.06)]"
+                className="group flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-borderLight bg-white shadow-[0_12px_34px_rgba(10,10,10,0.06)]"
               >
-                <div className="relative aspect-[16/10]">
+                <div className="relative aspect-[16/10] w-full shrink-0 lg:aspect-[2/1]">
                   <Image
                     src={item.image}
                     alt={item.title}
                     fill
                     className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                    sizes="(max-width: 1024px) 100vw, 33vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/22 to-transparent" />
-                  <div className="absolute left-4 top-4 inline-flex rounded-full border border-accent/70 bg-black/35 px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] text-accent">
-                    {item.month}
-                  </div>
-                  {index === 0 ? (
-                    <div className="absolute right-4 top-4 inline-flex rounded-full border border-white/30 bg-black/35 px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] text-white">
-                      Featured
-                    </div>
-                  ) : null}
-                  <div className="absolute left-4 bottom-4 inline-flex rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] text-white">
-                    {item.channel}
-                  </div>
+                  <div
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent"
+                    aria-hidden
+                  />
                 </div>
-                <div className="flex flex-1 flex-col p-5 md:p-6">
-                  <h3 className="min-h-[2.4em] text-[34px] font-[900] leading-[0.98] tracking-[-0.038em] text-[#0A0A0A]">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-[11px] font-[800] uppercase tracking-[0.09em] text-secondary">{item.date}</p>
-                  <p className="mt-3 min-h-[4.8em] text-[13px] leading-[1.62] text-secondary">{item.value}</p>
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-md border border-borderLight bg-[#fafafa] px-3 py-2.5">
-                      <p className="text-[10px] font-[800] uppercase tracking-[0.09em] text-secondary">From</p>
-                      <div className="mt-1 leading-none">
-                        <p className="text-[10px] font-[900] uppercase tracking-[0.1em] text-secondary">
-                          {priceParts.currency}
-                        </p>
-                        <p className="mt-1 text-[20px] font-[900] tracking-[-0.03em]">
-                          {priceParts.amount}
-                        </p>
+                <div className="flex min-h-0 min-w-0 flex-1 flex-col p-5 md:p-6 lg:p-7">
+                  <header className={`grid shrink-0 grid-cols-[1fr_auto] items-start gap-x-2 border-b pb-3 md:pb-3.5 ${ruleClass}`}>
+                    <div className="min-w-0">
+                      <p className={`text-[10px] font-[800] uppercase tracking-[0.1em] ${labelClass}`}>Month</p>
+                      <p className="mt-1.5 text-[13px] font-[900] uppercase tracking-[0.08em] text-[#0A0A0A]">{item.month}</p>
+                    </div>
+                    <div className="flex justify-end">
+                      {index === 0 ? (
+                        <span className="rounded-md border border-accent/60 bg-accent/10 px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] text-[#0A0A0A]">
+                          Featured
+                        </span>
+                      ) : (
+                        <span
+                          className="invisible select-none rounded-md border border-transparent px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em]"
+                          aria-hidden
+                        >
+                          Featured
+                        </span>
+                      )}
+                    </div>
+                  </header>
+
+                  <section className={`shrink-0 border-b py-3 md:py-3.5 ${ruleClass}`} aria-label="Format and schedule">
+                    <p className={`text-[10px] font-[800] uppercase tracking-[0.1em] ${labelClass}`}>Schedule</p>
+                    <p className="mt-2 text-[13px] font-[800] text-[#0A0A0A]">
+                      <span className="text-secondary">{item.channel}</span>
+                      <span className="mx-2 text-secondary/80" aria-hidden>
+                        ·
+                      </span>
+                      <span>{item.date}</span>
+                    </p>
+                  </section>
+
+                  <section className={`shrink-0 border-b py-3 md:py-3.5 ${ruleClass}`} aria-label="Session title">
+                    <p className={`text-[10px] font-[800] uppercase tracking-[0.1em] ${labelClass}`}>Session</p>
+                    <h3 className="mt-2 min-h-[2.35em] text-balance text-[26px] font-[900] leading-[1.05] tracking-[-0.034em] text-[#0A0A0A] sm:min-h-[2.45em] sm:text-[30px] lg:text-[32px]">
+                      {item.title}
+                    </h3>
+                  </section>
+
+                  <section
+                    className={`flex min-h-0 flex-1 flex-col justify-center border-b py-4 md:py-5 ${ruleClass}`}
+                    aria-label="What this experience covers"
+                  >
+                    <p className={`text-[10px] font-[800] uppercase tracking-[0.1em] ${labelClass}`}>What&apos;s included</p>
+                    <p className="mt-2 text-[14px] leading-[1.6] text-secondary md:text-[15px] md:leading-[1.65]">{item.value}</p>
+                  </section>
+
+                  <section className={`shrink-0 border-b pt-4 pb-4 md:pt-4 md:pb-4 ${ruleClass}`} aria-label="Pricing and availability">
+                    <p className={`text-[10px] font-[800] uppercase tracking-[0.1em] ${labelClass}`}>Pricing &amp; availability</p>
+                    <div className="mt-3 grid min-w-0 grid-cols-2 gap-3 sm:gap-4">
+                      <div className="min-w-0 rounded-md border border-borderLight bg-[#fafafa] px-3 py-2.5 sm:px-4 sm:py-3">
+                        <p className="text-[10px] font-[800] uppercase tracking-[0.09em] text-secondary">From</p>
+                        <div className="mt-2 min-h-[3.25rem] leading-none">
+                          <p className="text-[10px] font-[900] uppercase tracking-[0.1em] text-secondary">{priceParts.currency}</p>
+                          <p className="mt-1 text-[22px] font-[900] tracking-[-0.03em] sm:text-[24px] text-[#0A0A0A]">
+                            {priceParts.amount}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="min-w-0 rounded-md border border-accent/50 bg-accent/10 px-3 py-2.5 sm:px-4 sm:py-3">
+                        <p className="text-[10px] font-[800] uppercase tracking-[0.09em] text-secondary">Seats left</p>
+                        <div className="mt-2 flex min-h-[3.25rem] flex-col justify-end leading-none">
+                          <p className="text-[22px] font-[900] tracking-[-0.03em] sm:text-[24px] text-[#0A0A0A]">{item.seatsLeft}</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="rounded-md border border-accent/50 bg-accent/10 px-3 py-2.5">
-                      <p className="text-[10px] font-[800] uppercase tracking-[0.09em] text-secondary">Seats left</p>
-                      <p className="mt-1 text-[20px] font-[900] leading-none tracking-[-0.03em]">{item.seatsLeft}</p>
-                    </div>
-                  </div>
-                  <div className="mt-auto pt-5 flex flex-wrap items-center gap-2">
+                  </section>
+
+                  <div className="mt-auto flex min-w-0 shrink-0 flex-col gap-2 pt-5 sm:flex-row sm:flex-wrap sm:items-center">
                     <SwapArrowButton
                       href="https://allaxs.vercel.app/events"
                       compact
-                      className="h-11 rounded-md px-4 text-[12px] font-[900] uppercase tracking-[0.06em]"
+                      className="h-11 w-full justify-center px-4 text-[12px] font-[900] uppercase tracking-[0.06em] sm:w-auto sm:min-w-[148px]"
                     >
                       Reserve seat
                     </SwapArrowButton>
                     <button
                       type="button"
                       onClick={() => setActivePosterKey(`${item.month}-${item.title}`)}
-                      className="inline-flex h-11 items-center justify-center rounded-md border border-transparent bg-transparent px-3 text-[11px] font-[800] uppercase tracking-[0.09em] text-secondary transition-colors hover:text-[#0A0A0A]"
+                      className="inline-flex h-11 w-full items-center justify-center rounded-md border border-transparent bg-transparent px-3 text-[11px] font-[800] uppercase tracking-[0.09em] text-secondary transition-colors hover:text-[#0A0A0A] sm:w-auto"
                     >
                       Quick preview
                     </button>
@@ -581,13 +807,14 @@ export function EventsClient() {
                   Limited inventory in this release window.
                 </h3>
                 <p className="mt-4 max-w-[56ch] text-[14px] leading-[1.75] text-white/80 md:text-[15px]">
-                  Early Bird is moving fastest this month. Lock your seat now and secure access to the full Youth+
-                  2026 experience pipeline.
+                  Early Bird is moving fastest this month. Lock your seat for Youth Plus Festival 2026 and the
+                  January–May build-up — webinars plus select Nairobi rooms.
                 </p>
                 <div className="mt-6 flex flex-wrap items-center gap-2.5">
                   <SwapArrowButton
                     href="https://allaxs.vercel.app/events"
-                    className="h-12 rounded-md px-5 text-[13px] font-[900] uppercase tracking-[0.06em]"
+                    buttonRadius="var(--radius-md)"
+                    className="h-12 px-5 text-[13px] font-[900] uppercase tracking-[0.06em]"
                     hoverTextClassName="hover:text-white"
                     hoverBgClassName="hover:bg-[#1A1A1A]"
                   >
@@ -619,7 +846,7 @@ export function EventsClient() {
         </FadeUp>
       </ScrollJackSection>
 
-      <section className="bg-white py-16 md:py-24">
+      <section id="pass-types" className="scroll-mt-[calc(var(--site-header-height)+1rem)] bg-white py-16 md:py-24">
         <div className="relative page mx-auto max-w-[1440px] pt-16 md:pt-24">
           <SectionDivider contentWidth className="absolute top-0 opacity-80" />
           <FadeUp>
@@ -627,7 +854,7 @@ export function EventsClient() {
               Passes and pricing
             </p>
             <h2 className="mt-5 text-balance text-[33px] font-[900] leading-[0.98] tracking-[-0.03em] md:text-[50px]">
-              Choose your Youth+ Summit 2026 pass before this batch closes.
+              Choose your Youth Plus Festival 2026 pass before this batch closes.
             </h2>
             <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.8] text-secondary">
               Transparent tiers, clear value, and instant confirmation after checkout.
@@ -726,10 +953,10 @@ export function EventsClient() {
         <SectionDivider contentWidth className="absolute top-0 opacity-80" />
         <div className="page mx-auto max-w-[1440px] pt-8 md:pt-10">
           <div className="inline-flex items-center rounded-md border border-accent/80 bg-accent/15 px-3 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
-            African Event Energy
+            Event energy
           </div>
-          <h2 className="mt-4 max-w-[18ch] text-[32px] font-[900] leading-[1.02] tracking-[-0.04em] md:text-[48px]">
-            Spaces where collaboration feels local and continental.
+          <h2 className="mt-4 max-w-[22ch] text-[32px] font-[900] leading-[1.02] tracking-[-0.04em] md:text-[48px]">
+            The same rooms online and on the ground — built for momentum.
           </h2>
           <motion.div className="mt-8 grid gap-4 lg:grid-cols-12">
             <motion.figure
@@ -787,7 +1014,7 @@ export function EventsClient() {
         <div className="absolute inset-0">
           <Image
             src={ABOUT_EDITORIAL_STRIP_IMAGE}
-            alt="African keynote speaker at a Youth+ style summit"
+            alt="African keynote speaker at a Youth Plus Festival session"
             fill
             sizes="100vw"
             className="object-cover object-[52%_28%] md:object-[50%_24%]"
@@ -812,7 +1039,7 @@ export function EventsClient() {
               Short formats, strong facilitation, and outcomes you can measure. Bring your idea, leave with a plan.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
-              {["Practical keynotes", "Builder workshops", "Real networking"].map((item) => (
+              {["Webinar deep dives", "On-site intensives", "Operator-led facilitation"].map((item) => (
                 <span
                   key={item}
                   className="inline-flex items-center rounded-md border border-white/20 bg-black/25 px-3 py-1.5 text-[12px] font-[700] text-white/90"
@@ -827,100 +1054,150 @@ export function EventsClient() {
 
       <ScrollJackSection
         id="monthly-tracks"
-        className="relative page mx-auto max-w-[1440px] py-16 md:py-24"
-        intensity={1.1}
+        className="relative bg-[#fafafa] py-16 md:py-24"
+        intensity={1.05}
       >
-        <SectionDivider contentWidth className="absolute top-0 opacity-80" />
-        <FadeUp className="pt-6 md:pt-8">
-          <h2 className="text-balance text-[29px] font-[900] leading-[1.02] tracking-[-0.028em] sm:text-[31px] md:text-[50px]">
-            Full 2026 monthly tracks
-          </h2>
-          <p className="mt-4 max-w-[62ch] text-[15px] leading-[1.8] text-secondary">
-            Explore all themed tracks and session formats across the official Youth+ Connect calendar.
-          </p>
-        </FadeUp>
+        <div className="page relative mx-auto max-w-[1440px]">
+          <SectionDivider contentWidth className="absolute top-0 opacity-80" />
+          <FadeUp className="relative pt-6 md:pt-8">
+            <p className="inline-flex w-fit rounded-full border border-accent/60 bg-white px-4 py-1 text-[11px] font-[800] uppercase tracking-[0.1em] text-accent">
+              Two-lane calendar
+            </p>
+            <h2 className="mt-4 text-balance text-[29px] font-[900] leading-[1.02] tracking-[-0.028em] sm:text-[31px] md:text-[48px]">
+              January–May: webinars and Nairobi rooms, side by side.
+            </h2>
+            <p className="mt-4 max-w-[68ch] text-[15px] leading-[1.8] text-secondary md:text-[16px]">
+              Each month stacks online sessions next to in-person experiences when both are scheduled. Tap a card to
+              preview its poster, then continue to tickets.
+            </p>
 
-        <div className="mt-10 space-y-4 md:space-y-5">
-          {monthlyTracks.map((track, index) => (
-            <FadeUp key={track.month} delayMs={index * 35}>
-              <motion.article
-                whileHover={{ y: -3 }}
-                transition={{ type: "spring", stiffness: 200, damping: 24 }}
-                className="overflow-hidden rounded-2xl border border-borderLight bg-white shadow-[0_12px_34px_rgba(10,10,10,0.05)]"
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr]">
-                  <div className="border-b border-borderLight bg-[#0A0A0A] px-6 py-6 text-white lg:border-b-0 lg:border-r">
-                    <p className="text-[11px] font-[700] uppercase tracking-[0.1em] text-white/70">Month</p>
-                    <p className="mt-2 text-[28px] font-[900] leading-[0.96] tracking-[-0.03em] sm:text-[30px]">{track.month}</p>
-                    <p className="mt-5 text-[12px] font-[700] uppercase tracking-[0.08em] text-accent">Theme</p>
-                    <p className="mt-2 text-[14px] leading-[1.7] text-white/90">{track.theme}</p>
+            <div className="mt-8 grid gap-4 md:mt-10 md:grid-cols-2 md:gap-5">
+              <div className="rounded-2xl border border-borderLight bg-white p-5 shadow-[0_8px_28px_rgba(10,10,10,0.05)]">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0A0A0A] text-white">
+                    <Video className="h-5 w-5" aria-hidden />
                   </div>
-
-                  <div className="grid gap-3 p-3 sm:p-4 md:grid-cols-3 md:gap-4 md:p-5">
-                    {track.sessions.map((session) => (
-                      (() => {
-                        const parsedDate = parseSessionDate(session.date);
-                        const isPastSession = parsedDate ? parsedDate < today : false;
-                        const posterKey = `${track.month}-${session.title}`;
-                        const openPoster = () => setActivePosterKey(posterKey);
-                        return (
-                      <motion.div
-                        key={posterKey}
-                        role="button"
-                        tabIndex={0}
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                        className={`cursor-pointer select-none rounded-[var(--radius-xl)] border border-borderLight bg-[#fafafa] p-3.5 text-left sm:p-4 ${
-                          isPastSession ? "opacity-65" : ""
-                        }`}
-                        onClick={openPoster}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            openPoster();
-                          }
-                        }}
-                      >
-                        <div className="mb-2 flex items-start justify-between gap-2">
-                          <span
-                            className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] ${channelPillClasses[session.channel]}`}
-                          >
-                            {session.channel}
-                          </span>
-                          {isPastSession ? (
-                            <span className="inline-flex rounded-full border border-black/25 bg-black/5 px-2 py-0.5 text-[9px] font-[800] uppercase tracking-[0.1em] text-secondary">
-                              Past
-                            </span>
-                          ) : null}
-                        </div>
-                        {session.poster ? (
-                          <div className="relative mb-3 aspect-[4/5] overflow-hidden rounded-lg border border-borderLight bg-[#F7F7F7]">
-                            <Image
-                              src={session.poster}
-                              alt={session.title}
-                              fill
-                              className="object-contain p-1.5"
-                            />
-                          </div>
-                        ) : null}
-                        <h3 className="mt-3 text-[16px] font-[900] leading-[1.15] tracking-[-0.018em] text-[#0A0A0A] sm:text-[18px]">
-                          {session.title}
-                        </h3>
-                        <p className="mt-2 text-[13px] font-[700] uppercase tracking-[0.07em] text-secondary">
-                          {session.date}
-                        </p>
-                        <span className="mt-4 inline-flex text-[13px] font-[800] text-[#0A0A0A]">
-                          Click to reveal poster
-                        </span>
-                      </motion.div>
-                        );
-                      })()
-                    ))}
+                  <div>
+                    <p className="text-[12px] font-[800] uppercase tracking-[0.1em] text-[#0A0A0A]">Webinar lane</p>
+                    <p className="mt-2 text-[14px] leading-[1.65] text-secondary">
+                      Join remotely with a tight agenda, live Q&amp;A, and takeaways you can apply the same week.
+                    </p>
                   </div>
                 </div>
-              </motion.article>
-            </FadeUp>
-          ))}
+              </div>
+              <div className="rounded-2xl border border-borderLight bg-white p-5 shadow-[0_8px_28px_rgba(10,10,10,0.05)]">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-[#0A0A0A]">
+                    <MapPin className="h-5 w-5" aria-hidden />
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-[800] uppercase tracking-[0.1em] text-[#0A0A0A]">On-site lane</p>
+                    <p className="mt-2 text-[14px] leading-[1.65] text-secondary">
+                      Limited seats in Nairobi — workshops, expos, and high-trust rooms tied to the festival build-up.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </FadeUp>
+
+          <div className="relative mt-12 space-y-6 md:mt-16 md:space-y-8">
+            {monthlyTracks.map((track, index) => {
+              const webinars = track.sessions.filter((s) => s.channel === "Webinar");
+              const onsite = track.sessions.filter((s) => s.channel === "On-site");
+              return (
+                <FadeUp key={track.month} delayMs={index * 40}>
+                  <motion.article
+                    whileHover={{ y: -2 }}
+                    transition={{ type: "spring", stiffness: 220, damping: 26 }}
+                    className="overflow-hidden rounded-2xl border border-borderLight bg-white shadow-[0_16px_44px_rgba(10,10,10,0.07)]"
+                  >
+                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,300px)_1fr]">
+                      <div className="flex flex-col justify-between border-b border-borderLight bg-[#0A0A0A] px-6 py-8 text-white lg:border-b-0 lg:border-r lg:border-borderLight">
+                        <div>
+                          <p className="text-[11px] font-[700] uppercase tracking-[0.14em] text-white/55">Month</p>
+                          <p className="mt-1 text-[12px] font-[800] tabular-nums tracking-[0.18em] text-accent">
+                            {String(index + 1).padStart(2, "0")} / 05
+                          </p>
+                          <p className="mt-4 text-[32px] font-[900] leading-[0.94] tracking-[-0.035em] sm:text-[36px]">
+                            {track.month}
+                          </p>
+                          <p className="mt-5 text-[11px] font-[800] uppercase tracking-[0.12em] text-accent">Theme</p>
+                          <p className="mt-2 max-w-[30ch] text-[15px] leading-[1.65] text-white/90">{track.theme}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 divide-y divide-borderLight lg:grid-cols-2 lg:divide-x lg:divide-y-0">
+                        <div className="p-5 md:p-8">
+                          <div className="mb-4 flex flex-wrap items-center gap-2">
+                            <Video className="h-4 w-4 text-[#0A0A0A]" aria-hidden />
+                            <span className="text-[12px] font-[900] uppercase tracking-[0.12em] text-[#0A0A0A]">
+                              Webinars
+                            </span>
+                            <span className="rounded-full bg-black/[0.06] px-2 py-0.5 text-[10px] font-[800] text-secondary">
+                              {webinars.length} session{webinars.length === 1 ? "" : "s"}
+                            </span>
+                          </div>
+                          {webinars.length === 0 ? (
+                            <EmptySessionLane
+                              title="Webinar lane"
+                              body="No webinar is scheduled for this month in the published calendar."
+                              icon={<Video className="h-4 w-4" aria-hidden />}
+                            />
+                          ) : (
+                            <div className="space-y-4">
+                              {webinars.map((session) => (
+                                <SessionCard
+                                  key={session.title}
+                                  session={session}
+                                  trackMonth={track.month}
+                                  today={today}
+                                  onOpenPoster={(key) => setActivePosterKey(key)}
+                                  borderAccentClass={WEBINAR_LANE_BORDER}
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="p-5 md:p-8">
+                          <div className="mb-4 flex flex-wrap items-center gap-2">
+                            <MapPin className="h-4 w-4 text-accent" aria-hidden />
+                            <span className="text-[12px] font-[900] uppercase tracking-[0.12em] text-[#0A0A0A]">
+                              On-site
+                            </span>
+                            <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-[800] text-[#0A0A0A]">
+                              {onsite.length} session{onsite.length === 1 ? "" : "s"}
+                            </span>
+                          </div>
+                          {onsite.length === 0 ? (
+                            <EmptySessionLane
+                              title="On-site lane"
+                              body="This month is webinar-first on the calendar. In-person rooms pick up again in other months through May."
+                              icon={<MapPin className="h-4 w-4" aria-hidden />}
+                            />
+                          ) : (
+                            <div className="space-y-4">
+                              {onsite.map((session) => (
+                                <SessionCard
+                                  key={session.title}
+                                  session={session}
+                                  trackMonth={track.month}
+                                  today={today}
+                                  onOpenPoster={(key) => setActivePosterKey(key)}
+                                  borderAccentClass={ONSITE_LANE_BORDER}
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.article>
+                </FadeUp>
+              );
+            })}
+          </div>
         </div>
       </ScrollJackSection>
 
@@ -936,29 +1213,29 @@ export function EventsClient() {
             </h2>
           </FadeUp>
 
-          <div className="mt-8 grid grid-cols-1 gap-5 md:mt-9 md:grid-cols-3">
+          <div className="mt-8 grid auto-rows-fr grid-cols-1 gap-5 md:mt-9 md:grid-cols-3">
             {INSIGHT_HIGHLIGHTS.slice(0, 3).map((item, index) => (
-              <FadeUp key={item.slug} delayMs={index * 60}>
+              <FadeUp key={item.slug} delayMs={index * 60} className="h-full min-h-0">
                 <motion.article
                   whileHover={{ y: -5 }}
                   transition={{ type: "spring", stiffness: 230, damping: 24 }}
-                  className="flex h-full flex-col overflow-hidden rounded-[var(--radius-xl)] border border-borderLight bg-white shadow-[0_12px_34px_rgba(10,10,10,0.05)]"
+                  className="flex h-full min-h-0 flex-col overflow-hidden rounded-[var(--radius-xl)] border border-borderLight bg-white shadow-[0_12px_34px_rgba(10,10,10,0.05)]"
                 >
-                  <div className="relative aspect-[16/10]">
+                  <div className="relative aspect-[16/10] shrink-0">
                     <Image src={item.image} alt={item.title} fill className="object-cover" sizes="(max-width:768px) 100vw, 33vw" />
                   </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <h3 className="text-[25px] font-[900] leading-[1.03] tracking-[-0.025em]">{item.title}</h3>
+                  <div className="flex min-h-0 flex-1 flex-col p-5">
+                    <h3 className="min-h-[2.5em] text-[25px] font-[900] leading-[1.03] tracking-[-0.025em]">{item.title}</h3>
                     <p className="mt-3 text-[12px] font-[800] uppercase tracking-[0.08em] text-secondary">
                       {item.schedule}
                     </p>
                     <p className="mt-1 text-[13px] font-[700] text-secondary">{item.location}</p>
-                    <p className="mt-4 text-[14px] leading-[1.75] text-secondary">{item.detail}</p>
-                    <div className="mt-auto pt-5">
+                    <p className="mt-4 flex-1 text-[14px] leading-[1.75] text-secondary">{item.detail}</p>
+                    <div className="mt-auto shrink-0 pt-5">
                       <SwapArrowButton
                         href={`/insights#${item.slug}`}
                         compact
-                        className="h-11 w-full justify-center rounded-full text-[12px] font-[800] uppercase tracking-[0.06em] sm:w-auto"
+                        className="h-11 w-full justify-center text-[12px] font-[800] uppercase tracking-[0.06em]"
                       >
                         Read insight
                       </SwapArrowButton>
@@ -973,7 +1250,7 @@ export function EventsClient() {
               <SwapArrowButton
                 href="/insights"
                 compact
-                className="h-11 justify-center rounded-full px-6 text-[12px] font-[800] uppercase tracking-[0.06em]"
+                className="h-11 justify-center px-6 text-[12px] font-[800] uppercase tracking-[0.06em]"
               >
                 Browse all insights
               </SwapArrowButton>
@@ -1008,19 +1285,85 @@ export function EventsClient() {
                   sizes="(max-width: 768px) 92vw, 680px"
                 />
               </div>
-              <div className="space-y-2 overflow-y-auto border-t border-borderLight p-4 sm:p-5">
-                <p className="text-[11px] font-[800] uppercase tracking-[0.09em] text-secondary">
-                  {activeEvent.month} - {activeEvent.channel}
-                </p>
-                <h3 className="text-[24px] font-[900] leading-[1.06] tracking-[-0.03em]">{activeEvent.title}</h3>
-                <p className="text-[13px] font-[700] uppercase tracking-[0.07em] text-secondary">{activeEvent.date}</p>
-                <p className="text-[14px] leading-[1.7] text-secondary">{activeEvent.theme}</p>
+              <div className="max-h-[min(40vh,420px)] space-y-4 overflow-y-auto border-t border-borderLight p-4 sm:p-5 md:max-h-none">
+                <div>
+                  <p className="text-[11px] font-[800] uppercase tracking-[0.09em] text-secondary">
+                    {activeEvent.month} · {activeEvent.channel}
+                  </p>
+                  <h3 className="mt-1.5 text-[24px] font-[900] leading-[1.06] tracking-[-0.03em]">{activeEvent.title}</h3>
+                  <p className="mt-2 text-[13px] font-[700] uppercase tracking-[0.07em] text-secondary">{activeEvent.date}</p>
+                  <p className="mt-3 text-[12px] font-[800] uppercase tracking-[0.08em] text-accent">Month theme</p>
+                  <p className="mt-1 text-[14px] font-[700] leading-snug text-[#0A0A0A]">{activeEvent.theme}</p>
+                  <p className="mt-4 text-[15px] font-[700] leading-[1.45] text-[#0A0A0A]">
+                    {activeEvent.preview?.subtitle ?? `A ${activeEvent.channel.toLowerCase()} experience aligned with the ${activeEvent.month} program arc.`}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[12px] font-[800] uppercase tracking-[0.08em] text-secondary">Session snapshot</p>
+                  <ul className="mt-2.5 space-y-2.5">
+                    {(activeEvent.preview?.bullets ?? [
+                      `${activeEvent.channel} format with Youth+ facilitation and live Q&A.`,
+                      `Final run-of-show, seat counts, and add-ons are confirmed on the ticketing page.`,
+                      `Bring one concrete objective so facilitators can tailor breakout prompts.`,
+                    ]).map((line) => (
+                      <li key={line} className="flex gap-2.5 text-[14px] leading-[1.6] text-secondary">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {(activeEvent.preview?.venueLine ||
+                  activeEvent.preview?.durationLine ||
+                  activeEvent.preview?.audienceLine) && (
+                  <div>
+                    <p className="text-[12px] font-[800] uppercase tracking-[0.08em] text-secondary">Logistics</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {activeEvent.preview?.venueLine ? (
+                        <span className="inline-flex rounded-md border border-borderLight bg-[#fafafa] px-2.5 py-1.5 text-[12px] font-[700] text-[#0A0A0A]">
+                          {activeEvent.preview.venueLine}
+                        </span>
+                      ) : null}
+                      {activeEvent.preview?.durationLine ? (
+                        <span className="inline-flex rounded-md border border-borderLight bg-[#fafafa] px-2.5 py-1.5 text-[12px] font-[700] text-[#0A0A0A]">
+                          {activeEvent.preview.durationLine}
+                        </span>
+                      ) : null}
+                      {activeEvent.preview?.audienceLine ? (
+                        <span className="inline-flex rounded-md border border-borderLight bg-[#fafafa] px-2.5 py-1.5 text-[12px] font-[700] text-[#0A0A0A]">
+                          {activeEvent.preview.audienceLine}
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                )}
+                <div className="border-t border-borderLight pt-3">
+                  <p className="text-[12px] leading-[1.65] text-secondary">
+                    Need a different format or group block?{" "}
+                    <a
+                      href="mailto:support@youthplusafrica.com"
+                      className="font-[800] text-[#0A0A0A] underline decoration-accent/50 underline-offset-2 hover:decoration-accent"
+                    >
+                      support@youthplusafrica.com
+                    </a>
+                  </p>
+                  <div className="mt-4">
+                    <SwapArrowButton
+                      href="https://allaxs.vercel.app/events"
+                      compact
+                      newTab
+                      className="h-11 w-full justify-center text-[12px] font-[900] uppercase tracking-[0.06em]"
+                    >
+                      Continue to ticketing
+                    </SwapArrowButton>
+                  </div>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setActivePosterKey(null)}
                 className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[18px] font-[700] text-[#0A0A0A] shadow-sm"
-                aria-label="Close poster reveal"
+                aria-label="Close quick preview"
               >
                 -
               </button>

@@ -397,7 +397,7 @@ html[data-cursor-tone="dark"] [role="button"] {
 
 /* =================================================================
  * Design system component: JoinUsCta
- * Production card with primary / secondary / tertiary CTAs.
+ * Production card with primary / secondary / tertiary SwapArrow CTAs (outline pill).
  * All values come from design tokens — no hardcoded colors or spacing.
  * Animated only via transform / opacity / box-shadow / colors.
  * Respects prefers-reduced-motion.

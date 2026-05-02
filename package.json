@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "WATCHPACK_POLLING=true next dev -p 3002",
-    "dev:clean": "rm -rf .next && WATCHPACK_POLLING=true next dev -p 3002",
+    "dev": "next dev -p 3002",
+    "dev:poll": "WATCHPACK_POLLING=true next dev -p 3002",
+    "dev:clean": "rm -rf .next && next dev -p 3002",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "clean": "rm -rf .next out .turbo && rm -f tsconfig.tsbuildinfo .eslintcache"
   },
   "dependencies": {
     "framer-motion": "^12.38.0",

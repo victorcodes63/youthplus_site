@@ -2,7 +2,7 @@
 
 import { FadeUp } from "@/components/motion/FadeUp";
 import { useState, type FormEvent, type ReactNode } from "react";
-import { BrandButton } from "@/components/ui/BrandButton";
+import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 
 const ageGroups = ["18-24", "25-30", "31-35", "36+"];
 const counties = ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Uasin Gishu", "Other"];
@@ -477,15 +477,19 @@ export default function WeLeadBaselineSurveyPage() {
               <p className="text-[12px] leading-relaxed text-black/45 max-w-[60ch]">
                 Survey responses are securely submitted for baseline data collection and review.
               </p>
-              <BrandButton
-                type="submit"
+              <SwapArrowButton
+                submit
                 disabled={submissionState === "submitting"}
-                variant="gold"
-                fullWidth
-                className="sm:w-auto disabled:cursor-not-allowed disabled:opacity-60"
+                compact
+                ariaLabel={
+                  submissionState === "submitting"
+                    ? "Submitting baseline survey"
+                    : "Submit baseline survey"
+                }
+                className="w-full min-h-[48px] shrink-0 justify-center sm:w-auto sm:min-h-[44px]"
               >
                 {submissionState === "submitting" ? "Submitting..." : "Submit Baseline Survey"}
-              </BrandButton>
+              </SwapArrowButton>
             </div>
             {submissionMessage ? (
               <p

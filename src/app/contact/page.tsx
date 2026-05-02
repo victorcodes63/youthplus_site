@@ -19,9 +19,9 @@ const faqs = [
       "We typically reply within one business day. For urgent event deadlines, mention your target date in the message.",
   },
   {
-    question: "Can you support both one-off events and recurring summits?",
+    question: "Can you support both one-off events and recurring flagship festivals?",
     answer:
-      "Yes. We support single events, annual summits, and multi-event calendars with reusable workflows and branded pages.",
+      "Yes. We support single events, annual festivals, and multi-event calendars with reusable workflows and branded pages.",
   },
   {
     question: "Do you provide payment and ticketing setup?",
@@ -37,7 +37,7 @@ const faqs = [
 const CONTACT_HERO_IMAGE = "/images/contact-hero-stage.png";
 const testimonialQuotes = [
   "Youth+ helped us design a high-signal founder session that converted into real partnerships within weeks.",
-  "Practical, fast, and collaborative — we shipped a strong summit format without execution friction.",
+  "Practical, fast, and collaborative — we shipped a strong festival format without execution friction.",
   "From planning to delivery, Youth+ gave us the structure to engage talent and sustain momentum after the room ended.",
 ];
 
@@ -166,7 +166,7 @@ export default function ContactPage() {
                 className="relative mt-3.5 max-w-[34rem] text-[13px] leading-[1.68] text-white/82 sm:mt-4 sm:text-[15px] md:text-[18px]"
               >
                 Share your goals, timeline, and audience. We&apos;ll return a clear
-                execution plan for events, summits, and strategic ecosystem work.
+                execution plan for events, festivals, and strategic ecosystem work.
               </motion.p>
               <motion.div variants={heroChipOrchestra} className="relative mt-5 flex flex-wrap gap-2 sm:mt-7 sm:gap-2.5">
                 {["48h response", "Nairobi HQ", "Pan-African execution"].map((item) => (
@@ -329,7 +329,7 @@ export default function ContactPage() {
                     Reach us directly.
                   </h3>
                   <p className="mt-3 max-w-full break-words text-[14px] leading-[1.7] text-secondary">
-                    If your summit launch is time-sensitive, share your timeline
+                    If your festival launch is time-sensitive, share your timeline
                     in the form and we will prioritize your request.
                   </p>
 
@@ -377,7 +377,7 @@ export default function ContactPage() {
           <PartnerLogoMarquee
             label="Partners"
             variant="card"
-            logoTone="gold"
+            logoTone="color"
             durationSec={42}
             frameStyle="none"
             className="mt-8 w-full min-w-0 md:mt-10"

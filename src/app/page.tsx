@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   AnimatePresence,
   motion,
@@ -22,16 +23,16 @@ import { WhyUsStory } from "@/components/home/WhyUsStory";
 import { usePrefersFineHover } from "@/lib/usePrefersFineHover";
 import { useMobileTicketCta } from "@/lib/useMobileTicketCta";
 import { MobileTicketCta } from "@/components/site/MobileTicketCta";
-import { PARTNER_LOGOS } from "@/data/partnerLogos";
+import { PartnerLogoMarquee } from "@/components/site/PartnerLogoMarquee";
 import { type CarouselGestureIntent, resolveCarouselTouchIntent } from "@/lib/carouselTouchScroll";
 
 const HERO_IMAGE = "/images/women-s-panel-discussion.jpg";
-const SUMMIT_IMAGE = "/images/woman-giving-speech.jpg";
-const SUMMIT_IMAGE_ALT = "/images/view-funny-stand-up-comedian.jpg";
+const FESTIVAL_IMAGE = "/images/woman-giving-speech.jpg";
+const FESTIVAL_IMAGE_ALT = "/images/view-funny-stand-up-comedian.jpg";
 const EDITORIAL_IMAGE = "/images/smiling-speaker-podium.jpg";
 const FEATURED_EVENTS = [
   {
-    title: "AI+ Summit Lab",
+    title: "AI+ Festival Lab",
     meta: "AI • Product • Leadership",
     date: "Thu, 19 Feb 2026",
     venue: "Sarit Expo Centre, Nairobi",
@@ -109,7 +110,7 @@ const TICKET_TIERS = [
   {
     name: "Standard",
     price: "KES 12,000",
-    note: "Core summit access",
+    note: "Core festival access",
     seatsLeft: 318,
     image: "https://images.unsplash.com/photo-1767884161189-ed2f04d87550?auto=format&fit=crop&w=1200&q=80",
     textTone: "dark",
@@ -179,8 +180,8 @@ const HOME_CASE_STUDIES = [
   },
   {
     id: "06",
-    title: "Summit-to-Program Conversion Pipeline",
-    challenge: "High summit attendance did not reliably convert into long-term program participation.",
+    title: "Festival-to-Program Conversion Pipeline",
+    challenge: "High festival attendance did not reliably convert into long-term program participation.",
     action: "Built a 30-day follow-up sequence with segmented tracks, office hours, and peer accountability pods.",
     result: "Post-event conversion into active events improved by 46% year over year.",
     imageAlt: "Conference attendees networking after a keynote session",
@@ -204,7 +205,7 @@ const staggerItem = {
   },
 };
 
-const summitStagger = {
+const festivalStagger = {
   hidden: {},
   show: {
     transition: { staggerChildren: 0.14, delayChildren: 0.06 },
@@ -264,13 +265,13 @@ function splitPrice(price: string) {
 
 export default function Home() {
   const heroRef = useRef<HTMLElement | null>(null);
-  const summitRef = useRef<HTMLDivElement | null>(null);
+  const festivalRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const { scrollYProgress: summitProgress } = useScroll({
-    target: summitRef,
+  const { scrollYProgress: festivalProgress } = useScroll({
+    target: festivalRef,
     offset: ["start end", "end start"],
   });
   const heroImageY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
@@ -279,10 +280,10 @@ export default function Home() {
   const heroOverlayOpacity = useTransform(scrollYProgress, [0, 1], [0.62, 0.76]);
   const heroSeamY = useTransform(scrollYProgress, [0, 1], ["0%", "24%"]);
   const heroSeamOpacity = useTransform(scrollYProgress, [0, 1], [0.24, 0.78]);
-  const summitMediaY = useTransform(summitProgress, [0, 1], ["12%", "-10%"]);
-  const summitMediaScale = useTransform(summitProgress, [0, 0.5, 1], [0.96, 1, 1.04]);
-  const summitCopyY = useTransform(summitProgress, [0, 1], ["10%", "-6%"]);
-  const summitStatsY = useTransform(summitProgress, [0, 1], ["8%", "-4%"]);
+  const festivalMediaY = useTransform(festivalProgress, [0, 1], ["12%", "-10%"]);
+  const festivalMediaScale = useTransform(festivalProgress, [0, 0.5, 1], [0.96, 1, 1.04]);
+  const festivalCopyY = useTransform(festivalProgress, [0, 1], ["10%", "-6%"]);
+  const festivalStatsY = useTransform(festivalProgress, [0, 1], ["8%", "-4%"]);
   const reduceMotion = useReducedMotion();
   const [openFeatured, setOpenFeatured] = useState<number | null>(null);
   const [hoverTier, setHoverTier] = useState<number | null>(null);
@@ -674,7 +675,7 @@ export default function Home() {
           >
             <Image
               src={HERO_IMAGE}
-              alt="Women panel discussion at Youth+ Africa summit"
+              alt="Women panel discussion at Youth Plus Festival"
               fill
               priority
               sizes="100vw"
@@ -731,7 +732,7 @@ export default function Home() {
                 className="inline-flex items-center gap-3 rounded-md border-[1.5px] border-accent/85 bg-black/30 px-3.5 py-1.5 text-label text-accent"
               >
                 <span className="md:hidden">Youth+ · Tickets Live</span>
-                <span className="hidden md:inline">Youth+ Africa Festival 2026 · Tickets Live</span>
+                <span className="hidden md:inline">Youth Plus Festival 2026 · Tickets Live</span>
               </motion.div>
 
               <HeroHeading
@@ -757,10 +758,10 @@ export default function Home() {
                   compact
                   className="h-12 min-w-0 flex-1 basis-0 rounded-md font-[600] text-[0.9375rem] tracking-[0.01em] md:flex-none md:basis-auto md:px-4"
                 >
-                  Tickets
+                  Youth+ Festival Tickets
                 </SwapArrowButton>
                 <SwapArrowButton
-                  href="/events"
+                  href="/events#pass-types"
                   compact
                   className="h-12 min-w-0 flex-1 basis-0 justify-center rounded-md border border-white/20 px-3 font-[600] text-[0.9375rem] tracking-[0.01em] sm:px-5 md:flex-none md:basis-auto md:px-5"
                   backgroundColor="rgba(255,255,255,0.05)"
@@ -792,36 +793,15 @@ export default function Home() {
               className="col-span-12 xl:col-span-4 max-w-[560px] w-full xl:ml-auto"
               variants={heroPartnerOrchestra}
             >
-              <motion.div
-                variants={heroEnterLine}
-                className="text-label text-white/55"
-              >
-                Partners
-              </motion.div>
-              <motion.div
-                variants={heroEnterLine}
-                className="mt-6 overflow-hidden max-w-[516px]"
-              >
-                <motion.div
-                  className="flex gap-3"
-                  animate={{ x: ["0%", "-50%"] }}
-                  transition={{ duration: 18, ease: "linear", repeat: Infinity }}
-                >
-                  {[...PARTNER_LOGOS, ...PARTNER_LOGOS].map((logo, i) => (
-                    <div
-                      key={`${logo.src}-${i}`}
-                      className="min-w-[164px] h-[64px] px-4 flex items-center justify-center"
-                    >
-                      <Image
-                        src={logo.src}
-                        alt={logo.alt}
-                        width={138}
-                        height={42}
-                        className="max-h-[42px] w-auto object-contain brightness-0 invert opacity-85"
-                      />
-                    </div>
-                  ))}
-                </motion.div>
+              <motion.div variants={heroEnterLine} className="mt-1 min-w-0 max-w-[516px]">
+                <PartnerLogoMarquee
+                  label="Partners"
+                  variant="hero"
+                  logoTone="white"
+                  durationSec={42}
+                  frameStyle="none"
+                  className="w-full"
+                />
               </motion.div>
             </motion.div>
           </motion.div>
@@ -829,10 +809,10 @@ export default function Home() {
       </section>
         }
       >
-      {/* Summit snapshot section (inspired by ATS structure). */}
-      <ScrollJackSection id="summit-snapshot" className="bg-white text-[#0A0A0A]" intensity={1.1}>
+      {/* Festival snapshot section (inspired by ATS structure). */}
+      <ScrollJackSection id="festival-snapshot" className="bg-white text-[#0A0A0A]" intensity={1.1}>
         <div
-          ref={summitRef}
+          ref={festivalRef}
           className="page mx-auto max-w-[1440px] py-14 md:py-20 min-w-0 w-full box-border"
         >
           {/* Single column on small screens — 12-col + gap can exceed viewport width and clip copy (html overflow-x: clip). */}
@@ -840,18 +820,18 @@ export default function Home() {
             <div className="lg:col-span-7 order-2 lg:order-1 min-w-0 max-w-full w-full">
               <motion.div
                 className="relative h-[248px] sm:h-[280px] md:h-[320px] w-full max-w-full min-w-0 overflow-hidden"
-                style={{ y: summitMediaY, scale: summitMediaScale }}
+                style={{ y: festivalMediaY, scale: festivalMediaScale }}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true, margin: "-80px" }}
-                variants={summitStagger}
+                variants={festivalStagger}
               >
                 <motion.div
                   variants={staggerItem}
                   className="absolute z-20 left-0 top-0 h-[200px] w-[200px] sm:h-[240px] sm:w-[240px] md:h-[280px] md:w-[280px] rounded-[76px] sm:rounded-[90px] overflow-hidden border border-borderLight"
                 >
                   <Image
-                    src={SUMMIT_IMAGE}
+                    src={FESTIVAL_IMAGE}
                     alt="Speaker on stage"
                     fill
                     className="object-cover object-[center_24%]"
@@ -874,8 +854,8 @@ export default function Home() {
                   className="absolute z-20 left-[138px] sm:left-[170px] md:left-[235px] top-[108px] sm:top-[125px] md:top-[140px] h-[118px] w-[118px] sm:h-[140px] sm:w-[140px] md:h-[160px] md:w-[160px] rounded-b-[68px] rounded-t-[16px] sm:rounded-b-[80px] sm:rounded-t-[18px] overflow-hidden border border-borderLight"
                 >
                   <Image
-                    src={SUMMIT_IMAGE_ALT}
-                    alt="Audience at summit"
+                    src={FESTIVAL_IMAGE_ALT}
+                    alt="Audience at Youth Plus Festival"
                     fill
                     className="object-cover object-[72%_38%]"
                     sizes="(max-width: 640px) 118px, 160px"
@@ -885,14 +865,14 @@ export default function Home() {
             </div>
 
             <div className="lg:col-span-5 order-1 lg:order-2 min-w-0 max-w-full w-full">
-              <motion.div style={{ y: summitCopyY }}>
+              <motion.div style={{ y: festivalCopyY }}>
                 <FadeUp className="min-w-0 max-w-full w-full">
                 <h2 className="text-h1 text-primary break-words">
                   The Leading
                   <br />
                   African Youth
                   <br />
-                  Innovation Summit
+                  Innovation Festival
                 </h2>
                 <p className="mt-6 w-full text-lead break-words [word-break:break-word] hyphens-auto">
                   {
@@ -916,7 +896,7 @@ export default function Home() {
 
           <motion.div
             className="mt-10 md:mt-12 border-t border-borderLight pt-8"
-            style={{ y: summitStatsY }}
+            style={{ y: festivalStatsY }}
           >
             <div className="mx-auto max-w-[980px] grid grid-cols-2 md:grid-cols-4 gap-8 place-items-center">
               {[
@@ -988,7 +968,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured events — poster + content split, line-language details, Summit 2026 dates */}
+      {/* Featured events — poster + content split, line-language details, Festival 2026 dates */}
       <section
         id="featured-events"
         className="border-t border-borderLight/80 bg-[linear-gradient(180deg,#fafafa_0%,#ffffff_22%,#ffffff_100%)]"
@@ -1003,7 +983,7 @@ export default function Home() {
                 Choose your track. Reserve your seat.
               </h2>
               <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-secondary md:text-[16px]">
-                Summit-week labs at Sarit — each built for a clear outcome, with transparent tiers and instant
+                Festival-week labs at Sarit — each built for a clear outcome, with transparent tiers and instant
                 confirmation after checkout.
               </p>
             </FadeUp>
@@ -1251,23 +1231,30 @@ export default function Home() {
                 Passes and pricing
               </p>
               <h3 className="mt-4 text-h2 text-primary">
-                Choose your Youth+ Summit 2026 pass before this batch closes.
+                Choose your Youth Plus Festival 2026 pass before this batch closes.
               </h3>
               <p className="mt-4 text-lead max-w-[52ch]">
                 Transparent tiers, clear value, and instant confirmation after checkout.
               </p>
             </FadeUp>
           </div>
-          <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-3 lg:col-span-7">
             {TICKET_TIERS.map((tier, idx) => (
-              <FadeUp key={tier.name} delayMs={idx * 70}>
+              <FadeUp key={tier.name} delayMs={idx * 70} className="h-full min-h-0">
                 {(() => {
                   const priceParts = splitPrice(tier.price);
                   return (
-                <motion.article
+                <Link
+                  href="https://allaxs.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block h-full min-h-0 rounded-md no-underline outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                   onMouseEnter={() => setHoverTier(idx)}
-                  onMouseLeave={() => setHoverTier((prev) => (prev === idx ? null : prev))}
-                  className={`relative overflow-hidden rounded-md border p-4 md:p-5 bg-white shadow-[0_6px_24px_rgba(10,10,10,0.04)] min-h-[260px] ${
+                  onMouseLeave={() => setHoverTier((prev) => (prev === idx ? null : null))}
+                  aria-label={`${tier.name} pass — open ticketing on Allaxs`}
+                >
+                <motion.article
+                  className={`relative flex h-full min-h-[260px] cursor-pointer flex-col overflow-hidden rounded-md border bg-white p-4 shadow-[0_6px_24px_rgba(10,10,10,0.04)] md:p-5 ${
                     tier.active ? "border-accent" : "border-borderLight"
                   }`}
                   whileHover={{ y: -6, boxShadow: "0 18px 42px rgba(10,10,10,0.12)" }}
@@ -1278,42 +1265,75 @@ export default function Home() {
                     const useLightText = isRevealed;
                     const textClass = useLightText ? "text-white" : "text-black";
                     const seatsBoxClass = useLightText
-                      ? "border-white/35 bg-black/20"
+                      ? "border-white/35 bg-black/55 backdrop-blur-sm"
                       : "border-borderLight bg-[#FAFAFA]";
-                    const seatsLabelClass = useLightText ? "text-white/80" : "text-secondary";
+                    const seatsLabelClass = useLightText ? "text-white/85" : "text-secondary";
+
+                    const noteClass = useLightText ? "text-white/95" : "text-secondary";
+                    const ruleClass = useLightText ? "border-white/18" : "border-black/[0.08]";
+                    const priceShadow = useLightText ? "drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]" : "";
+                    const labelClass = useLightText ? "text-white/82" : "text-secondary";
 
                     return (
-                      <div className="relative z-10 flex h-full flex-col justify-between">
-                        <div className="flex items-center justify-between gap-3">
-                          <p className={`text-[13px] font-[900] uppercase tracking-[0.08em] ${textClass}`}>{tier.name}</p>
-                          {tier.active ? (
-                            <span
-                              className={`rounded-full border px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] transition-colors ${
-                                useLightText
-                                  ? "border-white/45 bg-white/12 text-white"
-                                  : "border-accent/60 bg-accent/10 text-[#0A0A0A]"
-                              }`}
-                            >
-                              Best value
-                            </span>
-                          ) : null}
-                        </div>
+                      <div className="relative z-10 flex min-h-0 flex-1 flex-col">
+                        <header className={`grid shrink-0 grid-cols-[1fr_auto] items-start gap-x-2 border-b pb-3 md:pb-3.5 ${ruleClass}`}>
+                          <div className="min-w-0">
+                            <p className={`text-[10px] font-[800] uppercase tracking-[0.1em] ${labelClass}`}>
+                              Pass type
+                            </p>
+                            <p className={`mt-1.5 text-[13px] font-[900] uppercase tracking-[0.08em] ${textClass}`}>{tier.name}</p>
+                          </div>
+                          <div className="flex justify-end">
+                            {tier.active ? (
+                              <span
+                                className={`rounded-md border px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em] transition-colors ${
+                                  useLightText
+                                    ? "border-white/40 bg-black/40 text-white shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
+                                    : "border-accent/60 bg-accent/10 text-[#0A0A0A]"
+                                }`}
+                              >
+                                Best value
+                              </span>
+                            ) : (
+                              <span
+                                className="invisible select-none rounded-md border border-transparent px-2.5 py-1 text-[10px] font-[800] uppercase tracking-[0.08em]"
+                                aria-hidden
+                              >
+                                Best value
+                              </span>
+                            )}
+                          </div>
+                        </header>
 
-                        <div className={`mt-4 leading-none ${textClass}`}>
-                          <p className="text-[14px] font-[900] uppercase tracking-[0.1em]">{priceParts.currency}</p>
-                          <p className="mt-1 text-[52px] font-[900] tracking-[-0.05em] break-words">{priceParts.amount}</p>
-                        </div>
-
-                        <p className={`mt-2 text-[13px] ${textClass}`}>{tier.note}</p>
-
-                        <div className={`mt-4 rounded-lg border px-3 py-2 ${seatsBoxClass}`}>
-                          <p className={`text-[10px] font-[800] uppercase tracking-[0.08em] ${seatsLabelClass}`}>
-                            Seats left
+                        <section className={`shrink-0 pt-4 ${textClass}`} aria-label="Ticket price">
+                          <p className={`text-[10px] font-[800] uppercase tracking-[0.1em] ${labelClass}`}>
+                            Ticket price
                           </p>
-                          <p className={`mt-1 text-[22px] font-[900] leading-none tracking-[-0.03em] ${textClass}`}>
-                            {tier.seatsLeft}
+                          <div className={`mt-2 min-h-[4.5rem] leading-none md:min-h-[4.75rem] ${priceShadow}`}>
+                            <p className="text-[14px] font-[900] uppercase tracking-[0.1em]">{priceParts.currency}</p>
+                            <p className="mt-1 text-[52px] font-[900] tracking-[-0.05em] break-words">{priceParts.amount}</p>
+                          </div>
+                        </section>
+
+                        <section
+                          className="flex min-h-0 flex-1 flex-col justify-center py-4 md:py-5"
+                          aria-label="What this pass includes"
+                        >
+                          <p className={`text-[10px] font-[800] uppercase tracking-[0.1em] ${labelClass}`}>
+                            What&apos;s included
                           </p>
-                        </div>
+                          <p className={`mt-2 text-[13px] leading-[1.55] md:text-[14px] md:leading-[1.6] ${noteClass}`}>{tier.note}</p>
+                        </section>
+
+                        <footer className={`mt-auto shrink-0 border-t pt-3 md:pt-3.5 ${ruleClass}`}>
+                          <p className={`text-[10px] font-[800] uppercase tracking-[0.1em] ${seatsLabelClass}`}>Availability</p>
+                          <div className={`mt-2 rounded-md border px-3 py-2 ${seatsBoxClass}`}>
+                            <p className={`text-[10px] font-[800] uppercase tracking-[0.08em] ${seatsLabelClass}`}>Seats left</p>
+                            <p className={`mt-1 text-[22px] font-[900] leading-none tracking-[-0.03em] ${textClass}`}>
+                              {tier.seatsLeft}
+                            </p>
+                          </div>
+                        </footer>
                       </div>
                     );
                   })()}
@@ -1329,9 +1349,14 @@ export default function Home() {
                       sizes="(min-width: 768px) 33vw, 100vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-[#0A0A0A]/68" />
+                    {/* Bottom-weighted scrim so white type stays legible on bright venue photography. */}
+                    <div
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0A0A0A]/52 via-[#0A0A0A]/78 to-[#0A0A0A]/94"
+                      aria-hidden
+                    />
                   </motion.div>
                 </motion.article>
+                </Link>
                   );
                 })()}
               </FadeUp>
@@ -1348,7 +1373,7 @@ export default function Home() {
                 Agenda teaser
               </div>
               <h3 className="mt-4 text-h2 text-primary">
-                What your summit day looks like.
+                What your festival day looks like.
               </h3>
             </FadeUp>
           </div>
@@ -1423,7 +1448,7 @@ export default function Home() {
                 <div className="mt-4 space-y-4 text-small">
                   <div>
                     <div className="font-[800] text-primary">Can I transfer a ticket?</div>
-                    <div className="mt-1">Yes. Name transfer is allowed up to 72 hours before the summit.</div>
+                    <div className="mt-1">Yes. Name transfer is allowed up to 72 hours before the festival.</div>
                   </div>
                   <div>
                     <div className="font-[800] text-primary">Do you issue company invoices?</div>

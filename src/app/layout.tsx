@@ -37,15 +37,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://youthplusafrica.com"),
   title: {
-    default: "Youth+ Africa | Nairobi Summit 2026",
+    default: "Youth+ Festival 2026",
     template: "%s | Youth+ Africa",
   },
   description:
-    "Youth+ Africa Summit 2026 in Nairobi. Book tickets, explore speakers, and join builders shaping Africa's next decade.",
+    "Youth+ Festival 2026 in Nairobi. Book tickets, explore speakers, and join builders shaping Africa's next decade.",
   openGraph: {
-    title: "Youth+ Africa | Nairobi Summit 2026",
+    title: "Youth+ Festival 2026",
     description:
-      "Book your Summit 2026 ticket. Meet founders, operators, investors, and creators shaping Africa's future.",
+      "Book your Youth+ Festival 2026 ticket. Meet founders, operators, investors, and creators shaping Africa's future.",
     url: "https://youthplusafrica.com",
     siteName: "Youth+ Africa",
     type: "website",
@@ -60,9 +60,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Youth+ Africa | Nairobi Summit 2026",
+    title: "Youth+ Festival 2026",
     description:
-      "Reserve your ticket for Youth+ Africa Summit 2026 and connect with Africa's top builders.",
+      "Reserve your ticket for Youth+ Festival 2026 and connect with Africa's top builders.",
     images: [BRAND_ICON.onLight],
   },
   icons: {
