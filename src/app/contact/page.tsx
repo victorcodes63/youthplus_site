@@ -56,6 +56,7 @@ export default function ContactPage() {
   const reduceMotion = useReducedMotion();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success">("idle");
+  const [submitError, setSubmitError] = useState("");
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const heroEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
   const heroOrchestra = {
@@ -99,11 +100,36 @@ export default function ContactPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setIsSubmitting(false);
-    setSubmitStatus("success");
-    setTimeout(() => setSubmitStatus("idle"), 3500);
-    e.currentTarget.reset();
+    setSubmitStatus("idle");
+    setSubmitError("");
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const payload = {
+      name: String(fd.get("name") ?? "").trim(),
+      email: String(fd.get("email") ?? "").trim(),
+      company: String(fd.get("company") ?? "").trim(),
+      timeline: String(fd.get("timeline") ?? "").trim(),
+      message: String(fd.get("message") ?? "").trim(),
+    };
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) {
+        throw new Error(data?.error ?? "Something went wrong. Please try again.");
+      }
+      form.reset();
+      setSubmitStatus("success");
+      setTimeout(() => setSubmitStatus("idle"), 4500);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -298,6 +324,12 @@ export default function ContactPage() {
                     </Link>
                     .
                   </p>
+
+                  {submitError ? (
+                    <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                      {submitError}
+                    </div>
+                  ) : null}
 
                   {submitStatus === "success" && (
                     <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">

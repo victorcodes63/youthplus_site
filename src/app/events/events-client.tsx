@@ -14,6 +14,8 @@ import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import { SectionDivider } from "@/components/ui/SectionDivider";
 import { INSIGHT_HIGHLIGHTS } from "@/data/insights";
 
+const HUSTLE_SASA_TICKETS = "https://youthplusafrica.hustlesasa.shop";
+
 type EventSessionPreview = {
   /** One supporting line under the session title */
   subtitle: string;
@@ -33,6 +35,8 @@ type EventSession = {
   date: string;
   poster?: string;
   preview?: EventSessionPreview;
+  /** When set, poster modal primary CTA opens this shop instead of the default ticketing URL. */
+  ticketShopHref?: string;
 };
 
 type MonthlyTrack = {
@@ -222,16 +226,20 @@ const monthlyTracks: MonthlyTrack[] = [
         channel: "On-site",
         title: "Eco Futures Expo",
         date: "May 29, 2026",
+        poster: "/event_posters/1BGreen.jpeg",
+        ticketShopHref: HUSTLE_SASA_TICKETS,
         preview: {
-          subtitle: "Hands-on expo floor connecting climate literacy with tools, founders, and capital.",
+          subtitle:
+            "Evening expo at Sarit Westlands — climate literacy, green pathways, demos, and curated networking in one high-signal block.",
           bullets: [
-            "Live demos from builders shipping low-carbon products and services.",
-            "Lightning talks on policy, procurement, and community-scale action.",
+            "Advance: Single KES 2,000 · Duo pass KES 3,500. Regular: Single KES 2,500 · Duo pass KES 4,500.",
+            "Tickets on Hustle Sasa: youthplusafrica.hustlesasa.shop — instant confirmation after checkout.",
+            "Live demos and lightning talks on policy, procurement, and community-scale climate action.",
             "Matchmaking for pilots, media, and distribution partners.",
           ],
-          venueLine: "Nairobi · expo floor",
-          durationLine: "Full afternoon",
-          audienceLine: "Founders, investors, civic teams",
+          venueLine: "Sarit Expo Centre, Westlands, Nairobi",
+          durationLine: "Fri 29 May 2026 · 6:00 PM – 9:00 PM",
+          audienceLine: "Founders, investors, students, civic teams",
         },
       },
     ],
@@ -245,11 +253,36 @@ type FeaturedExperience = {
   channel: EventSession["channel"];
   priceFrom: string;
   seatsLeft: number;
+  /** When set, replaces the numeric "Seats left" value (e.g. storefront name). */
+  seatsNote?: string;
   value: string;
   image: string;
+  ticketHref?: string;
+  /** Extra lines under the pricing row (tier breakdowns). */
+  pricingBullets?: string[];
+  /** Label for the right column in the pricing row (default: Seats left). */
+  availabilityColumnLabel?: string;
 };
 
 const featuredExperiences: FeaturedExperience[] = [
+  {
+    month: "May",
+    title: "Eco Futures Expo",
+    date: "Fri, 29 May 2026 · 6:00 PM – 9:00 PM",
+    channel: "On-site",
+    priceFrom: "KES 2,000",
+    seatsLeft: 0,
+    seatsNote: "Hustle Sasa",
+    value:
+      "Evening at Sarit Westlands: climate literacy, green skills, live demos, and matchmaking — Advance and Regular passes with Single and Duo pricing.",
+    image: "/event_posters/1BGreen.jpeg",
+    ticketHref: HUSTLE_SASA_TICKETS,
+    availabilityColumnLabel: "Store",
+    pricingBullets: [
+      "Advance — Single: KES 2,000 · Duo pass: KES 3,500",
+      "Regular — Single: KES 2,500 · Duo pass: KES 4,500",
+    ],
+  },
   {
     month: "February",
     title: "The Future of Work",
@@ -269,17 +302,6 @@ const featuredExperiences: FeaturedExperience[] = [
     seatsLeft: 124,
     value: "A tactical leadership masterclass for women building businesses, teams, and institutions with confidence.",
     image: "https://www.youthplusafrica.com/images/state_of_women_ai_2.jpg",
-  },
-  {
-    month: "May",
-    title: "Eco Futures Expo",
-    date: "May 29, 2026",
-    channel: "On-site",
-    priceFrom: "KES 5,000",
-    seatsLeft: 64,
-    value:
-      "A hands-on expo connecting climate literacy, green career pathways, and practical tools for sustainable impact.",
-    image: "https://www.youthplusafrica.com/images/events-bg.jpg",
   },
 ];
 
@@ -333,7 +355,7 @@ const monthPosterFallback: Record<string, string> = {
   February: "https://www.youthplusafrica.com/images/state_of_women_ai_2.jpg",
   March: "https://www.youthplusafrica.com/images/state_of_women_ai_2.jpg",
   April: "https://www.youthplusafrica.com/images/events-bg.jpg",
-  May: "https://www.youthplusafrica.com/images/events-bg.jpg",
+  May: "/event_posters/1BGreen.jpeg",
 };
 
 const ABOUT_EDITORIAL_STRIP_IMAGE = "/images/about-editorial-strip.png";
@@ -419,12 +441,12 @@ function SessionCard({
         ) : null}
       </div>
       {session.poster ? (
-        <div className="relative mt-3 aspect-[4/5] max-h-[200px] w-full overflow-hidden rounded-lg border border-borderLight bg-[#F7F7F7] sm:max-h-[220px]">
+        <div className="relative mt-3 aspect-[16/10] max-h-[200px] w-full overflow-hidden rounded-lg border border-borderLight bg-[#0a0a0a] sm:max-h-[220px]">
           <Image
             src={session.poster}
             alt={session.title}
             fill
-            className="object-contain p-1.5"
+            className="object-cover object-center"
             sizes="(max-width:768px) 100vw, 320px"
           />
         </div>
@@ -479,6 +501,7 @@ export function EventsClient() {
     channel: EventSession["channel"];
     poster: string;
     preview?: EventSessionPreview;
+    ticketShopHref?: string;
   } | null = null;
 
   if (activePosterKey) {
@@ -495,6 +518,7 @@ export function EventsClient() {
             channel: session.channel,
             poster: session.poster ?? monthPosterFallback[track.month],
             preview: session.preview,
+            ticketShopHref: session.ticketShopHref,
           };
           break;
         }
@@ -571,19 +595,20 @@ export function EventsClient() {
               lines={["High-impact rooms for Africa's", "next generation of builders."]}
             />
             <motion.p variants={heroEnterBody} className="mt-5 max-w-[60ch] text-[15px] leading-[1.8] text-white/85 md:text-[17px]">
-              Tickets on this page are for Youth Plus Festival 2026. Explore the January–May 2026 build-up calendar with
-              tactical webinars and premium in-person activations.
+              Next on-site highlight: Eco Futures Expo — Fri 29 May 2026, 6:00–9:00 PM at Sarit Expo Centre, Westlands.
+              Advance and Regular passes (Single and Duo) are on Hustle Sasa; explore the full January–May calendar below.
             </motion.p>
             <motion.div variants={heroEnterCta} className="mt-8 flex flex-wrap items-center gap-3">
               <SwapArrowButton
-                href="https://allaxs.vercel.app/events"
+                href={HUSTLE_SASA_TICKETS}
+                newTab
                 compact
                 buttonRadius="var(--radius-md)"
                 className="h-12 min-w-[164px] px-4 text-[13px] font-[900] uppercase tracking-[0.06em]"
                 hoverTextClassName="hover:text-white"
                 hoverBgClassName="hover:bg-[#0A0A0A]"
               >
-                Get Festival Tickets
+                Buy May 29 tickets
               </SwapArrowButton>
               <SwapArrowButton
                 href="#monthly-tracks"
@@ -689,7 +714,7 @@ export function EventsClient() {
                     src={item.image}
                     alt={item.title}
                     fill
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                    className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                     sizes="(max-width: 1024px) 100vw, 33vw"
                   />
                   <div
@@ -758,21 +783,36 @@ export function EventsClient() {
                         </div>
                       </div>
                       <div className="min-w-0 rounded-md border border-accent/50 bg-accent/10 px-3 py-2.5 sm:px-4 sm:py-3">
-                        <p className="text-[10px] font-[800] uppercase tracking-[0.09em] text-secondary">Seats left</p>
+                        <p className="text-[10px] font-[800] uppercase tracking-[0.09em] text-secondary">
+                          {item.availabilityColumnLabel ?? "Seats left"}
+                        </p>
                         <div className="mt-2 flex min-h-[3.25rem] flex-col justify-end leading-none">
-                          <p className="text-[22px] font-[900] tracking-[-0.03em] sm:text-[24px] text-[#0A0A0A]">{item.seatsLeft}</p>
+                          <p className="text-[22px] font-[900] tracking-[-0.03em] sm:text-[24px] text-[#0A0A0A]">
+                            {item.seatsNote ?? item.seatsLeft}
+                          </p>
                         </div>
                       </div>
                     </div>
+                    {item.pricingBullets?.length ? (
+                      <ul className="mt-3 space-y-1.5 text-[12px] font-[700] leading-snug text-secondary">
+                        {item.pricingBullets.map((line) => (
+                          <li key={line} className="flex gap-2">
+                            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden />
+                            <span>{line}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
                   </section>
 
                   <div className="mt-auto flex min-w-0 shrink-0 flex-col gap-2 pt-5 sm:flex-row sm:flex-wrap sm:items-center">
                     <SwapArrowButton
-                      href="https://allaxs.vercel.app/events"
+                      href={item.ticketHref ?? "https://allaxs.vercel.app/events"}
+                      newTab
                       compact
                       className="h-11 w-full justify-center px-4 text-[12px] font-[900] uppercase tracking-[0.06em] sm:w-auto sm:min-w-[148px]"
                     >
-                      Reserve seat
+                      {item.ticketHref ? "Buy tickets" : "Reserve seat"}
                     </SwapArrowButton>
                     <button
                       type="button"
@@ -1349,12 +1389,12 @@ export function EventsClient() {
                   </p>
                   <div className="mt-4">
                     <SwapArrowButton
-                      href="https://allaxs.vercel.app/events"
+                      href={activeEvent.ticketShopHref ?? "https://allaxs.vercel.app/events"}
                       compact
                       newTab
                       className="h-11 w-full justify-center text-[12px] font-[900] uppercase tracking-[0.06em]"
                     >
-                      Continue to ticketing
+                      {activeEvent.ticketShopHref ? "Open Hustle Sasa shop" : "Continue to ticketing"}
                     </SwapArrowButton>
                   </div>
                 </div>

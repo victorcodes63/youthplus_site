@@ -20,17 +20,52 @@ import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import { SectionDivider } from "@/components/ui/SectionDivider";
 import { SpeakersCarousel } from "@/components/home/SpeakersCarousel";
 import { WhyUsStory } from "@/components/home/WhyUsStory";
+import { FESTIVAL_SPEAKERS } from "@/data/festivalSpeakers";
 import { usePrefersFineHover } from "@/lib/usePrefersFineHover";
 import { useMobileTicketCta } from "@/lib/useMobileTicketCta";
 import { MobileTicketCta } from "@/components/site/MobileTicketCta";
 import { PartnerLogoMarquee } from "@/components/site/PartnerLogoMarquee";
-import { type CarouselGestureIntent, resolveCarouselTouchIntent } from "@/lib/carouselTouchScroll";
+import { useStripCarousel } from "@/lib/useStripCarousel";
 
 const HERO_IMAGE = "/images/women-s-panel-discussion.jpg";
 const FESTIVAL_IMAGE = "/images/woman-giving-speech.jpg";
 const FESTIVAL_IMAGE_ALT = "/images/view-funny-stand-up-comedian.jpg";
 const EDITORIAL_IMAGE = "/images/smiling-speaker-podium.jpg";
-const FEATURED_EVENTS = [
+
+const HUSTLE_SASA_TICKETS = "https://youthplusafrica.hustlesasa.shop";
+
+type FeaturedEventCard = {
+  title: string;
+  meta: string;
+  date: string;
+  venue: string;
+  image: string;
+  value: string;
+  tiers: string[];
+  urgency: string;
+  details: string[];
+  ticketHref?: string;
+};
+
+const FEATURED_EVENTS: FeaturedEventCard[] = [
+  {
+    title: "Eco Futures Expo",
+    meta: "Climate • Sustainability • Evening expo",
+    date: "Fri, 29 May 2026 · 6:00 PM – 9:00 PM",
+    venue: "Sarit Expo Centre, Westlands, Nairobi",
+    image: "/event_posters/1BGreen.jpeg",
+    value:
+      "Hands-on expo floor connecting climate literacy, green pathways, and practical tools — one focused evening at Sarit.",
+    tiers: ["Advance", "Regular"],
+    urgency: "Tickets live on Hustle Sasa while passes last",
+    details: [
+      "Advance: Single KES 2,000 · Duo pass KES 3,500",
+      "Regular: Single KES 2,500 · Duo pass KES 4,500",
+      "Checkout: youthplusafrica.hustlesasa.shop (secure Hustle Sasa store).",
+      "Bring teams or a friend — Duo pass is the best per-seat value in each tier.",
+    ],
+    ticketHref: HUSTLE_SASA_TICKETS,
+  },
   {
     title: "AI+ Festival Lab",
     meta: "AI • Product • Leadership",
@@ -289,23 +324,12 @@ export default function Home() {
   const [hoverTier, setHoverTier] = useState<number | null>(null);
   const fineHover = usePrefersFineHover();
   const { dismissed: mobileTicketCtaDismissed, dismiss: dismissMobileTicketCta } = useMobileTicketCta();
-  const caseStudiesViewportRef = useRef<HTMLDivElement | null>(null);
-  const caseStudiesTrackRef = useRef<HTMLDivElement | null>(null);
-  const [caseCursorActive, setCaseCursorActive] = useState(false);
-  const [caseCursorPoint, setCaseCursorPoint] = useState({ x: 0, y: 0 });
-  const [caseIsDragging, setCaseIsDragging] = useState(false);
-  const [caseDragOffset, setCaseDragOffset] = useState(0);
-  const [caseActiveIndex, setCaseActiveIndex] = useState(0);
-  const caseDragStartXRef = useRef(0);
-  const caseDragStartYRef = useRef(0);
-  const caseDragOffsetRef = useRef(0);
-  const casePointerIdRef = useRef<number | null>(null);
-  const caseIntentRef = useRef<CarouselGestureIntent>("idle");
-  const caseMovedRef = useRef(false);
-  const [caseCardWidth, setCaseCardWidth] = useState(0);
-  const [caseGap, setCaseGap] = useState(16);
-  const [caseVisibleCount, setCaseVisibleCount] = useState(1);
-  const CASE_DRAG_THRESHOLD = 60;
+  const caseStrip = useStripCarousel({
+    itemCount: HOME_CASE_STUDIES.length,
+    cardSelector: "[data-case-study-card]",
+    defaultGap: 16,
+    reduceMotion: Boolean(reduceMotion),
+  });
 
   const heroBackdropEase: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
   const heroEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -401,125 +425,6 @@ export default function Home() {
     },
   };
 
-  useEffect(() => {
-    const measure = () => {
-      const viewport = caseStudiesViewportRef.current;
-      const track = caseStudiesTrackRef.current;
-      if (!viewport || !track) return;
-      const card = track.querySelector<HTMLElement>("[data-case-study-card]");
-      if (!card) return;
-      const cardWidth = card.offsetWidth;
-      const trackStyle = window.getComputedStyle(track);
-      const gap = parseFloat(trackStyle.columnGap || trackStyle.gap || "16");
-      const visible = Math.max(1, Math.round(viewport.clientWidth / (cardWidth + gap)));
-      setCaseCardWidth(cardWidth);
-      setCaseGap(Number.isFinite(gap) ? gap : 16);
-      setCaseVisibleCount(visible);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
-  const caseMaxIndex = Math.max(0, HOME_CASE_STUDIES.length - caseVisibleCount);
-  const caseStep = caseCardWidth + caseGap;
-  const caseSafeIndex = Math.min(caseActiveIndex, caseMaxIndex);
-  const caseBaseOffset = -caseSafeIndex * caseStep;
-
-  const clampCaseIndex = (next: number) => Math.max(0, Math.min(caseMaxIndex, next));
-
-  const goToCaseStudy = (next: number) => {
-    setCaseActiveIndex(clampCaseIndex(next));
-  };
-
-  const slideCaseStudies = (direction: "prev" | "next") => {
-    goToCaseStudy(caseSafeIndex + (direction === "next" ? 1 : -1));
-  };
-
-  const onCasePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    if (event.pointerType === "mouse" && event.button !== 0) return;
-    casePointerIdRef.current = event.pointerId;
-    caseDragStartXRef.current = event.clientX;
-    caseDragStartYRef.current = event.clientY;
-    caseDragOffsetRef.current = 0;
-    caseMovedRef.current = false;
-    setCaseDragOffset(0);
-    if (event.pointerType === "mouse") {
-      caseIntentRef.current = "horizontal";
-      setCaseIsDragging(true);
-      event.currentTarget.setPointerCapture(event.pointerId);
-    } else {
-      caseIntentRef.current = "pending";
-      setCaseIsDragging(false);
-    }
-  };
-
-  const onCasePointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    if (casePointerIdRef.current !== event.pointerId) return;
-
-    if (caseIntentRef.current === "pending") {
-      const next = resolveCarouselTouchIntent(
-        event.clientX,
-        event.clientY,
-        caseDragStartXRef.current,
-        caseDragStartYRef.current,
-      );
-      if (next === "vertical") {
-        caseIntentRef.current = "vertical";
-        caseDragOffsetRef.current = 0;
-        setCaseDragOffset(0);
-        setCaseIsDragging(false);
-        return;
-      }
-      if (next === "pending") return;
-      caseIntentRef.current = "horizontal";
-      setCaseIsDragging(true);
-    }
-
-    if (caseIntentRef.current === "vertical") return;
-    if (caseIntentRef.current !== "horizontal") return;
-
-    const delta = event.clientX - caseDragStartXRef.current;
-    if (Math.abs(delta) > 4) caseMovedRef.current = true;
-    const atStart = caseSafeIndex === 0;
-    const atEnd = caseSafeIndex === caseMaxIndex;
-    let resisted = delta;
-    if ((atStart && delta > 0) || (atEnd && delta < 0)) {
-      resisted = delta * 0.35;
-    }
-    caseDragOffsetRef.current = resisted;
-    setCaseDragOffset(resisted);
-  };
-
-  const endCasePointer = (pointerId: number) => {
-    if (casePointerIdRef.current !== pointerId) return;
-    const intent = caseIntentRef.current;
-    const finalOffset = caseDragOffsetRef.current;
-    setCaseIsDragging(false);
-    casePointerIdRef.current = null;
-    caseIntentRef.current = "idle";
-    caseDragOffsetRef.current = 0;
-    setCaseDragOffset(0);
-
-    if (intent === "vertical") return;
-
-    if (finalOffset <= -CASE_DRAG_THRESHOLD) {
-      goToCaseStudy(caseSafeIndex + 1);
-      return;
-    }
-    if (finalOffset >= CASE_DRAG_THRESHOLD) {
-      goToCaseStudy(caseSafeIndex - 1);
-    }
-  };
-
-  const onCasePointerUp: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    endCasePointer(event.pointerId);
-  };
-
-  const onCasePointerCancel: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    endCasePointer(event.pointerId);
-  };
-
   const homeCaseStudiesSection = (
     <section id="home-case-studies" className="relative bg-white py-14 md:py-20">
       <SectionDivider contentWidth className="absolute top-0" />
@@ -540,7 +445,7 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => slideCaseStudies("prev")}
+                onClick={() => caseStrip.slideBy("prev")}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/35 bg-white/0 text-white transition-colors hover:border-accent hover:bg-accent hover:text-[#0A0A0A]"
                 aria-label="Previous case study"
               >
@@ -548,7 +453,7 @@ export default function Home() {
               </button>
               <button
                 type="button"
-                onClick={() => slideCaseStudies("next")}
+                onClick={() => caseStrip.slideBy("next")}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/35 bg-white/0 text-white transition-colors hover:border-accent hover:bg-accent hover:text-[#0A0A0A]"
                 aria-label="Next case study"
               >
@@ -558,32 +463,30 @@ export default function Home() {
           </div>
 
           <div
-            ref={caseStudiesViewportRef}
+            ref={caseStrip.viewportRef}
             className={`relative overflow-hidden touch-pan-y select-none ${
-              caseIsDragging ? "cursor-grabbing" : "cursor-grab"
+              caseStrip.isDragging ? "cursor-grabbing" : "cursor-grab"
             }`}
-            onPointerDown={onCasePointerDown}
-            onPointerMove={onCasePointerMove}
-            onPointerUp={onCasePointerUp}
-            onPointerCancel={onCasePointerCancel}
-            onMouseEnter={() => setCaseCursorActive(true)}
-            onMouseLeave={() => setCaseCursorActive(false)}
+            onPointerDown={caseStrip.onPointerDown}
+            onPointerMove={caseStrip.onPointerMove}
+            onPointerUp={caseStrip.onPointerUp}
+            onPointerCancel={caseStrip.onPointerCancel}
+            onMouseEnter={() => caseStrip.setCursorActive(true)}
+            onMouseLeave={() => caseStrip.setCursorActive(false)}
             onMouseMove={(event) => {
               const rect = event.currentTarget.getBoundingClientRect();
-              setCaseCursorPoint({
+              caseStrip.setCursorPoint({
                 x: event.clientX - rect.left,
                 y: event.clientY - rect.top,
               });
             }}
           >
             <div
-              ref={caseStudiesTrackRef}
+              ref={caseStrip.trackRef}
               className="flex gap-4 pb-1 md:gap-6 will-change-transform"
               style={{
-                transform: `translate3d(${caseBaseOffset + caseDragOffset}px, 0, 0)`,
-                transition: caseIsDragging
-                  ? "none"
-                  : `transform ${reduceMotion ? 1 : 600}ms cubic-bezier(0.16, 1, 0.3, 1)`,
+                transform: `translate3d(${caseStrip.baseOffset + caseStrip.dragOffset}px, 0, 0)`,
+                transition: caseStrip.trackTransition,
               }}
             >
               {HOME_CASE_STUDIES.map((study) => (
@@ -629,10 +532,10 @@ export default function Home() {
               ))}
             </div>
             <AnimatePresence>
-              {caseCursorActive ? (
+              {caseStrip.cursorActive ? (
                 <motion.div
                   className="pointer-events-none absolute z-20 hidden h-16 w-16 items-center justify-center rounded-full border border-accent bg-black/70 text-[11px] font-[900] uppercase tracking-[0.1em] text-accent md:flex"
-                  style={{ left: caseCursorPoint.x, top: caseCursorPoint.y, x: "-50%", y: "-50%" }}
+                  style={{ left: caseStrip.cursorPoint.x, top: caseStrip.cursorPoint.y, x: "-50%", y: "-50%" }}
                   initial={{ opacity: 0, scale: 0.7 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.7 }}
@@ -901,7 +804,7 @@ export default function Home() {
             <div className="mx-auto max-w-[980px] grid grid-cols-2 md:grid-cols-4 gap-8 place-items-center">
               {[
                 { value: 24, suffix: "", label: "Strategic Partners" },
-                { value: 38, suffix: "", label: "Confirmed Speakers" },
+                { value: FESTIVAL_SPEAKERS.length, suffix: "", label: "Confirmed Speakers" },
                 { value: 12, suffix: "", label: "African Cities Represented" },
                 { value: 1200, suffix: "+", label: "Available Seats" },
               ].map((stat, idx) => (
@@ -1048,7 +951,7 @@ export default function Home() {
                             alt={`${event.title} — featured session visual`}
                             fill
                             sizes="(min-width: 1024px) 38vw, 100vw"
-                            className="object-cover"
+                            className="object-cover object-center"
                           />
                         </motion.div>
                         <div
@@ -1169,13 +1072,14 @@ export default function Home() {
 
                         <div className="mt-8 flex flex-col gap-2.5 border-t border-borderLight pt-6 sm:flex-row sm:flex-wrap sm:items-center">
                           <SwapArrowButton
-                            href="/events"
+                            href={event.ticketHref ?? "/events"}
+                            newTab={Boolean(event.ticketHref)}
                             compact
                             className="h-11 w-full justify-center rounded-full px-5 text-[13px] font-[800] uppercase tracking-[0.05em] sm:w-auto"
                             hoverTextClassName="hover:text-white"
                             hoverBgClassName="hover:bg-[#0A0A0A]"
                           >
-                            Reserve ticket
+                            {event.ticketHref ? "Buy tickets" : "Reserve ticket"}
                           </SwapArrowButton>
                           <SwapArrowButton
                             href="/events"

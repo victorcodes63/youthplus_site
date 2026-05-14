@@ -50,18 +50,47 @@ const SPONSORSHIP_TIERS = [
 export default function PartnerWithUsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success">("idle");
+  const [submitError, setSubmitError] = useState("");
   const [selectedRole, setSelectedRole] =
     useState<(typeof ROLE_OPTIONS)[number]>("Facilitator / Trainer");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setIsSubmitting(false);
-    setSubmitStatus("success");
-    setTimeout(() => setSubmitStatus("idle"), 3500);
-    event.currentTarget.reset();
-    setSelectedRole("Facilitator / Trainer");
+    setSubmitStatus("idle");
+    setSubmitError("");
+    const form = event.currentTarget;
+    const fd = new FormData(form);
+    const payload = {
+      role: String(fd.get("role") ?? "").trim(),
+      name: String(fd.get("name") ?? "").trim(),
+      email: String(fd.get("email") ?? "").trim(),
+      phone: String(fd.get("phone") ?? "").trim(),
+      expertise: String(fd.get("expertise") ?? "").trim(),
+      availability: String(fd.get("availability") ?? "").trim(),
+      portfolio: String(fd.get("portfolio") ?? "").trim(),
+      message: String(fd.get("message") ?? "").trim(),
+    };
+
+    try {
+      const response = await fetch("/api/partner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) {
+        throw new Error(data?.error ?? "Something went wrong. Please try again.");
+      }
+      form.reset();
+      setSelectedRole("Facilitator / Trainer");
+      setSubmitStatus("success");
+      setTimeout(() => setSubmitStatus("idle"), 4500);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -203,6 +232,12 @@ export default function PartnerWithUsPage() {
               </div>
 
               <div className="mt-5 space-y-4">
+                {submitError ? (
+                  <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                    {submitError}
+                  </div>
+                ) : null}
+
                 {submitStatus === "success" && (
                   <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
                     Partnership form submitted successfully. We&apos;ll reach out
