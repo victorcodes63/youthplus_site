@@ -26,13 +26,12 @@ import { useMobileTicketCta } from "@/lib/useMobileTicketCta";
 import { MobileTicketCta } from "@/components/site/MobileTicketCta";
 import { PartnerLogoMarquee } from "@/components/site/PartnerLogoMarquee";
 import { useStripCarousel } from "@/lib/useStripCarousel";
+import { ECO_FUTURES_HUSTLE_SASA_CHECKOUT_URL } from "@/data/ecoFuturesTicketing";
 
 const HERO_IMAGE = "/images/women-s-panel-discussion.jpg";
 const FESTIVAL_IMAGE = "/images/woman-giving-speech.jpg";
 const FESTIVAL_IMAGE_ALT = "/images/view-funny-stand-up-comedian.jpg";
 const EDITORIAL_IMAGE = "/images/smiling-speaker-podium.jpg";
-
-const HUSTLE_SASA_TICKETS = "https://youthplusafrica.hustlesasa.shop";
 
 type FeaturedEventCard = {
   title: string;
@@ -61,10 +60,10 @@ const FEATURED_EVENTS: FeaturedEventCard[] = [
     details: [
       "Advance: Single KES 2,000 · Duo pass KES 3,500",
       "Regular: Single KES 2,500 · Duo pass KES 4,500",
-      "Checkout: youthplusafrica.hustlesasa.shop (secure Hustle Sasa store).",
+      "Checkout: youthplus.hustlesasa.shop — secure Hustle Sasa checkout for Eco Futures passes.",
       "Bring teams or a friend — Duo pass is the best per-seat value in each tier.",
     ],
-    ticketHref: HUSTLE_SASA_TICKETS,
+    ticketHref: ECO_FUTURES_HUSTLE_SASA_CHECKOUT_URL,
   },
   {
     title: "AI+ Festival Lab",

@@ -13,8 +13,7 @@ import { BrandButton } from "@/components/ui/BrandButton";
 import { SwapArrowButton } from "@/components/ui/SwapArrowButton";
 import { SectionDivider } from "@/components/ui/SectionDivider";
 import { INSIGHT_HIGHLIGHTS } from "@/data/insights";
-
-const HUSTLE_SASA_TICKETS = "https://youthplusafrica.hustlesasa.shop";
+import { ECO_FUTURES_HUSTLE_SASA_CHECKOUT_URL } from "@/data/ecoFuturesTicketing";
 
 type EventSessionPreview = {
   /** One supporting line under the session title */
@@ -227,13 +226,13 @@ const monthlyTracks: MonthlyTrack[] = [
         title: "Eco Futures Expo",
         date: "May 29, 2026",
         poster: "/event_posters/1BGreen.jpeg",
-        ticketShopHref: HUSTLE_SASA_TICKETS,
+        ticketShopHref: ECO_FUTURES_HUSTLE_SASA_CHECKOUT_URL,
         preview: {
           subtitle:
             "Evening expo at Sarit Westlands — climate literacy, green pathways, demos, and curated networking in one high-signal block.",
           bullets: [
             "Advance: Single KES 2,000 · Duo pass KES 3,500. Regular: Single KES 2,500 · Duo pass KES 4,500.",
-            "Tickets on Hustle Sasa: youthplusafrica.hustlesasa.shop — instant confirmation after checkout.",
+            "Tickets on Hustle Sasa (Eco Futures): youthplus.hustlesasa.shop — instant confirmation after checkout.",
             "Live demos and lightning talks on policy, procurement, and community-scale climate action.",
             "Matchmaking for pilots, media, and distribution partners.",
           ],
@@ -276,7 +275,7 @@ const featuredExperiences: FeaturedExperience[] = [
     value:
       "Evening at Sarit Westlands: climate literacy, green skills, live demos, and matchmaking — Advance and Regular passes with Single and Duo pricing.",
     image: "/event_posters/1BGreen.jpeg",
-    ticketHref: HUSTLE_SASA_TICKETS,
+    ticketHref: ECO_FUTURES_HUSTLE_SASA_CHECKOUT_URL,
     availabilityColumnLabel: "Store",
     pricingBullets: [
       "Advance — Single: KES 2,000 · Duo pass: KES 3,500",
@@ -600,7 +599,7 @@ export function EventsClient() {
             </motion.p>
             <motion.div variants={heroEnterCta} className="mt-8 flex flex-wrap items-center gap-3">
               <SwapArrowButton
-                href={HUSTLE_SASA_TICKETS}
+                href={ECO_FUTURES_HUSTLE_SASA_CHECKOUT_URL}
                 newTab
                 compact
                 buttonRadius="var(--radius-md)"
