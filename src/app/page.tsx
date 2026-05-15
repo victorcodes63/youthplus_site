@@ -21,6 +21,7 @@ import { SectionDivider } from "@/components/ui/SectionDivider";
 import { SpeakersCarousel } from "@/components/home/SpeakersCarousel";
 import { WhyUsStory } from "@/components/home/WhyUsStory";
 import { FESTIVAL_SPEAKERS } from "@/data/festivalSpeakers";
+import { useIsMobileViewport } from "@/lib/useIsMobileViewport";
 import { usePrefersFineHover } from "@/lib/usePrefersFineHover";
 import { useMobileTicketCta } from "@/lib/useMobileTicketCta";
 import { MobileTicketCta } from "@/components/site/MobileTicketCta";
@@ -319,6 +320,7 @@ export default function Home() {
   const festivalCopyY = useTransform(festivalProgress, [0, 1], ["10%", "-6%"]);
   const festivalStatsY = useTransform(festivalProgress, [0, 1], ["8%", "-4%"]);
   const reduceMotion = useReducedMotion();
+  const isMobile = useIsMobileViewport();
   const [openFeatured, setOpenFeatured] = useState<number | null>(null);
   const [hoverTier, setHoverTier] = useState<number | null>(null);
   const fineHover = usePrefersFineHover();
@@ -563,15 +565,15 @@ export default function Home() {
         className="relative -mt-[var(--site-header-height)] w-full overflow-hidden bg-[#0A0A0A] pt-[var(--site-header-height)] min-h-[100dvh]"
       >
         <motion.div
-          className="absolute inset-0"
-          style={{ y: heroImageY, scale: heroImageScale }}
+          className="absolute inset-0 max-md:origin-top max-md:scale-[1.12]"
+          style={isMobile ? undefined : { y: heroImageY, scale: heroImageScale }}
         >
           <motion.div
             className="absolute inset-0"
-            initial={reduceMotion ? false : { opacity: 0, scale: 1.05 }}
+            initial={reduceMotion || isMobile ? false : { opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
-              duration: reduceMotion ? 0 : 1.05,
+              duration: reduceMotion || isMobile ? 0 : 1.05,
               ease: heroBackdropEase,
             }}
           >
@@ -581,13 +583,13 @@ export default function Home() {
               fill
               priority
               sizes="100vw"
-              className="object-cover object-center"
+              className="object-cover object-top md:object-center"
             />
           </motion.div>
         </motion.div>
         <motion.div
           className="absolute inset-0 bg-[#0A0A0A]"
-          style={{ opacity: heroOverlayOpacity }}
+          style={isMobile ? { opacity: 0.62 } : { opacity: heroOverlayOpacity }}
         />
         <motion.div
           aria-hidden="true"
@@ -607,17 +609,25 @@ export default function Home() {
         <motion.div
           aria-hidden="true"
           className="absolute inset-x-0 bottom-0 h-[180px] pointer-events-none"
-          style={{
-            y: heroSeamY,
-            opacity: heroSeamOpacity,
-            background:
-              "linear-gradient(to top, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.1) 34%, transparent 100%)",
-          }}
+          style={
+            isMobile
+              ? {
+                  opacity: 0.24,
+                  background:
+                    "linear-gradient(to top, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.1) 34%, transparent 100%)",
+                }
+              : {
+                  y: heroSeamY,
+                  opacity: heroSeamOpacity,
+                  background:
+                    "linear-gradient(to top, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.1) 34%, transparent 100%)",
+                }
+          }
         />
 
         <motion.div
           className="relative page mx-auto flex min-h-[calc(100dvh_-_var(--site-header-height))] max-w-[1440px] items-center py-12 md:py-14 xl:py-16"
-          style={{ y: heroContentY }}
+          style={isMobile ? undefined : { y: heroContentY }}
         >
           <motion.div
             className="w-full grid grid-cols-12 gap-y-10 lg:gap-x-10 items-end"
@@ -653,19 +663,19 @@ export default function Home() {
 
               <motion.div
                 variants={heroEnterCta}
-                className="mt-9 flex flex-row gap-2 sm:gap-3 max-md:items-stretch md:items-center md:justify-start md:gap-4"
+                className="mt-9 flex flex-col gap-2 sm:gap-3 max-md:items-stretch md:flex-row md:items-center md:justify-start md:gap-4"
               >
                 <SwapArrowButton
                   href="/events"
                   compact
-                  className="h-12 min-w-0 flex-1 basis-0 rounded-md font-[600] text-[0.9375rem] tracking-[0.01em] md:flex-none md:basis-auto md:px-4"
+                  className="h-12 min-w-0 w-full rounded-md font-[600] text-[0.9375rem] tracking-[0.01em] md:w-auto md:flex-none md:px-4"
                 >
                   Youth+ Festival Tickets
                 </SwapArrowButton>
                 <SwapArrowButton
                   href="/events#pass-types"
                   compact
-                  className="h-12 min-w-0 flex-1 basis-0 justify-center rounded-md border border-white/20 px-3 font-[600] text-[0.9375rem] tracking-[0.01em] sm:px-5 md:flex-none md:basis-auto md:px-5"
+                  className="hidden h-12 min-w-0 justify-center rounded-md border border-white/20 px-3 font-[600] text-[0.9375rem] tracking-[0.01em] sm:px-5 md:inline-flex md:flex-none md:px-5"
                   backgroundColor="rgba(255,255,255,0.05)"
                   backgroundHoverColor="#FFFFFF"
                   textColor="#FFFFFF"

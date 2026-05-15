@@ -3,6 +3,7 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import type { ReactNode } from "react";
 import { useRef } from "react";
+import { useIsMobileViewport } from "@/lib/useIsMobileViewport";
 
 type StickyHeroSeamProps = {
   hero: ReactNode;
@@ -10,7 +11,10 @@ type StickyHeroSeamProps = {
   sheetClassName?: string;
 };
 
-export function StickyHeroSeam({
+const sheetClass = (sheetClassName: string) =>
+  `relative z-20 -mt-6 md:-mt-10 rounded-t-[24px] bg-white shadow-[0_-8px_30px_rgba(10,10,10,0.08)] ${sheetClassName}`.trim();
+
+function StickyHeroSeamAnimated({
   hero,
   children,
   sheetClassName = "",
@@ -31,11 +35,30 @@ export function StickyHeroSeam({
 
       <motion.div
         ref={sheetRef}
-        className={`relative z-20 -mt-6 md:-mt-10 rounded-t-[24px] bg-white shadow-[0_-8px_30px_rgba(10,10,10,0.08)] ${sheetClassName}`.trim()}
+        className={sheetClass(sheetClassName)}
         style={reduceMotion ? undefined : { y: sheetY, opacity: sheetOpacity }}
       >
         {children}
       </motion.div>
     </div>
+  );
+}
+
+export function StickyHeroSeam({ hero, children, sheetClassName = "" }: StickyHeroSeamProps) {
+  const isMobile = useIsMobileViewport();
+
+  if (isMobile) {
+    return (
+      <div className="relative">
+        <div className="z-0 md:sticky md:top-[var(--site-header-height)]">{hero}</div>
+        <div className={sheetClass(sheetClassName)}>{children}</div>
+      </div>
+    );
+  }
+
+  return (
+    <StickyHeroSeamAnimated hero={hero} sheetClassName={sheetClassName}>
+      {children}
+    </StickyHeroSeamAnimated>
   );
 }
